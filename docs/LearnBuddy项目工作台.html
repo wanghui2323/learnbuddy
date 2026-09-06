@@ -269,13 +269,6 @@
     </div>
   </section>
 
-  <section class="sec" id="open-learning">
-    <div class="sec-head"><div><h2>开发工作台也是开源学习产物</h2><div class="desc">2026-09-06 · 人工维护的版本视图，不是实时 CI 或自动同步的任务管理系统。</div></div></div>
-    <div class="start-grid">
-      <article class="card current-card"><span class="pill">第一周 · 过程开源</span><h2>一个需求，连到实现与验收</h2><p>需求池 → 版本范围 → 任务依赖 → 负责模块 → 退出门 → 结果与下一步。</p><p>以 V0.53 为例：实际作答产生评分证据，证据形成画像，画像进入路径决策。任务顺序由数据依赖决定。</p><p><a href="./学习地图.html">开源学习地图</a> · <a href="#iteration-v053">追踪完整任务树</a> · <a href="../SPEC.md">ADR 决策原文</a></p></article>
-      <article class="card"><h3>本轮交付与未通过的门</h3><p><b>源码：</b>v0.53.0-rc.1 已公开；Cloud / Personal、Agent 接入底座和发布安全修复。</p><p><b>工程：</b>最近一次开发全量回归 454 tests。下方 398 tests 是此前 V0.53 阶段快照，不与本次累计数相加。</p><p><b>待验收：</b>干净机安装与恢复、真实飞书、36 个人工评分单元、生产备份与部署。线上记录仍为 V0.52。</p><p><a href="../tests/test_runtime_modes.py">额度与模式测试</a> · <a href="../scripts/release_loop.py">发布门脚本</a></p></article>
-    </div>
-  </section>
   <section class="sec" id="overview">
     <div class="sec-head">
       <div>
@@ -745,6 +738,14 @@
   </section>
 
   <div class="footer">LearnBuddy 项目工作台 · 以后每期迭代先登记版本号，再推进需求、技术方案和验收。</div>
+  <section class="sec" id="open-learning">
+    <div class="sec-head"><div><h2>开发工作台也是开源学习产物</h2><div class="desc">2026-09-06 · 人工维护的版本视图，不是实时 CI 或自动同步的任务管理系统。</div></div></div>
+    <div class="start-grid">
+      <article class="card current-card"><span class="pill">第一周 · 过程开源</span><h2>一个需求，连到实现与验收</h2><p>需求池 → 版本范围 → 任务依赖 → 负责模块 → 退出门 → 结果与下一步。</p><p>以 V0.53 为例：实际作答产生评分证据，证据形成画像，画像进入路径决策。任务顺序由数据依赖决定。</p><p><a href="./学习地图.html">开源学习地图</a> · <a href="#iteration-v053">追踪完整任务树</a> · <a href="../SPEC.md">ADR 决策原文</a></p></article>
+      <article class="card"><h3>本轮交付与未通过的门</h3><p><b>源码：</b>v0.53.0-rc.1 已公开；Cloud / Personal、Agent 接入底座和发布安全修复。</p><p><b>工程：</b>最近一次开发全量回归 454 tests。下方 398 tests 是此前 V0.53 阶段快照，不与本次累计数相加。</p><p><b>待验收：</b>干净机安装与恢复、真实飞书、36 个人工评分单元、生产备份与部署。线上记录仍为 V0.52。</p><p><a href="../tests/test_runtime_modes.py">额度与模式测试</a> · <a href="../scripts/release_loop.py">发布门脚本</a></p></article>
+    </div>
+  </section>
+
 </main>
 </body>
 </html>

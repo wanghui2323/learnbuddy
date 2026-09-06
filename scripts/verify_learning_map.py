@@ -48,9 +48,23 @@ def verify():
         assert re.search(rf"--{name}:\s*{value}", source, re.I)
         assert value in content
     assert "id=\"open-learning\"" in (ROOT / "docs/LearnBuddy项目工作台.html").read_text()
+    article = (ROOT / "docs/AIBuilder第一周.md").read_text()
+    images = re.findall(r"!\[[^\]]*\]\(([^)]+)\)", article)
+    assert len(images) == 7
+    for image in images:
+        assert (ROOT / "docs" / image).resolve().is_file(), image
+    for removed in ("03-page-preview.png", "01-open-process-aigc.png", "06-workbench.png"):
+        assert removed not in article
+    for relative in re.findall(r"https://github.com/wanghui2323/learnbuddy/(?:blob|tree)/main/([^\s)]+)", article):
+        assert (ROOT / unquote(relative.split("#", 1)[0])).exists(), relative
+    design = (ROOT / "docs/AI_DESIGN.md").read_text()
+    for required in ("页面合同", "视觉语言", "组件与状态", "AI 交互", "Design QA", "未对业务页面"):
+        assert required in design
+    prd = (ROOT / "docs/01-需求方案.md").read_text()
+    assert prd.index("## 当前版本 PRD") < prd.index("## 历史档案")
+    assert "LB-BASE-01" in prd and "Given" in prd
     if errors:
         raise SystemExit("\n".join(errors))
-    print(f"PASS: {checked} local references, 6 sections, 4 source token mappings, version boundaries")
+    print(f"PASS: {checked} map references; 7 article images and repository links; PRD and AI Design contracts; version boundaries")
 if __name__ == "__main__":
     verify()
-

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 静态文档与登录页截图；不启动业务后端，不读取环境密钥或学习数据。
+// 静态架构图与完整开发工作台；业务截图单独获取，绝不生成假登录数据。
 import {spawn} from 'node:child_process';
 import {readFile,mkdir,mkdtemp,rm,writeFile} from 'node:fs/promises';
 import {createServer} from 'node:http';
@@ -21,26 +21,24 @@ if(!path.startsWith(root+sep)||!(/^\/(docs|web)\//.test(u))||!types[extname(path
 res.writeHead(200,{'Content-Type':types[extname(path)]});res.end(await readFile(path));
 }catch{res.writeHead(404);res.end('Not found');}});
 await new Promise(ok=>server.listen(0,'127.0.0.1',ok));const base='http://127.0.0.1:'+server.address().port;
-const report={mode:'static documentation and unsubmitted login page; no business API',viewports:[],screenshots:[]};
+const report={mode:'editable architecture figures and full existing development workbench; no business API',viewports:[],screenshots:[]};
 try {
-await run(['open',base+'/web/login.html']);
-await run(['resize','1062','820']);await run(['eval','() => document.fonts.ready']);
-await run(['screenshot','--filename',join(assets,'login.png')]);report.screenshots.push('login.png');
-await run(['goto',base+'/docs/LearnBuddy项目工作台.html']);
-await run(['resize','390','844']);await run(['snapshot']);
-// 仅解除粘性定位，避免元素截图时顶部导航覆盖目标区域。
+await run(['open',base+'/docs/LearnBuddy项目工作台.html']);
+await run(['resize','1440','1100']);await run(['eval','() => document.fonts.ready']);await run(['snapshot']);
+await run(['screenshot','--filename',join(assets,'workbench-overview.png')]);report.screenshots.push('workbench-overview.png');
+await run(['screenshot','--full-page','--filename',join(assets,'workbench-full.png')]);report.screenshots.push('workbench-full.png');
 await run(['eval',"() => { document.querySelector('header').style.position = 'static'; }"]);
-await run(['screenshot','#open-learning','--filename',join(assets,'workbench.png')]);report.screenshots.push('workbench.png');
+await run(['screenshot','#iteration-v053','--filename',join(assets,'workbench-tasks.png')]);report.screenshots.push('workbench-tasks.png');
 await run(['goto',base+'/docs/学习地图.html']);await run(['snapshot']);
 for(const width of [1200,390]){
 await run(['resize',String(width),'844']);
 report.viewports.push(await run(['eval',`async () => {await document.fonts.ready;const imgs=[...document.images];await Promise.all(imgs.map(i=>i.decode()));if(document.documentElement.scrollWidth>innerWidth+1)throw Error('overflow');if(imgs.some(i=>!i.naturalWidth))throw Error('broken image');return {width:innerWidth,images:imgs.length,overflow:false};}`]));
 await run(['screenshot','--filename',join(output,'map-'+width+'.png')]);
 }
-await run(['resize','1200','1100']);
-for(const [id,name] of [['product','01-product-loop.png'],['tokens','02-design-tokens.png'],['architecture','04-system-architecture.png'],['agent','05-agent-state.png']]){
-await run(['screenshot','#diagram-'+id,'--filename',join(assets,name)]);report.screenshots.push(name);
-}
+const figures=[['product','product-architecture.png'],['tokens','ai-design-contract.png'],['architecture','system-architecture.png'],['agent','agent-architecture.png']];
+// 从 HTML 原始排版以 2x 像素密度直接渲染，不是放大已有位图。
+await run(['run-code',`async (page) => {const context=await page.context().browser().newContext({viewport:{width:1200,height:1100},deviceScaleFactor:2});try{const p=await context.newPage();await p.goto(${JSON.stringify(base+'/docs/学习地图.html')});await p.evaluate(()=>document.fonts.ready);for(const [id,name] of ${JSON.stringify(figures)})await p.locator('#diagram-'+id).screenshot({path:${JSON.stringify(assets)}+'/'+name});}finally{await context.close();}}`]);
+report.screenshots.push(...figures.map(x=>x[1]));
 const errors=await run(['console','error']);if(!/Errors:\s*0\b/.test(errors))throw Error(errors);report.console=errors;
 await writeFile(join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));

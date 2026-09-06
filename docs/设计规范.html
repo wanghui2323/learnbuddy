@@ -15,11 +15,21 @@
 <main class="wrap">
   <section class="hero">
     <span class="kicker">长期规范 · 每次迭代对照 · 不占版本号</span>
-    <h1>用一套通用设计规范约束 LearnBuddy 的每次产品迭代</h1>
+    <h1>AI Design：让视觉、交互和 AI 生成遵守同一份合同</h1>
     <p>这不是某个版本的需求，而是跨版本设计准则。它定义 LearnBuddy 的产品调性、信息层级、组件规则、AI 状态、图片资产和验收方式；后续每次迭代都要检查是否遵守，具体页面改造再单独立版本。</p>
     <div class="meta"><span class="pill gold">状态：长期生效</span><span class="pill">ADR-047</span><span class="pill gray">版本开发前必看</span></div>
   </section>
 
+  <section class="section" id="ai-design-contract">
+    <h2>执行规范 v1 · 2026-09-06</h2>
+    <p>本轮把原则补成可直接执行的规范。<a href="./AI_DESIGN.md">打开 AI Design 完整规范与 AI 任务模板</a>；<a href="./学习地图.html#design">查看视觉、交互与组件状态样例</a>。</p>
+    <div class="grid3">
+      <article class="card panel"><h3>视觉合同</h3><p>主行动色、正文层级、间距尺度、圆角、布局密度和图片用途。沿用现有共享变量，明确当前页面与规范目标的差距。</p></article>
+      <article class="card panel"><h3>交互合同</h3><p>默认、加载、成功、失败、空态与恢复逐项定义；长任务显示真实阶段，刷新不丢已保存内容，失败不伪装成功。</p></article>
+      <article class="card panel"><h3>AI 执行与验收</h3><p>先读 PRD → 提交页面合同 → 复用组件和 Token → 实现 → 验证桌面与 390px、保存重读、失败和权限边界。</p></article>
+    </div>
+    <div class="callout">状态：规范与样例已提供；不是全站迁移完成，也不把静态组件示例视为真实后端交互。</div>
+  </section>
   <section class="section" id="implementation">
     <h2>规范目标与当前实现 · 2026-09-06</h2>
     <div class="callout">本页描述目标准则，不表示所有页面已完成统一。当前 <a href="../web/index.html">对话页</a>、<a href="../web/space.html">学习空间</a>等仍在各自的 :root 定义 teal / amber / paper；<a href="../web/common.css">common.css</a>负责 toast、加载和响应式等公共状态。尚无独立 web/design-tokens.css。可在<a href="./学习地图.html#design">学习地图</a>查看实际色值与页面映射。</div>

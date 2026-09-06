@@ -1,6 +1,20 @@
 # LearnBuddy · 开源学习地图
 
-这里不仅解释怎样启动项目，也帮助你追踪一个学习需求怎样变成页面、代码与验收。当前入口以 **[学习地图.html](./学习地图.html)** 为主；版本与任务去 **[开发工作台](./LearnBuddy项目工作台.html#open-learning)**。
+这里不仅解释怎样启动项目，也帮助你追踪一个学习需求怎样变成页面、代码与验收。当前入口以 **[学习地图.html](./学习地图.html)** 为主；版本与任务去 **[完整开发工作台](./LearnBuddy项目工作台.html)**。
+
+## 第一周分类交付清单 · 2026-09-06
+
+| 类别 | 可复用产物 | 当前状态 |
+|---|---|---|
+| 产品 | [产品分层架构](./学习地图.html#product)、[Cloud / Personal 方案](./07-开源与公有云双版本架构.md) | 领域实体、学习服务、前端渠道、用户体验与发行边界 |
+| 需求 | [当前版本 PRD](./01-需求方案.md) | 当前合同在前、历史档案在后；含完整需求实例与验收追踪 |
+| AI Design | [执行规范与 AI 任务模板](./AI_DESIGN.md)、[视觉规范入口](./设计规范.html) | 本轮补齐；全站迁移未完成 |
+| 体验页面 | [学习空间截图](./assets/learning-map/real-learning-space.png)、[计划页截图](./assets/learning-map/real-learning-plan.png)、[对话入口截图](./assets/learning-map/real-onboarding.png) | 用户提供真实界面；不等于独立业务验收 |
+| 系统与 Agent | [系统总图](./学习地图.html#architecture)、[Agent 架构](./学习地图.html#agent)、[工具代码](../core/tools.py) | 责任与目标合同；真实飞书链路待验收 |
+| 开发过程 | [完整工作台](./LearnBuddy项目工作台.html)、[全页截图](./assets/learning-map/workbench-full.png)、[任务树](./LearnBuddy项目工作台.html#iteration-v053)、[决策 ADR](../SPEC.md) | 真实静态项目页面，人工维护，非自动任务后端 |
+| 开源与验证 | [源代码](../README.md)、[测试](../tests/)、[Release Loop](../scripts/release_loop.py)、[个人部署](./PERSONAL_DEPLOYMENT.md) | 源码 RC；安装恢复、人工评分、真实渠道及新版生产仍待验收 |
+
+图示可编辑内容源为学习地图 HTML；重建脚本是 scripts/capture_learning_map.mjs。文章展示用 [AIGC 产品架构图](./assets/learning-map/product-architecture-aigc.png) 与 [AIGC 系统总图](./assets/learning-map/system-architecture-aigc.png) 另存，[生图与单点修正 Prompt](./assets/learning-map/aigc-prompts.json) 一起公开。真实截图与架构示例分别标明来源，不公开原始学习数据。
 
 配套导读：[100 天 AI Builder 第一周：把 LearnBuddy 的构建过程一起开源](./AIBuilder第一周.md)。
 
@@ -31,7 +45,7 @@ python3 -m http.server 8088 --bind 127.0.0.1
 - 当前：线上记录 V0.52，公开源码 v0.53.0-rc.1；最近一次开发回归累计 454 tests。
 - 待验收：干净机 Docker / 恢复、真实 OpenClaw / 飞书、36 个开放题双人人工评分单元、生产部署。
 - [设计规范](./设计规范.html)是目标合同；实际页面仍有重复 CSS 变量，不是全站统一已完成。
-- [架构总览](./架构总览.html)保留 V0.18 历史快照；[早期需求方案](./01-需求方案.md)保留当时分期。历史方案不覆盖最新 ADR。
+- [架构总览](./架构总览.html)保留 V0.18 历史快照；[需求方案](./01-需求方案.md)以当前合同为入口，旧分期移到历史档案。历史方案不覆盖最新 ADR。
 - [文档中心](./文档中心.html)是分类目录；[开发工作台](./LearnBuddy项目工作台.html)是人工维护的版本视图；`SPEC.md` 保存决策原文，代码与测试验证实现。
 - 早期的 [工作台](./工作台.html)、[开发方案与计划](./03-开发方案与计划.md)只作专题和演进参考。
 

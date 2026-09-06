@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-06",
+  "diagrams": {
+    "mode": "HTML/CSS direct Chromium render",
+    "source": "docs/学习地图.html",
+    "deviceScaleFactor": 2,
+    "width": 2124,
+    "raster_upscaling": false,
+    "files": [
+      "product-architecture.png",
+      "ai-design-contract.png",
+      "system-architecture.png",
+      "agent-architecture.png"
+    ]
+  },
+  "user_screenshots": {
+    "mode": "user supplied screenshots, unmodified copies",
+    "files": [
+      "real-learning-space.png",
+      "real-onboarding.png",
+      "real-learning-plan.png"
+    ],
+    "limits": "UI evidence only, not independent task or production release verification"
+  },
+  "workbench": {
+    "source": "docs/LearnBuddy项目工作台.html",
+    "files": [
+      "workbench-overview.png",
+      "workbench-tasks.png",
+      "workbench-full.png"
+    ],
+    "mode": "real browser capture of maintained static project page",
+    "adjustment": "sticky header made static only for task-tree element capture to prevent occlusion"
+  },
+  "privacy": "No raw user database, session credentials or learning JSON included. Visible author display name retained from user supplied screenshots.",
+  "previous_images": "Login collage and AIGC reminder illustration not used in current article.",
+  "aigc": {
+    "mode": "built-in image_gen",
+    "files": [
+      "product-architecture-aigc.png",
+      "system-architecture-aigc.png"
+    ],
+    "actual_native_dimensions": [
+      1024,
+      1536
+    ],
+    "raster_upscaling": false,
+    "prompts": "aigc-prompts.json",
+    "semantic_fixes": [
+      "Removed Cloud-Personal bidirectional arrow to prevent data-sync implication",
+      "Removed model API connection to reminder scheduler; Core remains responsible"
+    ],
+    "review": "Chinese labels and responsibility flow visually checked; not a live runtime trace"
+  }
+}
