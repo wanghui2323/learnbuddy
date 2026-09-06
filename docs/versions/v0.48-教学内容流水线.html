@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V0.48 教学内容生成流水线 · 三件套</title>
+<link rel="stylesheet" href="./version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.48 教学内容生成流水线<small>需求方案 · 技术方案 · 开发范式</small></div>
+  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">已提交 · 待真 LLM 验证 · 内容质量根因修复</span>
+    <h1>把单节出课从巨型 prompt 改成受控内容生产线</h1>
+    <p>V0.48 解决的不是“prompt 再写强一点”，而是修复生成架构：先过滤低质来源，再单独做课设，再围绕锁定主线写课，最后用 critic 检查内容是否具体、有洞见、讲透边界和诚实接地。</p>
+    <div class="meta"><span class="pill gold">状态：待真测</span><span class="pill">提交：7a8ca34</span><span class="pill gray">上线前：真 LLM E2E</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求方案</h2><p>用户反馈“内容看着完整但学不到东西”，根因是生成链路优化错了目标。</p><ul><li>不能再让单模型一次性吐完整 lesson 巨型 JSON。</li><li>不能只靠卡片数量、字数和关键词判断质量。</li><li>不能把低质 SEO 摘要当事实 grounding 注入模型。</li><li>每节课必须有一个换主题就不成立的具体洞见。</li><li>上线前必须用真实重新生成结果验证锐度。</li></ul></article>
+    <article class="card panel"><h2>技术方案</h2><p>受控 workflow，单模型多阶段，不做自由多智能体。</p><ul><li><code>design_lesson</code>：reasoner 只做课设、angle、anti_generic。</li><li><code>write_lesson</code>：chat 围绕课设写深内容。</li><li><code>critic_lesson</code>：reasoner 按 specificity / insight / depth / grounding 锐评。</li><li><code>revise_lesson</code>：chat 根据具体指令定向修订一次。</li><li><code>select_quality_sources</code> + 正文抓取先修 grounding。</li></ul></article>
+    <article class="card panel"><h2>开发范式</h2><p>保留旧 schema 和回退路径，先让新链路可观测。</p><ul><li>旧 <code>lesson.md</code> 单段式继续作为 fallback。</li><li>pipeline / reasoner / review / 来源阈值都可用 env 降级。</li><li>新增 <code>_critic</code>、<code>_critic_revised</code>、<code>_pipeline</code> 观察字段。</li><li>服务端进度展示拆成 source_fetch / design / write / critic / revise。</li><li>部署前先人工读新旧内容，不只看 JSON 是否完整。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>开发完成记录</h2><p>本版代码已提交，工作区后续只需验证和部署决策。</p></div><span class="pill gold">Release Record</span></div>
+    <div class="table-wrap"><table><thead><tr><th>项目</th><th>完成情况</th></tr></thead><tbody>
+      <tr><td>提交记录</td><td><code>7a8ca34 feat(content): 教学内容生成升级为受控流水线 + grounding 过滤</code></td></tr>
+      <tr><td>核心产物</td><td><code>core/content.py</code> 新增课设、写课、critic、修订编排；<code>core/source_search.py</code> 新增来源过滤、正文抓取、grounding 上下文；<code>server.py</code> 更新进度阶段与学员信号注入。</td></tr>
+      <tr><td>新增 prompt</td><td><code>lesson_design.md</code>、<code>lesson_write.md</code>、<code>lesson_critic.md</code>。</td></tr>
+      <tr><td>新增测试</td><td><code>tests/test_content_review.py</code> 覆盖 pipeline / reasoner / critic / fallback；<code>tests/test_source_quality.py</code> 覆盖来源过滤、阈值、正文抓取和摘要降级。</td></tr>
+      <tr><td>未做事项</td><td>未推远程、未部署火山 ECS、未做联网真 LLM 重新生成对比；这些是上线前检查，不属于已完成事实。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>根因到方案映射</h2><p>每个架构问题都必须对应一个工程动作，避免再次变成 prompt 装修。</p></div><span class="pill">Problem Matrix</span></div>
+    <div class="table-wrap"><table><thead><tr><th>确认根因</th><th>工程修复</th><th>验收信号</th></tr></thead><tbody>
+      <tr><td>一次性输出巨型 JSON，注意力被 design / explain / cards / lab / practice / citations 摊薄。</td><td>拆成 <code>design_lesson</code> 和 <code>write_lesson</code>，写课只能围绕锁定课设推进。</td><td>新 lesson 的 <code>design.angle</code> 和主线能解释这一节为什么不能套到别的主题。</td></tr>
+      <tr><td>质量门奖励结构完整，不奖励教学洞见。</td><td>新增 <code>critic_lesson</code>，按 specificity、insight、depth、grounding 给分并输出重写指令。</td><td><code>_critic.scores</code> 能指出“太通用 / 没讲透边界 / 来源不诚实”等具体问题。</td></tr>
+      <tr><td>低质量来源摘要被直接喂给模型，噪声污染备课。</td><td><code>select_quality_sources</code> 按 authority / relevance 过滤，优质来源抓正文；全被过滤时 context 留空。</td><td>低质 web 来源不进入 prompt；<code>_source_pack.grounding</code> 能说明 grounded / ungrounded。</td></tr>
+      <tr><td>内容对学员信号不敏感，像通用讲义。</td><td>服务端把 <code>concept_mastery</code> 和 <code>memory.recall</code> 压成 learner_signals 注入课设。</td><td>课设阶段 prompt 能看到薄弱点、已掌握点和偏好；内容难度随信号变化。</td></tr>
+      <tr><td>多段调用成本和失败率上升。</td><td>保留旧单段 fallback；<code>ITUTOR_LESSON_PIPELINE</code> / <code>ITUTOR_LESSON_REASONER</code> 可降级。</td><td>reasoner 失败或关闭时仍能返回可展示 lesson，不影响旧缓存读取。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>运行链路</h2><p>V0.48 是受控流水线，不是自由多智能体。</p></div><span class="pill">Workflow</span></div>
+    <div class="table-wrap"><table><thead><tr><th>阶段</th><th>模型</th><th>输入</th><th>输出</th><th>失败处理</th></tr></thead><tbody>
+      <tr><td>Grounding</td><td>确定性 + httpx</td><td>知识库命中、source_pack 搜索结果。</td><td>过滤后的来源正文或空 context。</td><td>抓取失败退回摘要；来源低质则不注入。</td></tr>
+      <tr><td>课设</td><td>deepseek-reasoner</td><td>领域、目标、主题、基线、参考资料、学员信号。</td><td>learning_question、outcome、main_thread、angle、anti_generic。</td><td>失败回退旧单段生成。</td></tr>
+      <tr><td>写课</td><td>deepseek-chat</td><td>锁定课设、参考资料、生成要求。</td><td>兼容旧 schema 的 lesson JSON。</td><td>失败回退旧单段生成。</td></tr>
+      <tr><td>锐评</td><td>deepseek-reasoner</td><td>lesson 草稿、本地质量报告、参考资料。</td><td>scores、issues、rewrite_instructions。</td><td>失败退草稿，不阻塞展示。</td></tr>
+      <tr><td>修订</td><td>deepseek-chat</td><td>草稿 + critic 指令。</td><td>修订后的完整 lesson。</td><td>失败保留草稿与 critic 记录。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>开关与兼容</h2><p>质量优先，但必须能控成本、控风险、可回退。</p></div><span class="pill gray">Controls</span></div>
+    <div class="table-wrap"><table><thead><tr><th>开关</th><th>默认</th><th>作用</th><th>什么时候用</th></tr></thead><tbody>
+      <tr><td><code>ITUTOR_LESSON_PIPELINE</code></td><td>1</td><td>开启设计→写作→评审流水线。</td><td>遇到生产异常或成本压力时临时回退单段式。</td></tr>
+      <tr><td><code>ITUTOR_LESSON_REASONER</code></td><td>1</td><td>课设和 critic 优先用 reasoner。</td><td>需要省钱或 reasoner 不稳定时改用 chat。</td></tr>
+      <tr><td><code>ITUTOR_LESSON_REVIEW</code></td><td>1</td><td>启用 critic 与修订链路。</td><td>排查生成链路时可关闭，保留草稿。</td></tr>
+      <tr><td><code>ITUTOR_SOURCE_MIN_AUTHORITY</code></td><td>0.75</td><td>过滤低权威来源。</td><td>某些非技术领域权威来源较少时可微调。</td></tr>
+      <tr><td><code>DEEPSEEK_REASONER_MODEL</code></td><td>deepseek-reasoner</td><td>指定推理模型。</td><td>供应商模型名变化时只改 env。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>上线前验收</h2><p>不要只看测试绿，要确认内容真的更像“被设计过的一节课”。</p></div><span class="pill gold">Go Live Gate</span></div>
+    <div class="table-wrap"><table><thead><tr><th>验收项</th><th>通过标准</th><th>当前状态</th></tr></thead><tbody>
+      <tr><td>单测</td><td>pipeline、fallback、source quality 相关测试通过；最好再跑全量 pytest。</td><td>代码中已有测试；本页更新未重新跑全量。</td></tr>
+      <tr><td>真 LLM 重新生成</td><td>同一主题重新生成一节，确认 <code>_critic.scores</code>、<code>design.angle</code> 和 <code>anti_generic</code> 有效。</td><td>待执行。</td></tr>
+      <tr><td>人工阅读对比</td><td>和旧缓存并排读，判断是否更具体、有边界、有非显然洞见，不只是 JSON 更漂亮。</td><td>待执行。</td></tr>
+      <tr><td>来源检查</td><td>低质来源不进入 context；高质量来源正文能出现在 grounding；无好来源时诚实 ungrounded。</td><td>待真样例确认。</td></tr>
+      <tr><td>部署</td><td>验证通过后再跑 <code>scripts/deploy_to_ecs.sh</code>，生产 <code>data/</code> 和 <code>.env</code> 不覆盖。</td><td>未部署。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>本版收口结论</h2><p>V0.48 是内容质量根因修复版本，下一步不是继续加 prompt，而是真实样例验证。</p></div><span class="pill gold">Decision</span></div>
+    <div class="callout"><b>收口结论：</b>代码层已经从巨型 prompt 升级为受控流水线，并修复 grounding 噪声入口。当前状态应标记为“已提交、待真 LLM 验证”，通过后再部署；如果真样例仍空洞，下一轮应补 golden case 与更强 critic，而不是回到 prompt 堆规则。</div>
+  </section>
+  <div class="footer">V0.48 · 教学内容生成流水线 · 已提交，待真 LLM 验证。</div>
+</main>
+</body>
+</html>

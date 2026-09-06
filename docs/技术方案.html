@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 技术方案</title>
+<style>
+  :root {
+    --bg: #f7f4ee; --card: #ffffff; --paper-2: #efeae0; --line: #e7e1d6;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd; --amber-dark: #b9852f;
+    --blue: #3d6e9e; --blue-soft: #e3edf5; --green: #4a9d6e; --green-soft: #e7f3ec;
+    --purple: #7b5ea7; --purple-soft: #ece5f5; --radius: 14px;
+    --shadow: 0 1px 2px rgba(43,41,38,.05), 0 8px 24px rgba(43,41,38,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.7; }
+  .topbar { position: sticky; top: 0; z-index: 30; background: #fffdf9ee; backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark)); color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  .ttl { font-weight: 700; font-size: 15px; }
+  .ttl small { font-weight: 500; color: var(--ink-faint); font-size: 12.5px; margin-left: 6px; }
+  .spacer { flex: 1; }
+  .nav { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; padding: 7px 13px; border-radius: 8px; font-weight: 600; }
+  .nav:hover, .nav.active { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 30px 24px 80px; }
+  .hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; border-radius: 18px; padding: 28px 30px; box-shadow: 0 12px 32px rgba(44,110,106,.22); }
+  .hero h1 { font-size: 24px; }
+  .hero p { margin-top: 8px; font-size: 14.5px; max-width: 920px; opacity: .96; }
+  .meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); }
+  .meta .k { font-size: 11px; opacity: .74; letter-spacing: .04em; }
+  .meta .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .quick-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .quick-actions a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 9px; background: rgba(255,255,255,.14); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,.16); }
+  .quick-actions a:hover { background: rgba(255,255,255,.22); }
+  .sec { margin-top: 34px; }
+  .sec h2 { font-size: 20px; margin-bottom: 4px; }
+  .desc { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .split { display: grid; grid-template-columns: 1.06fr .94fr; gap: 14px; }
+  .card, table, .diagram { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .card { padding: 18px 20px; }
+  table { width: 100%; border-collapse: collapse; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #faf7f1; color: var(--ink-soft); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  .diagram { padding: 18px 20px; overflow: auto; }
+  .diagram-grid { display: grid; grid-template-columns: 1fr; gap: 12px; min-width: 760px; }
+  .diagram-row { display: grid; gap: 12px; }
+  .diagram-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .diagram-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .diagram-node { position: relative; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg, #fff, #fcfaf6); padding: 16px 18px; }
+  .diagram-node::before { content: ""; position: absolute; left: 0; top: 0; width: 6px; height: 100%; border-radius: 16px 0 0 16px; background: var(--teal); }
+  .diagram-node h3 { font-size: 16px; margin-bottom: 6px; }
+  .diagram-node p { color: var(--ink-soft); font-size: 13px; }
+  .diagram-node ul { margin-top: 8px; padding-left: 18px; color: var(--ink-soft); font-size: 13px; }
+  .diagram-arrow { justify-self: center; width: 2px; height: 22px; background: linear-gradient(180deg, var(--teal), var(--amber)); position: relative; }
+  .diagram-arrow::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 10px; height: 10px; border-right: 2px solid var(--amber); border-bottom: 2px solid var(--amber); transform: translateX(-50%) rotate(45deg); background: #fff; }
+  .flow-stack { display: flex; flex-direction: column; gap: 10px; min-width: 360px; }
+  .flow-step { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: linear-gradient(180deg, #fff, #fcfaf6); }
+  .flow-step b { display: block; font-size: 14px; margin-bottom: 4px; }
+  .flow-step span { display: block; color: var(--ink-soft); font-size: 12.5px; }
+  .flow-branch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .flow-pill { border: 1px dashed var(--line); border-radius: 12px; padding: 10px 12px; background: var(--paper-2); color: var(--ink-soft); font-size: 12.5px; text-align: center; }
+  .h-link-row { display: grid; grid-template-columns: 1fr 18px 1fr 18px 1fr; gap: 10px; align-items: center; }
+  .h-arrow { width: 18px; height: 2px; background: var(--amber); position: relative; }
+  .h-arrow::after { content: ""; position: absolute; right: -1px; top: 50%; width: 8px; height: 8px; border-top: 2px solid var(--amber); border-right: 2px solid var(--amber); transform: translateY(-50%) rotate(45deg); }
+  @media (max-width: 860px) { .diagram-grid { min-width: 0; } .diagram-row.cols-2, .diagram-row.cols-3, .flow-branch, .h-link-row { grid-template-columns: 1fr; } .h-arrow { display: none; } .flow-stack { min-width: 0; } }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .b-base { background: var(--green-soft); color: var(--green); }
+  .b-flow { background: var(--amber-soft); color: var(--amber-dark); }
+  .b-agent { background: var(--blue-soft); color: var(--blue); }
+  .b-ext { background: var(--purple-soft); color: var(--purple); }
+  .note { margin-top: 12px; background: var(--amber-soft); color: #87561d; border-radius: 10px; padding: 12px 14px; font-size: 13px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .lk { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid var(--line); color: var(--ink); font-size: 13px; background: #fff; }
+  .lk:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .foot { margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: 12.5px; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .ttl small { display: none; } .topbar { padding: 0 14px; gap: 8px; overflow-x: auto; } .wrap { padding: 22px 16px 70px; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">T</div>
+  <div class="ttl">LearnBuddy 技术方案<small>Agent · Skill · MCP · Memory · RAG</small></div>
+  <div class="spacer"></div>
+  <a class="nav" href="./文档中心.html">文档中心</a>
+  <a class="nav" href="./工作台.html">工作台</a>
+  <a class="nav" href="./需求方案.html">需求方案</a>
+  <a class="nav active" href="./技术方案.html">技术方案</a>
+  <a class="nav" href="./架构总览.html">架构总览</a>
+  <a class="nav" href="./协作机制.html">协作机制</a>
+  <a class="nav" href="./开发方案与计划.html">主方案</a>
+  <a class="nav" href="./Harness技术体系对齐.html">Harness</a>
+  <a class="nav" href="./OpenClaw接入方案.html">OpenClaw</a>
+</div>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>LearnBuddy 学习伙伴 · 技术方案</h1>
+    <p>这页用于系统化解释 LearnBuddy 的技术结构、关键链路、支付权益底座和 OpenClaw 接入边界。你应该可以通过这页判断当前架构是否合理、哪些模块是主系统真相源、哪些能力只是上层运行时。</p>
+    <div class="meta">
+      <div><div class="k">主系统</div><div class="v">Web / PWA + FastAPI + core</div></div>
+      <div><div class="k">学习真相源</div><div class="v">SQLite + JSON + 路径产物</div></div>
+      <div><div class="k">公共地基</div><div class="v">tools + MCP + memory + scheduler</div></div>
+      <div><div class="k">升级方向</div><div class="v">个人助理模式 / OpenClaw</div></div>
+    </div>
+    <div class="quick-actions">
+      <a href="#tech-arch">系统总图</a>
+      <a href="#tech-seq">关键链路</a>
+      <a href="#billing-arch">支付技术架构</a>
+      <a href="./02-技术方案.md">打开 Markdown 原文</a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>技术分层总览</h2>
+    <div class="desc">先把层分清楚，再决定问题该放哪一层解决，避免“什么都上 agent”。</div>
+    <table>
+      <thead><tr><th style="width:70px">层</th><th style="width:180px">概念</th><th>作用</th><th style="width:300px">当前对应</th></tr></thead>
+      <tbody>
+        <tr><td><b>L0</b></td><td><span class="tag b-base">确定性能力</span></td><td>不依赖 LLM 的判断、调度、掌握度、通知与阶段闸门</td><td>`scheduler.py` `mastery.py` `phases.py` `notify.py`</td></tr>
+        <tr><td><b>L1</b></td><td><span class="tag b-base">Tool / Skill</span></td><td>把单个能力包装成可复用、可外露的接口</td><td>`core/tools.py`、统一工具注册表、skill 包</td></tr>
+        <tr><td><b>L2</b></td><td><span class="tag b-flow">Workflow</span></td><td>固定编排的产品闭环，比如生成、讲解、自检、推送</td><td>路径生成、lesson workflow、RAG 讲解、通知编排</td></tr>
+        <tr><td><b>L3</b></td><td><span class="tag b-flow">Dynamic Workflow</span></td><td>根据状态和规则动态选路</td><td>`recommend.py` `replan.py`</td></tr>
+        <tr><td><b>L4</b></td><td><span class="tag b-agent">Agent</span></td><td>带长期身份和主动推进能力的角色</td><td>LearnBuddy 教练、未来个人助理模式</td></tr>
+        <tr><td><b>L5</b></td><td><span class="tag b-ext">外部 Runtime</span></td><td>承载高阶自治代理与跨端主动执行</td><td>OpenClaw / 未来托管 runtime</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="tech-arch">
+    <h2>系统总图</h2>
+    <div class="desc">整套系统要按“用户触点层 → 接入编排层 → 核心学习引擎 → 数据真相源 / LLM / 扩展接入”来理解。</div>
+    <div class="diagram">
+      <object class="arch-svg" type="image/svg+xml" data="./技术架构图.svg" aria-label="技术架构图"></object>
+    </div>
+    <div class="note">关键判断：LearnBuddy 主系统负责学习数据和业务规则，OpenClaw 只做高阶运行时，不接管学习真相源。</div>
+  </section>
+
+  <section class="sec" id="tech-seq">
+    <h2>关键运行链路</h2>
+    <div class="desc">只看总图还不够，下面把生成链路和执行链路拆开，方便后续做功能和故障定位。</div>
+    <div class="split">
+      <div class="diagram">
+        <object class="arch-svg" type="image/svg+xml" data="./生成链路.svg" aria-label="生成链路"></object>
+      </div>
+      <div class="diagram">
+        <object class="arch-svg" type="image/svg+xml" data="./执行链路.svg" aria-label="执行链路"></object>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>核心模块职责</h2>
+    <div class="desc">把模块和文件职责映射清楚，后面做改动就不容易乱层。</div>
+    <table>
+      <thead><tr><th style="width:180px">模块</th><th style="width:260px">当前文件</th><th>职责</th></tr></thead>
+      <tbody>
+        <tr><td><b>接入层</b></td><td>`server.py`</td><td>对外 API、SSE、鉴权、路由编排、错误回退、聚合多个 core 能力</td></tr>
+        <tr><td><b>对话与生成</b></td><td>`core/engine.py` `core/generator.py`</td><td>对话收敛参数、解析生成条件、输出路径产物</td></tr>
+        <tr><td><b>内容与检索</b></td><td>`core/content.py` `core/rag.py` `core/concepts.py`</td><td>生成讲解、引用资料、构建知识结构</td></tr>
+        <tr><td><b>掌握度与推荐</b></td><td>`core/mastery.py` `core/recommend.py` `core/replan.py` `core/phases.py`</td><td>决定今天学什么、何时复习、是否需要调节节奏</td></tr>
+        <tr><td><b>记忆与长期陪伴</b></td><td>`core/memory.py` `core/scheduler.py` `core/notify.py`</td><td>沉淀偏好/弱项、调度复习、产出通知 payload</td></tr>
+        <tr><td><b>扩展接入</b></td><td>`core/tools.py` `mcp_server.py`</td><td>把主系统能力标准化暴露给内部工作流和外部 runtime</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>核心数据模型</h2>
+    <div class="desc">下面列出主系统关键表的关键字段，便于在改动时判断是否在动“学习真相源”。</div>
+    <table>
+      <thead><tr><th style="width:160px">表</th><th style="width:200px">关键字段</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>users</b></td><td>id / phone / email / password_hash / status / created_at / last_login_at</td><td>统一主账户，密码和手机号在同一账户体系内</td></tr>
+        <tr><td><b>phone_verifications</b></td><td>phone / code_hash / expires_at / attempts / ip / ua</td><td>验证码 hash + 有效期 + 风控审计</td></tr>
+        <tr><td><b>user_profiles</b></td><td>user_id / indep_score / indep_gap / indep_risk / collab_score / collab_uplift / prompt_skill / updated_at</td><td>评估画像，双坐标系，独立 vs 协作</td></tr>
+        <tr><td><b>subscriptions</b></td><td>user_id / plan / status / started_at / expires_at / auto_renew / cancel_at</td><td>订阅状态机：active / past_due / canceled / expired</td></tr>
+        <tr><td><b>orders</b></td><td>id (幂等号) / user_id / product_id / amount / currency / status / channel / created_at / paid_at</td><td>订单状态机：pending / paid / failed / refunded / partial_refunded</td></tr>
+        <tr><td><b>payment_records</b></td><td>order_id / channel_trade_no / paid_amount / raw_payload / verified_at</td><td>支付渠道原始记录 + 验签结果</td></tr>
+        <tr><td><b>points_accounts</b></td><td>user_id / balance_paid / balance_gift / frozen_amount / updated_at</td><td>积分账户，付费和赠送分开记账</td></tr>
+        <tr><td><b>points_ledger</b></td><td>user_id / amount / balance_after / type / source_ref / remark / created_at</td><td>积分流水：recharge / gift / consume / refund / compensation</td></tr>
+        <tr><td><b>instances</b></td><td>slug / user_id / domain / goal / params / master / weeks / handbook / contract</td><td>学习路径产物，文件 + SQLite 索引</td></tr>
+        <tr><td><b>events</b></td><td>user_id / instance_id / type / payload / created_at</td><td>用户行为事件，用于掌握度和推荐</td></tr>
+        <tr><td><b>mastery</b></td><td>user_id / concept_id / score / streak / last_seen_at / next_review_at</td><td>掌握度主表，SM-2 / FSRS 调度</td></tr>
+        <tr><td><b>memory</b></td><td>user_id / kind / content / importance / updated_at</td><td>偏好 / 弱项 / 节奏等长期记忆</td></tr>
+        <tr><td><b>notifications</b></td><td>user_id / type / payload / sent_at / status / retry_count</td><td>推送 payload 与发送状态</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>关键状态机</h2>
+    <div class="desc">订单、订阅、积分、订阅续费、退款等状态机要画清楚，避免“先实现，后填坑”。</div>
+    <table>
+      <thead><tr><th style="width:160px">状态机</th><th>状态</th><th>合法转移</th></tr></thead>
+      <tbody>
+        <tr><td><b>Order</b></td><td>pending / paid / failed / refunded / partial_refunded / closed</td><td>pending → paid / failed / closed；paid → refunded / partial_refunded；refund 必须同步扣减权益</td></tr>
+        <tr><td><b>Subscription</b></td><td>active / past_due / canceled / expired</td><td>active → past_due（续费失败）→ canceled 或 active；expired 后权益只读</td></tr>
+        <tr><td><b>PointsAccount</b></td><td>正常 / 冻结</td><td>正常 → 冻结（风控）→ 正常；冻结期间不允许消费</td></tr>
+        <tr><td><b>PhoneVerification</b></td><td>待验证 / 已通过 / 已过期 / 已锁定</td><td>待验证 → 已通过 / 已过期；连续失败进入已锁定</td></tr>
+        <tr><td><b>Mastery</b></td><td>new / learning / reviewing / mastered / forgotten</td><td>new → learning → reviewing → mastered；mastered 可回退至 forgotten</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>错误处理与回退</h2>
+    <div class="desc">生成 / 检索 / 支付 / 推送是高风险环节，必须有可见的 fallback，而不是静默失败。</div>
+    <table>
+      <thead><tr><th style="width:160px">环节</th><th>典型失败</th><th>用户可见回退</th></tr></thead>
+      <tbody>
+        <tr><td><b>LLM 生成</b></td><td>上游超时、解析失败、内容审核拒绝</td><td>显示“生成暂不可用”，保留用户输入，允许重试或切换精简模式</td></tr>
+        <tr><td><b>基线评估</b></td><td>出题失败 / 判分失败</td><td>跳过评估直接用对话澄清生成路径，标注“未评估，路径精度下降”</td></tr>
+        <tr><td><b>支付</b></td><td>下单失败 / 回调超时 / 验签失败</td><td>订单进入 pending 或 failed；用户重试时复用幂等号；不重复扣款</td></tr>
+        <tr><td><b>权益发放</b></td><td>数据库失败 / 重复回调</td><td>幂等键保证一次发放；失败时记录补偿任务，UI 提示“稍后到账”</td></tr>
+        <tr><td><b>推送</b></td><td>订阅失效 / 渠道不可用</td><td>退避重试 + 死亡队列；UI 内通知作为兜底</td></tr>
+        <tr><td><b>RAG 检索</b></td><td>索引为空 / 检索失败</td><td>直接使用 LLM 通用回答并打标“无资料引用”</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>安全模型</h2>
+    <div class="desc">账号、支付、Agent 接入都需要明确安全边界，不能上线后再补。</div>
+    <table>
+      <thead><tr><th style="width:160px">场景</th><th>当前要求</th></tr></thead>
+      <tbody>
+        <tr><td><b>账号密码</b></td><td>bcrypt/argon2 hash；不存明文；登录限频；登录失败递增冷却</td></tr>
+        <tr><td><b>手机验证码</b></td><td>短信 hash + 过期 5 分钟；同一手机 1 分钟内只发 1 条；1 天内最多 5 条</td></tr>
+        <tr><td><b>支付回调</b></td><td>渠道签名校验；幂等订单号；金额二次比对；异常订单报警</td></tr>
+        <tr><td><b>积分账本</b></td><td>所有变更必须留 ledger；不允许绕过 ledger 直接改余额</td></tr>
+        <tr><td><b>订阅续费</b></td><td>扣费前必须确认；失败有通知；自动续费可一键关停</td></tr>
+        <tr><td><b>Agent / OpenClaw</b></td><td>只能走 tool/skill/MCP 受控接口；不允许直连 DB；危险操作需二次确认</td></tr>
+        <tr><td><b>密钥管理</b></td><td>仅走环境变量；.env 不进仓库；CI 注入；定期轮换</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>可观测与告警</h2>
+    <div class="desc">没有可观测，就没法判断“当前阶段是否 OK”。这一节定下必须采集的最小信号集。</div>
+    <table>
+      <thead><tr><th style="width:160px">维度</th><th>必须采集的信号</th></tr></thead>
+      <tbody>
+        <tr><td><b>生成链路</b></td><td>出题耗时、生成耗时、解析失败率、retries</td></tr>
+        <tr><td><b>执行链路</b></td><td>今日任务生成耗时、推荐命中率、复习命中率、重规划触发率</td></tr>
+        <tr><td><b>支付链路</b></td><td>下单成功率、回调延迟、幂等命中率、退款率</td></tr>
+        <tr><td><b>推送链路</b></td><td>订阅成功率、送达率、点击率、退订率</td></tr>
+        <tr><td><b>系统资源</b></td><td>CPU、内存、磁盘、SQLite 大小、SSE 长连接数、缓存命中率</td></tr>
+        <tr><td><b>异常</b></td><td>5xx 比例、上游 LLM 失败比例、未捕获异常、关键任务堆积</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>部署与性能预算</h2>
+    <div class="desc">为了让方案“可执行”，要写明最小部署单元和性能预算。</div>
+    <table>
+      <thead><tr><th style="width:160px">项</th><th>当前基线</th></tr></thead>
+      <tbody>
+        <tr><td><b>进程模型</b></td><td>FastAPI 单进程 + APScheduler；SSE 长连接用异步任务</td></tr>
+        <tr><td><b>数据库</b></td><td>SQLite（主），文件 JSON（实例产物）；后续按需迁移 Postgres</td></tr>
+        <tr><td><b>缓存</b></td><td>进程内 LRU + 命中统计；不强制 Redis</td></tr>
+        <tr><td><b>生成接口 P95</b></td><td>≤ 8s（不含网络）；超过走精简模式</td></tr>
+        <tr><td><b>推荐接口 P95</b></td><td>≤ 500ms</td></tr>
+        <tr><td><b>支付回调 P95</b></td><td>≤ 1.5s；失败重试 3 次</td></tr>
+        <tr><td><b>前端首屏</b></td><td>≤ 2.5s（4G）；样式不依赖外部 CDN</td></tr>
+        <tr><td><b>浏览器兼容</b></td><td>最近两个大版本；移动端响应式 360px 起</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>备份与恢复</h2>
+    <div class="desc">账号、订单、积分、学习档案都不能丢。备份要按层做，恢复要演练过。</div>
+    <table>
+      <thead><tr><th style="width:160px">层级</th><th>备份策略</th><th>恢复目标</th></tr></thead>
+      <tbody>
+        <tr><td><b>SQLite 主库</b></td><td>每日全量 + 关键表每小时增量 WAL；保留 30 天</td><td>RPO ≤ 1h，RTO ≤ 30min</td></tr>
+        <tr><td><b>学习路径产物</b></td><td>每日 rsync 到备份盘；保留 90 天</td><td>RPO ≤ 24h，RTO ≤ 1h</td></tr>
+        <tr><td><b>向量与缓存</b></td><td>不备份，丢失可重建</td><td>—</td></tr>
+        <tr><td><b>密钥与配置</b></td><td>密钥不入仓库；配置走环境变量与 .env 备份（加密）</td><td>RTO 取决于环境重建时间</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="billing-arch">
+    <h2>账号、支付与权益技术架构图</h2>
+    <div class="desc">账号、支付、积分、订阅和升级模式必须挂在主系统底座上，不能分散到不同触点自行建账。</div>
+    <div class="split">
+      <div class="diagram">
+        <object class="arch-svg" type="image/svg+xml" data="./支付权益技术架构.svg" aria-label="支付权益技术架构"></object>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th style="width:130px">模块</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><b>User</b></td><td>统一用户主账户，兼容密码与手机号登录</td></tr>
+            <tr><td><b>PhoneVerification</b></td><td>验证码 hash、有效期、限频和风控审计</td></tr>
+            <tr><td><b>Order / PaymentRecord</b></td><td>订单状态机、支付回调、验签与幂等</td></tr>
+            <tr><td><b>Entitlement</b></td><td>订阅和积分等权益统一发放</td></tr>
+            <tr><td><b>PointsAccount / Ledger</b></td><td>可解释账本，支持付费积分与赠送积分分离</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>支付链路时序</h2>
+    <div class="desc">这条链路必须幂等，否则会出现重复发放或回调丢失问题。</div>
+    <div class="diagram">
+      <object class="arch-svg" type="image/svg+xml" data="./支付链路时序.svg" aria-label="支付链路时序"></object>
+    </div>
+    <div class="note">技术边界要固定：支付和账本都属于 LearnBuddy 基础设施，Agent 或 IM 入口只能消费权益，不能绕过主系统直接改账。</div>
+  </section>
+
+  <section class="sec">
+    <h2>OpenClaw 接入边界</h2>
+    <div class="desc">这里最容易误解，所以必须单独讲清楚。</div>
+    <table>
+      <thead><tr><th style="width:180px">问题</th><th>当前结论</th></tr></thead>
+      <tbody>
+        <tr><td><b>OpenClaw 是什么</b></td><td>是个人助理升级模式的运行时和承载层，不是 LearnBuddy 的替身。</td></tr>
+        <tr><td><b>谁是学习真相源</b></td><td>始终是 LearnBuddy 主系统，包含计划、学情、记忆、推荐和权益数据。</td></tr>
+        <tr><td><b>OpenClaw 通过什么接入</b></td><td>通过 tools、skill、MCP 和受控 API 接入，而不是直连数据库乱改状态。</td></tr>
+        <tr><td><b>OpenClaw 能做什么</b></td><td>主动提醒、主动复盘、跨端协助、承接更自由的代理行为。</td></tr>
+        <tr><td><b>OpenClaw 不能做什么</b></td><td>不能独立维护订单、积分、学习档案和账本。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>怎么看当前架构是否 OK</h2>
+    <div class="desc">如果你要用这页评估未来几周做得对不对，重点看下面 4 个判断。</div>
+    <div class="grid">
+      <div class="card"><b>第一条</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">主系统真相源有没有继续统一，而不是让新功能各自建一套状态。</p></div>
+      <div class="card"><b>第二条</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">新能力有没有落在正确层级，是规则层、工作流层还是 Agent 层。</p></div>
+      <div class="card"><b>第三条</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">关键链路有没有回退和幂等，尤其是 LLM、支付、通知这些高风险环节。</p></div>
+      <div class="card"><b>第四条</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">OpenClaw 和 IM 是否只承担上层承载，而没有侵入账本和学习真相源。</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="harness-tech">
+    <h2>Harness 技术体系总图</h2>
+    <div class="desc">harness = 模型 + agent + 全部外部工程。每一层都对应 LearnBuddy 真实代码或下一阶段必须补齐的工程。</div>
+    <div class="diagram">
+      <object class="arch-svg" type="image/svg+xml" data="./Harness落地映射.svg" aria-label="Harness 技术体系总图"></object>
+    </div>
+    <div class="note">逐篇落地状态、差距、行动见 <a href="./Harness技术体系对齐.html#status">Harness 技术体系对齐.html#status</a>；新增任务 T-21 → T-37 见 <a href="./Harness技术体系对齐.html#todo">#todo</a>。</div>
+  </section>
+
+  <section class="sec">
+    <h2>工程约束与非目标</h2>
+    <div class="desc">这部分是防止架构继续发散的保护线。</div>
+    <div class="grid">
+      <div class="card"><b>学习真相源统一</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">计划、学情、记忆、推荐、权益都必须归主系统统一维护。</p></div>
+      <div class="card"><b>工作流先于 Agent</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">优先把可验证闭环做稳，再决定哪些场景值得 Agent 化。</p></div>
+      <div class="card"><b>LLM 必须有回退</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">生成失败、检索失败、上游超时都需要用户可见的 fallback。</p></div>
+      <div class="card"><b>支付与风控不后补</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">验证码限频、回调验签、幂等账本、退款补偿都要在设计时就锁死。</p></div>
+    </div>
+  </section>
+
+  <div class="links">
+    <a class="lk" href="./开发方案与计划.html#progress">查看当前进度</a>
+    <a class="lk" href="./开发方案与计划.html#todo">查看待办任务</a>
+    <a class="lk" href="./开发方案与计划.html">查看主方案</a>
+    <a class="lk" href="./需求方案.html#need-arch">查看需求架构图</a>
+    <a class="lk" href="./02-技术方案.md">查看 Markdown 真相源</a>
+    <a class="lk" href="./架构总览.html">查看全局架构总览</a>
+  </div>
+
+  <div class="foot">
+    LearnBuddy 技术方案页 · 现在包含系统总图、关键链路、账号支付技术架构和 OpenClaw 接入边界 · 深度原文仍以 `02-技术方案.md` 为准
+  </div>
+</div>
+</body>
+</html>

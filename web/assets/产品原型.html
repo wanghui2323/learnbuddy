@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 产品原型（日语 N3 样例）</title>
+<style>
+  :root {
+    --teal: #2c6e6a;
+    --teal-dark: #235955;
+    --teal-soft: #e4efee;
+    --amber: #d98a3d;
+    --amber-soft: #fbeedd;
+    --paper: #f7f4ee;
+    --paper-2: #efeae0;
+    --card: #ffffff;
+    --ink: #2b2926;
+    --ink-soft: #6b6760;
+    --ink-faint: #a39e94;
+    --line: #e7e1d6;
+    --green: #4a9d6e;
+    --green-soft: #e7f3ec;
+    --red: #c2603f;
+    --red-soft: #f8e8e1;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(43,41,38,.05), 0 10px 30px rgba(43,41,38,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans", "Microsoft YaHei", sans-serif;
+    background: var(--paper); color: var(--ink); line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .layout { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 232px; background: #fffdf9; border-right: 1px solid var(--line);
+    padding: 26px 16px; position: sticky; top: 0; height: 100vh; flex-shrink: 0;
+    display: flex; flex-direction: column;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; padding: 0 8px 4px; }
+  .brand .logo {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff; font-weight: 700; font-size: 20px;
+    display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(44,110,106,.25);
+  }
+  .brand .name { font-weight: 700; font-size: 16px; }
+  .brand .sub { font-size: 11.5px; color: var(--ink-faint); }
+  .nav { margin-top: 26px; display: flex; flex-direction: column; gap: 3px; }
+  .nav a {
+    display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 11px;
+    color: var(--ink-soft); text-decoration: none; font-size: 14.5px; font-weight: 500;
+    cursor: pointer; transition: all .15s; border: 1px solid transparent;
+  }
+  .nav a:hover { background: var(--teal-soft); color: var(--teal-dark); }
+  .nav a.active { background: var(--teal); color: #fff; box-shadow: 0 4px 12px rgba(44,110,106,.22); }
+  .nav a .ic { font-size: 17px; width: 20px; text-align: center; }
+  .side-foot { margin-top: auto; padding: 14px 10px 4px; border-top: 1px solid var(--line); }
+  .side-foot .exam { font-size: 12.5px; color: var(--ink-soft); }
+  .side-foot .exam b { color: var(--amber); font-size: 15px; }
+
+  /* Main */
+  .main { flex: 1; padding: 34px 46px 90px; max-width: 1120px; }
+  .page { display: none; }
+  .page.active { display: block; animation: fade .28s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .page-head h1 { font-size: 25px; font-weight: 700; letter-spacing: -.3px; }
+  .page-head p { color: var(--ink-soft); margin-top: 4px; font-size: 14.5px; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .grid { display: grid; gap: 18px; }
+  .section-title { font-size: 16px; font-weight: 700; margin: 30px 0 14px; display: flex; align-items: center; gap: 9px; }
+  .section-title .bar { width: 4px; height: 16px; border-radius: 3px; background: var(--amber); }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+  .pill.teal { background: var(--teal-soft); color: var(--teal-dark); }
+  .pill.amber { background: var(--amber-soft); color: var(--amber); }
+  .pill.green { background: var(--green-soft); color: var(--green); }
+  .pill.gray { background: var(--paper-2); color: var(--ink-soft); }
+
+  .btn { font: inherit; cursor: pointer; border: none; border-radius: 11px; font-weight: 600; padding: 11px 20px; transition: all .15s; }
+  .btn.primary { background: var(--teal); color: #fff; }
+  .btn.primary:hover { background: var(--teal-dark); }
+  .btn.ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: var(--paper-2); }
+
+  /* ---- Today ---- */
+  .coach {
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff;
+    border-radius: var(--radius); padding: 26px 28px; display: flex; gap: 20px; align-items: center;
+    box-shadow: 0 10px 30px rgba(44,110,106,.25);
+  }
+  .coach .ava { width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .coach .msg { font-size: 16px; line-height: 1.7; }
+  .coach .msg b { color: #ffe0b8; }
+
+  .ring-wrap { display: flex; align-items: center; gap: 22px; }
+  .ring-txt .big { font-size: 30px; font-weight: 700; }
+  .ring-txt .lbl { color: var(--ink-soft); font-size: 13.5px; }
+
+  .task { display: flex; align-items: center; gap: 16px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); cursor: pointer; transition: all .15s; }
+  .task:hover { border-color: var(--teal); box-shadow: 0 6px 18px rgba(44,110,106,.1); transform: translateY(-1px); }
+  .task .tic { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 21px; flex-shrink: 0; }
+  .task .tic.learn { background: var(--teal-soft); }
+  .task .tic.drill { background: var(--amber-soft); }
+  .task .tic.review { background: var(--green-soft); }
+  .task .tt { flex: 1; }
+  .task .tt .h { font-weight: 600; font-size: 15px; }
+  .task .tt .s { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+  .task .arr { color: var(--ink-faint); font-size: 18px; }
+
+  /* ---- Unit shell ---- */
+  .unit { max-width: 720px; margin: 0 auto; }
+  .unit-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .unit-bar .back { color: var(--ink-soft); cursor: pointer; font-size: 14px; }
+  .dots { display: flex; gap: 7px; }
+  .dots span { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .dots span.on { background: var(--teal); }
+  .dots span.done { background: var(--green); }
+  .stage { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); min-height: 320px; }
+  .stage .kicker { font-size: 12.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+  .stage .kicker.learn { color: var(--teal); }
+  .stage .kicker.drill { color: var(--amber); }
+  .stage h2 { font-size: 23px; margin: 8px 0 4px; }
+  .jp { font-family: "Hiragino Sans", "Yu Gothic", sans-serif; }
+  .ex { background: var(--paper); border-left: 3px solid var(--teal); border-radius: 8px; padding: 13px 16px; margin: 12px 0; }
+  .ex .s { font-size: 17px; font-weight: 600; }
+  .ex .t { font-size: 13.5px; color: var(--ink-soft); margin-top: 3px; }
+  .opt { display: block; width: 100%; text-align: left; padding: 15px 18px; border: 1.5px solid var(--line); border-radius: 12px; margin-top: 11px; cursor: pointer; font: inherit; background: var(--card); transition: all .15s; }
+  .opt:hover { border-color: var(--teal); background: var(--teal-soft); }
+  .opt.correct { border-color: var(--green); background: var(--green-soft); }
+  .opt.wrong { border-color: var(--red); background: var(--red-soft); }
+  .unit-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+  .unit-foot .lt { display: flex; gap: 10px; }
+
+  /* dual coordinate feedback */
+  .dual { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  .dual .d { background: var(--paper); border-radius: 12px; padding: 14px 16px; }
+  .dual .d .lab { font-size: 12.5px; color: var(--ink-soft); }
+  .dual .d .sc { font-size: 26px; font-weight: 700; margin-top: 2px; }
+  .dual .d.indep .sc { color: var(--teal); }
+  .dual .d.assist .sc { color: var(--amber); }
+
+  /* ---- Path map ---- */
+  .week { display: flex; gap: 14px; margin-bottom: 8px; }
+  .week .wk-no { width: 60px; flex-shrink: 0; text-align: right; padding-top: 14px; color: var(--ink-faint); font-size: 12.5px; font-weight: 600; }
+  .week .wk-body { flex: 1; border-left: 2px solid var(--line); padding: 0 0 22px 22px; position: relative; }
+  .week .wk-body::before { content: ""; position: absolute; left: -7px; top: 16px; width: 12px; height: 12px; border-radius: 50%; background: var(--line); border: 2px solid var(--paper); }
+  .week.done .wk-body::before { background: var(--green); }
+  .week.now .wk-body::before { background: var(--amber); box-shadow: 0 0 0 4px var(--amber-soft); }
+  .week .wk-card { background: var(--card); border: 1px solid var(--line); border-radius: 13px; padding: 15px 18px; }
+  .week.now .wk-card { border-color: var(--amber); box-shadow: 0 6px 18px rgba(217,138,61,.14); }
+  .week .wk-card .wt { font-weight: 600; font-size: 15px; }
+  .kps { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+  .kp { font-size: 12.5px; padding: 4px 11px; border-radius: 8px; background: var(--paper-2); color: var(--ink-soft); }
+  .kp.done { background: var(--green-soft); color: var(--green); }
+  .kp.now { background: var(--amber-soft); color: var(--amber); font-weight: 600; }
+
+  /* ---- Analytics ---- */
+  .abil { margin-top: 6px; }
+  .abil .row { margin-bottom: 16px; }
+  .abil .row .top { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 6px; }
+  .abil .track { height: 10px; background: var(--paper-2); border-radius: 6px; position: relative; }
+  .abil .track .indep { position: absolute; left: 0; top: 0; height: 100%; border-radius: 6px; background: var(--teal); }
+  .abil .track .assist { position: absolute; left: 0; top: 0; height: 100%; border-radius: 6px; background: var(--amber); opacity: .4; }
+  .legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--ink-soft); margin: 4px 0 18px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .weak { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .weak:last-child { border: none; }
+  .weak .wn { flex: 1; }
+  .weak .wn .h { font-weight: 600; font-size: 14.5px; }
+  .weak .wn .s { font-size: 12.5px; color: var(--ink-soft); }
+
+  /* ---- Chat ---- */
+  .fab { position: fixed; right: 28px; bottom: 26px; background: var(--teal); color: #fff; border: none; cursor: pointer;
+    padding: 13px 20px; border-radius: 30px; font-weight: 600; font-size: 14.5px; box-shadow: 0 8px 24px rgba(44,110,106,.35); display: flex; align-items: center; gap: 8px; z-index: 40; }
+  .fab:hover { background: var(--teal-dark); }
+  .chat { position: fixed; right: 28px; bottom: 26px; width: 372px; max-width: calc(100vw - 40px); height: 540px; max-height: calc(100vh - 50px);
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 20px 60px rgba(43,41,38,.22);
+    display: none; flex-direction: column; overflow: hidden; z-index: 41; }
+  .chat.open { display: flex; }
+  .chat .ch-head { background: var(--teal); color: #fff; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .chat .ch-head .x { cursor: pointer; opacity: .8; font-size: 18px; }
+  .chat .ch-body { flex: 1; padding: 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--paper); }
+  .bubble { max-width: 80%; padding: 11px 14px; border-radius: 14px; font-size: 14px; line-height: 1.6; }
+  .bubble.ai { background: var(--card); border: 1px solid var(--line); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .bubble.me { background: var(--teal); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .chat .ch-foot { padding: 12px; border-top: 1px solid var(--line); display: flex; gap: 8px; }
+  .chat .ch-foot input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; font: inherit; outline: none; }
+  .chat .ch-foot input:focus { border-color: var(--teal); }
+
+  .note { font-size: 12px; color: var(--ink-faint); text-align: center; margin-top: 30px; }
+
+  /* ---- Generate flow ---- */
+  .nav .gen-link { background: linear-gradient(135deg, var(--amber), #c87a2e); color:#fff; margin-bottom:6px; box-shadow:0 4px 12px rgba(217,138,61,.25); }
+  .nav .gen-link:hover { background: linear-gradient(135deg, #c87a2e, var(--amber)); color:#fff; }
+  .gen-wrap { max-width: 640px; margin: 10px auto 0; }
+  .gen-steps { display:flex; gap:8px; justify-content:center; margin-bottom:26px; }
+  .gen-steps .gs { font-size:12px; color:var(--ink-faint); display:flex; align-items:center; gap:6px; }
+  .gen-steps .gs .n { width:22px; height:22px; border-radius:50%; background:var(--paper-2); color:var(--ink-faint); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; }
+  .gen-steps .gs.on .n { background:var(--teal); color:#fff; }
+  .gen-steps .gs.on { color:var(--teal-dark); font-weight:600; }
+  .gen-steps .gs.ok .n { background:var(--green); color:#fff; }
+  .big-input { width:100%; border:2px solid var(--line); border-radius:16px; padding:18px 20px; font:inherit; font-size:17px; outline:none; resize:none; }
+  .big-input:focus { border-color:var(--teal); }
+  .chips { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+  .chip { padding:10px 18px; border:1.5px solid var(--line); border-radius:24px; background:var(--card); cursor:pointer; font:inherit; font-size:14px; transition:all .15s; }
+  .chip:hover { border-color:var(--teal); background:var(--teal-soft); color:var(--teal-dark); }
+  .gen-hero { text-align:center; margin-bottom:24px; }
+  .gen-hero h1 { font-size:28px; letter-spacing:-.4px; }
+  .gen-hero p { color:var(--ink-soft); margin-top:8px; font-size:15px; }
+  .genchk { display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:12px; background:var(--paper); margin-bottom:10px; font-size:14.5px; transition:all .3s; opacity:.4; }
+  .genchk.on { opacity:1; background:var(--teal-soft); }
+  .genchk .gck { width:24px; height:24px; border-radius:50%; border:2px solid var(--line); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .genchk.on .gck { background:var(--green); border-color:var(--green); color:#fff; }
+  .spinner { width:18px; height:18px; border:2.5px solid var(--teal-soft); border-top-color:var(--teal); border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">i</div>
+      <div><div class="name">LearnBuddy</div><div class="sub">日语 N3 · 个性化路径</div></div>
+    </div>
+    <nav class="nav">
+      <a class="gen-link" data-page="generate"><span class="ic">✨</span> 生成新路径</a>
+      <a class="active" data-page="today"><span class="ic">📅</span> 今日</a>
+      <a data-page="unit"><span class="ic">📖</span> 学习单元</a>
+      <a data-page="path"><span class="ic">🗺️</span> 路径地图</a>
+      <a data-page="analytics"><span class="ic">📊</span> 学情面板</a>
+    </nav>
+    <div class="side-foot">
+      <div class="exam">距 N3 考试 <b>78</b> 天<br>已坚持 <b>23</b> 天 · 第 4 周</div>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<button class="fab" id="fab">💬 问教练</button>
+<div class="chat" id="chat"></div>
+
+<script>
+/* ---------------- TODAY ---------------- */
+function ringSVG(pct){
+  const r=42, c=2*Math.PI*r, off=c*(1-pct/100);
+  return `<svg width="108" height="108" viewBox="0 0 108 108">
+    <circle cx="54" cy="54" r="${r}" fill="none" stroke="#efeae0" stroke-width="11"/>
+    <circle cx="54" cy="54" r="${r}" fill="none" stroke="#2c6e6a" stroke-width="11" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 54 54)"/>
+    <text x="54" y="60" text-anchor="middle" font-size="22" font-weight="700" fill="#2b2926">${pct}%</text>
+  </svg>`;
+}
+
+const PAGES = {};
+
+PAGES.today = () => `
+  <div class="page-head"><h1>今日</h1><p>2026年6月14日 · 周日 · 预计 25 分钟</p></div>
+  <div class="coach" style="margin-top:8px">
+    <div class="ava">🧑‍🏫</div>
+    <div class="msg">早上好。距 N3 还有 <b>78 天</b>，按计划你应该稳了。<br>
+      今天核心是攻下「<b>～たことがある</b>」这个表达"经验"的句型——昨天你在听力里漏听了两次它，所以今天讲完马上练。再花 5 分钟复习 <b>8 个</b>到期的旧词就收工。</div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 320px 1fr; margin-top:18px; align-items:stretch">
+    <div class="card ring-wrap">
+      ${ringSVG(64)}
+      <div class="ring-txt">
+        <div class="big">第 4 周</div>
+        <div class="lbl">本周进度 64%</div>
+        <div style="margin-top:10px"><span class="pill green">▲ 较计划 领先半天</span></div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:6px">
+      <div style="font-size:13.5px;color:var(--ink-soft)">今日目标</div>
+      <div style="font-size:18px;font-weight:700">掌握 1 个新句型 · 练 6 题 · 复习 8 词</div>
+      <div style="font-size:13px;color:var(--ink-soft);margin-top:4px">完成后本周第 5/7 个学习日达标，周日有周回测。</div>
+    </div>
+  </div>
+
+  <div class="section-title"><span class="bar"></span>今日任务</div>
+  <div class="grid" style="gap:12px">
+    <div class="task" onclick="go('unit')">
+      <div class="tic learn">📖</div>
+      <div class="tt"><div class="h">学 · ～たことがある（表达"经验"）</div><div class="s">讲解卡 + 3 个例句 · 约 6 分钟</div></div>
+      <span class="pill teal">新知识点</span><div class="arr">→</div>
+    </div>
+    <div class="task" onclick="go('unit'); jumpStep(2)">
+      <div class="tic drill">✏️</div>
+      <div class="tt"><div class="h">练 · 句型应用 + 情景对话</div><div class="s">6 题（选择 + 造句 + 1 段陪练）· 约 12 分钟</div></div>
+      <span class="pill amber">即学即练</span><div class="arr">→</div>
+    </div>
+    <div class="task" onclick="go('analytics')">
+      <div class="tic review">🔁</div>
+      <div class="tt"><div class="h">复习 · 8 个到期词汇</div><div class="s">间隔重复队列 · 昨天 2 个错的优先 · 约 5 分钟</div></div>
+      <span class="pill green">反遗忘</span><div class="arr">→</div>
+    </div>
+  </div>
+  <p class="note">原型说明：以"今日"为中心的混合式导航。每张任务卡点进去都是同一套"学/练单元壳"，内容由原语动态填充。</p>
+`;
+
+/* ---------------- UNIT (step machine) ---------------- */
+let unitStep = 1;
+const UNIT_STEPS = [
+  // step 1: 学 - 讲解卡 (primitive: 讲解卡)
+  () => `
+    <div class="stage">
+      <div class="kicker learn">学 · 讲解卡</div>
+      <h2 class="jp">～たことがある</h2>
+      <div style="color:var(--ink-soft);font-size:14.5px;margin-bottom:6px">表示"曾经做过某事"的经验。动词改成「た形」后接 ことがある。</div>
+      <div class="ex"><div class="s jp">日本へ <b>行ったことがあります</b>。</div><div class="t">我曾经去过日本。</div></div>
+      <div class="ex"><div class="s jp">寿司を <b>食べたことがありますか</b>。</div><div class="t">你吃过寿司吗？</div></div>
+      <div class="ex"><div class="s jp">この本は <b>読んだことがありません</b>。</div><div class="t">这本书我没读过。</div></div>
+      <div style="background:var(--amber-soft);border-radius:10px;padding:12px 15px;margin-top:14px;font-size:13.5px;color:var(--ink)">
+        💡 <b>易错点：</b>表示经验时一定用「た形」，不是「て形」。你昨天听力里把「行ったことがある」听成了「行ってある」——这是今天重点。
+      </div>
+    </div>`,
+  // step 2: 练 - 选择题 (primitive: 选择题 + 判分)
+  () => `
+    <div class="stage">
+      <div class="kicker drill">练 · 第 1 题 / 6 · 选择</div>
+      <h2 style="font-size:19px">选出正确的句子：「我以前学过钢琴。」</h2>
+      <div id="opts">
+        <button class="opt jp" onclick="answer(this,false)">前にピアノを習ってあります。</button>
+        <button class="opt jp" onclick="answer(this,true)">前にピアノを習ったことがあります。</button>
+        <button class="opt jp" onclick="answer(this,false)">前にピアノを習うことがあります。</button>
+      </div>
+      <div id="fb" style="margin-top:14px"></div>
+    </div>`,
+  // step 3: 练 - 情景对话 (primitive: 情景模拟陪练 — 护城河原语)
+  () => `
+    <div class="stage">
+      <div class="kicker drill">练 · 情景陪练 · 护城河原语</div>
+      <h2 style="font-size:19px">🗾 场景：旅行社咨询</h2>
+      <div style="color:var(--ink-soft);font-size:14px;margin-bottom:14px">店员问你的旅行经验，请用今天学的句型回答。</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="bubble ai jp" style="max-width:100%">店員：海外旅行の経験はありますか？</div>
+        <div class="bubble me jp" style="max-width:100%;align-self:flex-end">はい、韓国へ行ったことがあります。</div>
+        <div class="bubble ai" style="max-width:100%">✅ 句型用对了！自然度也好。<br><span style="color:var(--green);font-weight:600">小建议</span>：口语里还能加「2回ほど」让回答更具体。</div>
+      </div>
+    </div>`,
+  // step 4: 双坐标判分反馈 (核心差异点)
+  () => `
+    <div class="stage">
+      <div class="kicker drill">本单元小结 · 双坐标评估</div>
+      <h2 style="font-size:20px">～たことがある · 已掌握 🎉</h2>
+      <div style="color:var(--ink-soft);font-size:14px">同一个能力，我们分两个坐标看——这是 LearnBuddy 和普通刷题的核心区别。</div>
+      <div class="dual">
+        <div class="d indep"><div class="lab">🎯 独立掌握度（没提示）</div><div class="sc">72%</div></div>
+        <div class="d assist"><div class="lab">🤝 AI 协作下表现</div><div class="sc">95%</div></div>
+      </div>
+      <div style="background:var(--paper);border-radius:10px;padding:13px 16px;font-size:13.5px;line-height:1.7">
+        独立掌握 72%：选择题全对，但情景造句时你犹豫了一次。<br>
+        <b>下一步</b>：这个句型已进入复习队列，第 3 天 / 第 7 天会各回测一次。明天听力里我会故意再埋它一次，验证你是否真听得出。
+      </div>
+    </div>`,
+];
+const UNIT_TITLES = ["～たことがある","句型应用","情景陪练","小结"];
+
+PAGES.unit = () => `
+  <div class="unit">
+    <div class="unit-bar">
+      <span class="back" onclick="go('today')">← 返回今日</span>
+      <span class="pill gray">第 4 周 · 句型篇</span>
+    </div>
+    <div class="dots" id="dots" style="justify-content:center;margin-bottom:18px"></div>
+    <div id="stageHost"></div>
+    <div class="unit-foot">
+      <div class="lt">
+        <button class="btn ghost" onclick="hint()">💡 提示</button>
+        <button class="btn ghost" onclick="openChat()">问教练</button>
+      </div>
+      <button class="btn primary" id="nextBtn" onclick="nextStep()">继续 →</button>
+    </div>
+  </div>
+`;
+
+function renderUnit(){
+  const host = document.getElementById('stageHost');
+  if(!host) return;
+  host.innerHTML = UNIT_STEPS[unitStep-1]();
+  const dots = document.getElementById('dots');
+  dots.innerHTML = UNIT_STEPS.map((_,i)=>{
+    const cls = i+1<unitStep?'done':(i+1===unitStep?'on':'');
+    return `<span class="${cls}"></span>`;
+  }).join('');
+  document.getElementById('nextBtn').textContent = unitStep>=UNIT_STEPS.length ? '完成 ✓' : '继续 →';
+}
+function nextStep(){
+  if(unitStep>=UNIT_STEPS.length){ go('today'); unitStep=1; return; }
+  unitStep++; renderUnit();
+}
+function jumpStep(n){ unitStep=n; setTimeout(renderUnit,0); }
+function answer(el,correct){
+  document.querySelectorAll('#opts .opt').forEach(o=>o.style.pointerEvents='none');
+  el.classList.add(correct?'correct':'wrong');
+  document.getElementById('fb').innerHTML = correct
+    ? `<div style="color:var(--green);font-weight:600">✅ 正确！「習ったことがある」=学过的经验。</div>`
+    : `<div style="color:var(--red);font-weight:600">不对。「てある」表状态，经验要用「た形＋ことがある」。</div>`;
+}
+function hint(){ alert('💡 提示：表示"经验"时，动词用「た形」，例如 行く→行った。'); }
+
+/* ---------------- PATH MAP ---------------- */
+const WEEKS = [
+  {no:'W1-2', t:'入门巩固 · 平假名/片假名 + 基础句型', kps:[['五十音',1],['です/ます',1],['这是/那是',1]], st:'done'},
+  {no:'W3', t:'动词变形基础', kps:[['ます形',1],['て形',1],['ない形',1]], st:'done'},
+  {no:'W4', t:'经验与状态表达（本周）', kps:[['た形',1],['～たことがある',2],['～ている',0],['～てある',0]], st:'now'},
+  {no:'W5-6', t:'授受关系 + 敬语入门', kps:[['あげる/もらう',0],['尊敬语',0],['谦让语',0]], st:'todo'},
+  {no:'W7-10', t:'N3 核心语法冲刺', kps:[['条件形',0],['使役/被动',0],['复合句',0]], st:'todo'},
+  {no:'W11', t:'月度雪球 + 全真模拟', kps:[['月度回测',0],['听力专项',0],['阅读专项',0]], st:'todo'},
+];
+PAGES.path = () => `
+  <div class="page-head"><h1>路径地图</h1><p>3 个月 N3 备考 · 共 24 周 · 你在第 4 周</p></div>
+  <div style="margin-top:18px">
+    ${WEEKS.map(w=>`
+      <div class="week ${w.st}">
+        <div class="wk-no">${w.no}</div>
+        <div class="wk-body">
+          <div class="wk-card">
+            <div class="wt">${w.t}</div>
+            <div class="kps">${w.kps.map(k=>`<span class="kp ${k[1]===1?'done':k[1]===2?'now':''}">${k[1]===1?'✓ ':''}${k[0]}</span>`).join('')}</div>
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>
+  <p class="note">原型说明：路径由"课程规划 agent"按你的基线评估生成，"节奏调整 agent"会随学情动态增删知识点。</p>
+`;
+
+/* ---------------- ANALYTICS ---------------- */
+const ABIL = [
+  {n:'词汇', indep:68, assist:88},
+  {n:'语法', indep:74, assist:92},
+  {n:'听力', indep:52, assist:80},
+  {n:'阅读', indep:71, assist:90},
+];
+const WEAK = [
+  {h:'～てある vs ～ている', s:'状态表达混淆 · 错 3 次', tag:'amber'},
+  {h:'长音听辨（おばさん/おばあさん）', s:'听力高频失分点', tag:'red'},
+  {h:'敬语：尊敬 vs 谦让', s:'尚未学习 · W5 安排', tag:'gray'},
+];
+const REVIEW = [
+  {h:'～たことがある', s:'今天刚学 · 第 3 天回测', tag:'teal'},
+  {h:'8 个到期词汇', s:'间隔重复 · 今日到期', tag:'green'},
+  {h:'て形动词变位', s:'第 7 天雪球回测', tag:'green'},
+];
+PAGES.analytics = () => `
+  <div class="page-head"><h1>学情面板</h1><p>由"学情分析 agent"基于你的每次作答实时更新</p></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:18px">
+    <div class="card">
+      <div style="font-weight:700;font-size:16px;margin-bottom:4px">能力双坐标</div>
+      <div class="legend"><span><i style="background:#2c6e6a"></i>独立掌握</span><span><i style="background:#d98a3d;opacity:.5"></i>AI 协作下</span></div>
+      <div class="abil">
+        ${ABIL.map(a=>`<div class="row">
+          <div class="top"><span>${a.n}</span><span style="color:var(--ink-soft)">${a.indep}% / ${a.assist}%</span></div>
+          <div class="track"><div class="assist" style="width:${a.assist}%"></div><div class="indep" style="width:${a.indep}%"></div></div>
+        </div>`).join('')}
+      </div>
+      <div style="font-size:12.5px;color:var(--ink-soft);margin-top:6px">差值越大 = 越依赖提示，要重点补独立能力。听力差值 28% 最大。</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="card">
+        <div style="font-weight:700;font-size:16px;margin-bottom:10px">🎯 当前弱项</div>
+        ${WEAK.map(w=>`<div class="weak"><span class="pill ${w.tag}">!</span><div class="wn"><div class="h">${w.h}</div><div class="s">${w.s}</div></div></div>`).join('')}
+      </div>
+      <div class="card">
+        <div style="font-weight:700;font-size:16px;margin-bottom:10px">🔁 复习队列（反遗忘）</div>
+        ${REVIEW.map(w=>`<div class="weak"><span class="pill ${w.tag}">⏱</span><div class="wn"><div class="h">${w.h}</div><div class="s">${w.s}</div></div></div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <p class="note">原型说明：双坐标（独立 vs AI协作）是 LearnBuddy 的核心差异点，普通刷题工具只给一个分数。</p>
+`;
+
+/* ---------------- GENERATE FLOW ---------------- */
+let genStep = 1;
+function genSteps(active){
+  const labels=['说需求','对话澄清','基线评估','生成中','完成'];
+  return `<div class="gen-steps">${labels.map((l,i)=>{
+    const n=i+1; const cls=n<active?'ok':(n===active?'on':'');
+    return `<div class="gs ${cls}"><span class="n">${n<active?'✓':n}</span>${l}</div>`;
+  }).join('<span style="color:var(--ink-faint)">·</span>')}</div>`;
+}
+const GEN = [
+  // 1 welcome
+  () => `${genSteps(1)}
+    <div class="gen-hero"><h1>你想学什么？</h1><p>用一句话说出你的目标，LearnBuddy 会现场摸底、当场给你生成专属路径。</p></div>
+    <textarea class="big-input" rows="2" id="genWish" placeholder="例如：我想 3 个月内考过日语 N3…">我想 3 个月内考过日语 N3</textarea>
+    <div class="chips">
+      <span style="font-size:13px;color:var(--ink-faint);align-self:center">试试：</span>
+      <button class="chip" onclick="genNext()">🇯🇵 日语 N3（3个月）</button>
+      <button class="chip" onclick="genNext()">🐍 Python 入门</button>
+      <button class="chip" onclick="genNext()">🥗 营养学基础</button>
+      <button class="chip" onclick="genNext()">✍️ 中文写作</button>
+    </div>
+    <div style="text-align:right;margin-top:20px"><button class="btn primary" onclick="genNext()">开始 →</button></div>
+    <p class="note">这一步对应"引导对话 agent"入口 —— 任何能用自然语言描述的需求都行（通用性）。</p>`,
+  // 2 dialogue clarify
+  () => `${genSteps(2)}
+    <div class="gen-hero" style="text-align:left"><h1 style="font-size:22px">教练在和你对齐目标</h1><p style="margin-top:4px">8–15 轮对话挖清需求，这里压缩演示几轮。</p></div>
+    <div style="display:flex;flex-direction:column;gap:11px;margin:6px 0 4px">
+      <div class="bubble ai" style="max-width:90%">3 个月考 N3，目标很清晰 👍 先问几个关键点：<b>你现在的基础</b>是？</div>
+      <div class="bubble me" style="max-width:90%;align-self:flex-end">五十音会读，但语法基本零基础</div>
+      <div class="bubble ai" style="max-width:90%">了解。<b>每天能投入多少时间</b>？周末能多一点吗？</div>
+      <div class="bubble me" style="max-width:90%;align-self:flex-end">工作日 25 分钟，周末 1 小时</div>
+      <div class="bubble ai" style="max-width:90%">够用，我会把重活放周末。最后一个：<b>你更怕哪块</b>——听力 / 语法 / 词汇？</div>
+    </div>
+    <div class="chips">
+      <button class="chip" onclick="genNext()">最怕听力</button>
+      <button class="chip" onclick="genNext()">最怕语法</button>
+      <button class="chip" onclick="genNext()">词汇记不住</button>
+    </div>
+    <p class="note">对应"引导对话 agent"：挖出目标 / 基础 / 时间预算 / 痛点，沉淀为初始用户画像。</p>`,
+  // 3 baseline assessment (核心差异点)
+  () => `${genSteps(3)}
+    <div class="gen-hero" style="text-align:left"><h1 style="font-size:22px">⚡ 即时基线评估</h1><p style="margin-top:4px">不靠你自评，我现场出 3 道题摸底（核心差异点）。</p></div>
+    <div class="stage" style="min-height:auto;padding:22px">
+      <div style="font-weight:600;margin-bottom:8px">Q1 · 假名认读：「ねこ」是什么意思？</div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('correct')">猫</button>
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('wrong')">狗</button>
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('wrong')">鸟</button>
+      </div>
+      <div style="font-weight:600;margin:18px 0 8px">Q2 · 语法：「学校＿行きます」填什么助词？</div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('correct')">へ</button>
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('wrong')">を</button>
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('wrong')">が</button>
+      </div>
+      <div style="font-weight:600;margin:18px 0 8px">Q3 · 听一段 5 秒音频，选你听到的词（演示略）</div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('wrong')">おばさん</button>
+        <button class="opt" style="margin:0;width:auto" onclick="this.classList.add('correct')">おばあさん</button>
+      </div>
+    </div>
+    <div style="text-align:right;margin-top:18px"><button class="btn primary" onclick="genNext()">提交，生成我的路径 →</button></div>
+    <p class="note">对应"基线评估"：现场出题 → 得出双坐标基线（独立 vs AI协作），路径据此加权，不是套模板。</p>`,
+  // 4 generating
+  () => `${genSteps(4)}
+    <div class="gen-hero"><h1>正在生成你的专属系统…</h1><p>基于你的需求 + 基线，4 件套一次生成</p></div>
+    <div id="genList">
+      <div class="genchk" data-i="0"><div class="gck"></div>分析基线 → 构建初始用户画像（语法弱 · 听力需加强）</div>
+      <div class="genchk" data-i="1"><div class="gck"></div>规划 24 周知识图谱 master 蓝图</div>
+      <div class="genchk" data-i="2"><div class="gck"></div>生成第 1 周详细计划（资源 · 数量 · 验收标准）</div>
+      <div class="genchk" data-i="3"><div class="gck"></div>写学习手册 + 反遗忘机制 + 愿景契约</div>
+    </div>`,
+  // 5 done
+  () => `${genSteps(5)}
+    <div class="gen-hero"><div style="font-size:46px">🎉</div><h1>你的专属路径已生成</h1><p>日语 N3 · 3 个月 · 24 周 · 已写入今日任务</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-soft)">目标</span><b>3 个月通过 N3</b></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-soft)">基线（双坐标）</span><b>独立 38% · AI协作 61%</b></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-soft)">重点补强</span><b>语法 · 听力长音</b></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--ink-soft)">节奏</span><b>工作日 25 分 · 周末 1 小时</b></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <button class="btn primary" style="flex:1" onclick="genStep=1; go('today')">进入今日，开始学 →</button>
+      <button class="btn ghost" onclick="go('path')">先看 24 周路径</button>
+    </div>
+    <p class="note">生成的 4 件套：master 蓝图 / 周计划 / 学习手册 / 愿景契约 —— 之后由"节奏调整 agent"随学情动态更新。</p>`,
+];
+function renderGen(){
+  document.getElementById('main').innerHTML = `<div class="page active"><div class="gen-wrap">${GEN[genStep-1]()}</div></div>`;
+  if(genStep===4) runGenAnim();
+  window.scrollTo(0,0);
+}
+function genNext(){ if(genStep<GEN.length){ genStep++; renderGen(); } }
+function runGenAnim(){
+  const items=[...document.querySelectorAll('.genchk')];
+  items.forEach((el,i)=>{
+    setTimeout(()=>{
+      el.classList.add('on');
+      el.querySelector('.gck').innerHTML='<span class="spinner"></span>';
+      setTimeout(()=>{ el.querySelector('.gck').innerHTML='✓'; }, 650);
+    }, i*800);
+  });
+  setTimeout(()=>{ genStep=5; renderGen(); }, items.length*800+700);
+}
+
+/* ---------------- ROUTER ---------------- */
+function go(page){
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active', a.dataset.page===page));
+  if(page==='generate'){ renderGen(); return; }
+  document.getElementById('main').innerHTML = `<div class="page active">${PAGES[page]()}</div>`;
+  if(page==='unit') renderUnit();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.nav a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    if(a.dataset.page==='unit') unitStep=1;
+    if(a.dataset.page==='generate') genStep=1;
+    go(a.dataset.page);
+  });
+});
+
+/* ---------------- CHAT ---------------- */
+function chatHTML(){ return `
+  <div class="ch-head"><div><b>问教练</b><div style="font-size:11.5px;opacity:.85">随时答疑 · 可调计划</div></div><span class="x" onclick="closeChat()">✕</span></div>
+  <div class="ch-body" id="chBody">
+    <div class="bubble ai">你好！「～たことがある」哪里还不清楚？也可以让我帮你调今天的计划。</div>
+    <div class="bubble me">た形和て形老搞混…</div>
+    <div class="bubble ai">很常见 👍 记一句话：<b>た形讲"做完/经验"，て形讲"连接/正在"</b>。<br>行った＝去过了；行って＝去了然后…。今天的情景陪练就专门练这个，要现在开始吗？</div>
+  </div>
+  <div class="ch-foot"><input placeholder="问点什么…" id="chIn" onkeydown="if(event.key==='Enter')sendChat()"><button class="btn primary" style="padding:10px 16px" onclick="sendChat()">发送</button></div>
+`; }
+function openChat(){ const c=document.getElementById('chat'); c.innerHTML=chatHTML(); c.classList.add('open'); document.getElementById('fab').style.display='none'; }
+function closeChat(){ document.getElementById('chat').classList.remove('open'); document.getElementById('fab').style.display='flex'; }
+function sendChat(){
+  const i=document.getElementById('chIn'); const v=i.value.trim(); if(!v) return;
+  const b=document.getElementById('chBody');
+  b.insertAdjacentHTML('beforeend',`<div class="bubble me">${v}</div>`); i.value='';
+  setTimeout(()=>{ b.insertAdjacentHTML('beforeend',`<div class="bubble ai">（原型演示）收到～ 我会结合你的学情来回答，并能直接帮你改今日任务。</div>`); b.scrollTop=b.scrollHeight; },400);
+  b.scrollTop=b.scrollHeight;
+}
+document.getElementById('fab').addEventListener('click',openChat);
+
+go('today');
+</script>
+</body>
+</html>

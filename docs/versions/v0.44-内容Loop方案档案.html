@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V0.44 内容 Loop 方案档案 · 三件套</title>
+<link rel="stylesheet" href="./version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.44 内容 Loop 方案档案<small>需求方案 · 技术方案 · 开发范式</small></div>
+  <nav class="nav">
+    <a href="../LearnBuddy项目工作台.html">项目工作台</a>
+    <a href="../文档中心.html">文档中心</a>
+    <a href="../教学内容Loop开发工作台.html">专项档案</a>
+  </nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">方案档案 · 后续版本母版</span>
+    <h1>教学内容 Loop Engine 的方案母版</h1>
+    <p>V0.44 不代表功能已开发完成，而是把 AI-Shifu 调研、Loop 工程文章、当前内容质量问题和产品判断收敛成后续 V0.46/V0.47 的拆解依据。</p>
+    <div class="meta"><span class="pill gray">状态：方案档案</span><span class="pill">作用：母版</span><span class="pill gold">下游：V0.46/V0.47</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求方案</h2><p>把“内容浅、来源弱、互动差、等待焦虑、生成不可控”收敛为可开发需求。</p><ul><li>每节课要说明本节解决什么问题、学完能做什么、依据什么来源。</li><li>允许网页、论文、文档、视频/B站作为学习参考源。</li><li>生成过程要让用户看到搜索、设计、生成、质检和保存状态。</li><li>学习页要从长文本展示变成有节奏的任务流。</li></ul></article>
+    <article class="card panel"><h2>技术方案</h2><p>形成 Content Loop Engine 的骨架。</p><ul><li>核心契约：LearningIntent、ResearchPack、LessonSpec、LessonFlow、QualityReport、RunSheet。</li><li>核心流程：目标接地 → 深度资料收集 → 教学链设计 → 内容生成 → Critic → 返工 → 保存。</li><li>长任务必须有 job/status、硬超时、恢复和重试。</li><li>所有新增字段兼容旧实例，缺失时降级读取。</li></ul></article>
+    <article class="card panel"><h2>开发范式</h2><p>按可发版产品版本推进，工程阶段只作为内部里程碑。</p><ul><li>V0.46 教学内容 Loop v1：合并契约、单节生成和学习页运行时。</li><li>V0.47 路径级 Loop v1：视 V0.46 验证情况推进路径级预生成和后台分析。</li><li>每个版本都要有独立三件套页面，不能只是一段技术阶段。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>验收清单</h2><p>V0.44 的验收是“方案是否能指导后续开发”，不是线上功能验收。</p></div><span class="pill gray">Archive DoD</span></div>
+    <div class="table-wrap"><table><thead><tr><th>检查项</th><th>要求</th></tr></thead><tbody>
+      <tr><td>方案完整</td><td>能覆盖产品需求、技术方案、开发范式三部分。</td></tr>
+      <tr><td>可拆版本</td><td>能自然拆成 V0.46 教学内容 Loop v1 与 V0.47 路径级 Loop v1，而不是把工程阶段误当产品版本。</td></tr>
+      <tr><td>可追溯</td><td>外部调研、AI-Shifu 对比和 Loop 文章有归档入口。</td></tr>
+    </tbody></table></div>
+  </section>
+  <div class="footer">V0.44 · 方案档案，不作为已开发版本。</div>
+</main>
+</body>
+</html>

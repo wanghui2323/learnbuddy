@@ -1,0 +1,75 @@
+<svg viewBox="0 0 940 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="商业化链路图">
+  <defs>
+    <marker id="arr-bf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-bf-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-bf-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-bf-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <style>
+    .bf-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .bf-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .bf-card { stroke: #d8d2c4; stroke-width: 1; }
+    .bf-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+  </style>
+
+  <rect x="360" y="30" width="220" height="58" rx="12" fill="url(#g-bf-1)" class="bf-card" />
+  <text x="380" y="56" class="bf-title">用户注册 / 登录</text>
+  <text x="380" y="76" class="bf-sub">统一身份入口</text>
+
+  <line x1="470" y1="88" x2="470" y2="124" class="bf-conn" marker-end="url(#arr-bf)" />
+
+  <rect x="360" y="126" width="220" height="58" rx="12" fill="url(#g-bf-2)" class="bf-card" />
+  <text x="380" y="152" class="bf-title">绑定手机号</text>
+  <text x="380" y="172" class="bf-sub">支付 / 找回 / 通知触达</text>
+
+  <line x1="470" y1="184" x2="470" y2="220" class="bf-conn" marker-end="url(#arr-bf)" />
+
+  <rect x="360" y="222" width="220" height="58" rx="12" fill="url(#g-bf-3)" class="bf-card" />
+  <text x="380" y="248" class="bf-title">选择商品</text>
+  <text x="380" y="268" class="bf-sub">进入标准化商品体系</text>
+
+  <!-- 分叉 4 路 -->
+  <path d="M470 280 C 470 304, 130 304, 130 326" class="bf-conn" marker-end="url(#arr-bf)" />
+  <path d="M470 280 C 470 304, 320 304, 320 326" class="bf-conn" marker-end="url(#arr-bf)" />
+  <path d="M470 280 C 470 304, 540 304, 540 326" class="bf-conn" marker-end="url(#arr-bf)" />
+  <path d="M470 280 C 470 304, 810 304, 810 326" class="bf-conn" marker-end="url(#arr-bf)" />
+
+  <rect x="40" y="328" width="180" height="56" rx="10" fill="#fff" class="bf-card" />
+  <text x="60" y="350" class="bf-title">基础订阅</text>
+  <text x="60" y="370" class="bf-sub">月度 / 年度</text>
+
+  <rect x="230" y="328" width="180" height="56" rx="10" fill="#fff" class="bf-card" />
+  <text x="250" y="350" class="bf-title">积分包</text>
+  <text x="250" y="370" class="bf-sub">付费积分 + 赠送积分</text>
+
+  <rect x="450" y="328" width="180" height="56" rx="10" fill="#fff" class="bf-card" />
+  <text x="470" y="350" class="bf-title">个人助理升级</text>
+  <text x="470" y="370" class="bf-sub">Pro 模式 / 跨端</text>
+
+  <rect x="720" y="328" width="180" height="56" rx="10" fill="#fff" class="bf-card" />
+  <text x="740" y="350" class="bf-title">混合套餐</text>
+  <text x="740" y="370" class="bf-sub">订阅 + 积分 + 升级</text>
+
+  <!-- 汇合 -->
+  <path d="M130 384 C 130 416, 470 416, 470 442" class="bf-conn" marker-end="url(#arr-bf)" />
+  <path d="M320 384 C 320 416, 470 416, 470 442" class="bf-conn" />
+  <path d="M540 384 C 540 416, 470 416, 470 442" class="bf-conn" />
+  <path d="M810 384 C 810 416, 470 416, 470 442" class="bf-conn" />
+
+  <rect x="320" y="444" width="300" height="58" rx="12" fill="url(#g-bf-1)" class="bf-card" />
+  <text x="340" y="470" class="bf-title">创建订单</text>
+  <text x="340" y="490" class="bf-sub">订单状态机 pending → paid / failed / refunded</text>
+
+  <line x1="470" y1="502" x2="470" y2="528" class="bf-conn" marker-end="url(#arr-bf)" />
+</svg>

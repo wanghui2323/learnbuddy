@@ -1,0 +1,108 @@
+<svg viewBox="0 0 940 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="当前进度总览图">
+  <defs>
+    <marker id="arr-pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-pg-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-pg-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-pg-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e3edf5" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-pg-4" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#efeae0" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <style>
+    .pg-title { font: 700 14px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .pg-sub { font: 400 11.5px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .pg-card { stroke: #d8d2c4; stroke-width: 1; }
+    .pg-bar-bg { fill: #efeae0; }
+    .pg-bar { fill: #2c6e6a; }
+    .pg-tag { font: 700 10.5px -apple-system, "PingFang SC", sans-serif; fill: #fff; }
+  </style>
+
+  <text x="40" y="36" class="pg-title">当前进度总览（V0.19 → V0.20）</text>
+  <text x="40" y="56" class="pg-sub">每个里程碑一行，绿色=已完成，琥珀=当前在做，蓝色=下一阶段，米色=并行准备</text>
+
+  <!-- M0 -->
+  <rect x="40" y="78" width="860" height="48" rx="10" fill="url(#g-pg-1)" class="pg-card" />
+  <circle cx="62" cy="102" r="10" fill="#4a9d6e" />
+  <text x="62" y="106" text-anchor="middle" class="pg-tag">M0</text>
+  <text x="84" y="100" class="pg-title">基础跑通</text>
+  <text x="84" y="116" class="pg-sub">项目启动、单跑通 demo、首批路径生成</text>
+  <rect x="540" y="92" width="340" height="20" rx="6" class="pg-bar-bg" />
+  <rect x="540" y="92" width="340" height="20" rx="6" class="pg-bar" />
+  <text x="870" y="107" text-anchor="end" class="pg-tag">100%</text>
+
+  <!-- M1 -->
+  <rect x="40" y="136" width="860" height="48" rx="10" fill="url(#g-pg-1)" class="pg-card" />
+  <circle cx="62" cy="160" r="10" fill="#4a9d6e" />
+  <text x="62" y="164" text-anchor="middle" class="pg-tag">M1</text>
+  <text x="84" y="158" class="pg-title">学习闭环地基</text>
+  <text x="84" y="174" class="pg-sub">登录、路径、学练、学情、图谱、RAG、推荐、记忆、重规划</text>
+  <rect x="540" y="150" width="340" height="20" rx="6" class="pg-bar-bg" />
+  <rect x="540" y="150" width="340" height="20" rx="6" class="pg-bar" />
+  <text x="870" y="165" text-anchor="end" class="pg-tag">100%</text>
+
+  <!-- M2 -->
+  <rect x="40" y="194" width="860" height="48" rx="10" fill="url(#g-pg-1)" class="pg-card" />
+  <circle cx="62" cy="218" r="10" fill="#4a9d6e" />
+  <text x="62" y="222" text-anchor="middle" class="pg-tag">M2</text>
+  <text x="84" y="216" class="pg-title">公网可用化</text>
+  <text x="84" y="232" class="pg-sub">Web Push 地基、公网 ECS 部署、LearnBuddy 品牌适配</text>
+  <rect x="540" y="208" width="340" height="20" rx="6" class="pg-bar-bg" />
+  <rect x="540" y="208" width="340" height="20" rx="6" class="pg-bar" />
+  <text x="870" y="223" text-anchor="end" class="pg-tag">100%</text>
+
+  <!-- M3 当前在做 -->
+  <rect x="40" y="252" width="860" height="60" rx="10" fill="url(#g-pg-2)" class="pg-card" />
+  <circle cx="62" cy="282" r="11" fill="#d98a3d" />
+  <text x="62" y="286" text-anchor="middle" class="pg-tag">M3</text>
+  <text x="84" y="274" class="pg-title">当前收口（V0.20）</text>
+  <text x="84" y="292" class="pg-sub">响应式、6 关自检交互、W2-WN lazy build、推送 dogfood、文档统一</text>
+  <text x="84" y="306" class="pg-sub">手机验证码 / 支付 / 积分方案定稿</text>
+  <rect x="540" y="266" width="340" height="22" rx="6" class="pg-bar-bg" />
+  <rect x="540" y="266" width="210" height="22" rx="6" fill="#d98a3d" />
+  <text x="870" y="282" text-anchor="end" class="pg-tag">62%</text>
+
+  <!-- M4 -->
+  <rect x="40" y="322" width="860" height="48" rx="10" fill="url(#g-pg-3)" class="pg-card" />
+  <circle cx="62" cy="346" r="10" fill="#3d6e9e" />
+  <text x="62" y="350" text-anchor="middle" class="pg-tag">M4</text>
+  <text x="84" y="344" class="pg-title">差异化深化</text>
+  <text x="84" y="360" class="pg-sub">评估闭环、FSRS 调度、周回测、手动调整、prompt 版本化</text>
+  <rect x="540" y="336" width="340" height="20" rx="6" class="pg-bar-bg" />
+  <rect x="540" y="336" width="68" height="20" rx="6" fill="#3d6e9e" />
+  <text x="870" y="351" text-anchor="end" class="pg-tag">20%</text>
+
+  <!-- M5 -->
+  <rect x="40" y="380" width="860" height="48" rx="10" fill="url(#g-pg-4)" class="pg-card" />
+  <circle cx="62" cy="404" r="10" fill="#7b5ea7" />
+  <text x="62" y="408" text-anchor="middle" class="pg-tag">M5</text>
+  <text x="84" y="398" class="pg-title">工程与升级模式</text>
+  <text x="84" y="414" class="pg-sub">持久会话、备份、安全加固、个人助理模式接入层</text>
+  <rect x="540" y="390" width="340" height="20" rx="6" class="pg-bar-bg" />
+  <rect x="540" y="390" width="22" height="20" rx="6" fill="#7b5ea7" />
+  <text x="870" y="405" text-anchor="end" class="pg-tag">5%</text>
+
+  <!-- 图例 -->
+  <text x="40" y="466" class="pg-sub">图例：</text>
+  <circle cx="84" cy="462" r="7" fill="#4a9d6e" />
+  <text x="98" y="466" class="pg-sub">已完成</text>
+  <circle cx="160" cy="462" r="7" fill="#d98a3d" />
+  <text x="174" y="466" class="pg-sub">当前在做</text>
+  <circle cx="252" cy="462" r="7" fill="#3d6e9e" />
+  <text x="266" y="466" class="pg-sub">下一阶段</text>
+  <circle cx="344" cy="462" r="7" fill="#7b5ea7" />
+  <text x="358" y="466" class="pg-sub">并行准备</text>
+
+  <text x="40" y="502" class="pg-sub">说明：百分比按当前已确认完成的关键产物数量 / 阶段总关键产物估算；详细任务清单见下一节。</text>
+</svg>

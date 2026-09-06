@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 产品需求评估体系</title>
+<style>
+  :root{
+    --bg:#f6f2eb;
+    --paper:#fffdfa;
+    --ink:#282623;
+    --muted:#746f68;
+    --line:#e2d9cc;
+    --teal:#27776f;
+    --teal-dark:#1f5f59;
+    --teal-soft:#e4f1ee;
+    --gold:#d88a31;
+    --gold-soft:#fff1dc;
+    --red:#b75a4b;
+    --red-soft:#fae8e5;
+    --green:#4f9f73;
+    --shadow:0 14px 34px rgba(50,42,31,.08);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.72;
+  }
+  a{color:inherit}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    min-height:74px;
+    padding:0 42px;
+    background:rgba(255,253,250,.94);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(12px);
+  }
+  .logo{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--teal-dark);color:#fff;font-weight:900}
+  .brand{font-size:19px;font-weight:900;white-space:nowrap}
+  .brand small{display:block;color:var(--muted);font-size:12px;font-weight:700}
+  .nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .nav a{padding:9px 12px;border-radius:12px;color:#625c55;text-decoration:none;font-size:14px;font-weight:850}
+  .nav a:hover,.nav a.active{background:var(--teal-soft);color:var(--teal-dark)}
+  .wrap{max-width:1220px;margin:0 auto;padding:34px 28px 70px}
+  .hero{
+    padding:34px;
+    border-radius:26px;
+    color:white;
+    background:
+      radial-gradient(circle at 88% 18%, rgba(216,138,49,.22), transparent 28%),
+      linear-gradient(135deg,#1f5f59 0%,#2d7f76 58%,#385c48 100%);
+    box-shadow:var(--shadow);
+  }
+  .kicker{display:inline-flex;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);color:#e5fffb;font-size:13px;font-weight:850}
+  h1{max-width:900px;margin:18px 0 10px;font-size:40px;line-height:1.18;letter-spacing:0}
+  .hero p{max-width:920px;margin:0;color:rgba(255,255,255,.82);font-size:17px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .pill{display:inline-flex;align-items:center;justify-content:center;padding:5px 11px;border-radius:999px;background:var(--teal-soft);color:var(--teal-dark);font-size:13px;font-weight:850}
+  .pill.gold{background:var(--gold-soft);color:#8b551e}
+  .pill.gray{background:#eee9df;color:#69625a}
+  .pill.red{background:var(--red-soft);color:#9e493d}
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
+  .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+  .panel{padding:22px}
+  .panel h2{margin:0 0 10px;font-size:24px}
+  .panel h3{margin:0 0 8px;font-size:18px;color:var(--teal-dark)}
+  .panel p{margin:0;color:var(--muted)}
+  .panel ul{margin:8px 0 0;padding-left:20px;color:#625c55}
+  .panel li{margin:6px 0}
+  .section{margin-top:30px}
+  .section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:14px}
+  .section-head h2{margin:0;font-size:28px}
+  .section-head p{margin:5px 0 0;color:var(--muted)}
+  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}
+  table{width:100%;min-width:860px;border-collapse:collapse;background:var(--paper)}
+  th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:#f2ece1;color:#4d4740;font-size:13px}
+  td{font-size:14px}
+  tr:last-child td{border-bottom:0}
+  .score{font-size:22px;font-weight:950;color:var(--teal-dark)}
+  .score.warn{color:#8b551e}
+  .score.risk{color:#9e493d}
+  .callout{padding:18px;border-radius:18px;background:#f8fbfa;border:1px solid #cae2dc}
+  .callout b{color:var(--teal-dark)}
+  .refs a{display:inline-flex;margin:4px 8px 4px 0;padding:7px 10px;border-radius:10px;background:#fff;border:1px solid var(--line);text-decoration:none;font-size:13px;font-weight:760;color:#625c55}
+  .footer{margin-top:34px;color:var(--muted);text-align:center;font-size:13px}
+  @media(max-width:900px){
+    .topbar{padding:12px 18px;align-items:flex-start;flex-wrap:wrap}
+    .nav{width:100%;margin-left:0}
+    .wrap{padding:22px 16px 48px}
+    .hero{padding:26px}
+    h1{font-size:30px}
+    .grid3,.grid2{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">LearnBuddy 需求评估体系<small>版本质量门 · 开发前评估 · 验收依据</small></div>
+  <nav class="nav" aria-label="页面导航">
+    <a class="active" href="./需求评估体系.html">评估体系</a>
+    <a href="./LearnBuddy项目工作台.html">项目工作台</a>
+    <a href="./文档中心.html">文档中心</a>
+    <a href="#score">本次评估</a>
+    <a href="#gaps">缺口清单</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">PRD Fitness v0.1</span>
+    <h1>让每个版本在开发前先过一遍需求质量门</h1>
+    <p>这套体系用来回答一个问题：一个版本的需求方案，是否已经足够支撑产品、设计、后端、前端、AI 生成链路和验收一起开工。它不是替代判断，而是把判断标准显性化。</p>
+    <div class="meta"><span class="pill gold">初版体系</span><span class="pill">适用于 V0.46 起</span><span class="pill gray">每版独立评估</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>为什么需要</h2><p>LearnBuddy 的需求不是普通 CRUD。它包含 AI 生成、长任务、来源检索、学习交互、状态恢复和旧数据兼容。如果只写功能点，开发时会反复补洞。</p></article>
+    <article class="card panel"><h2>怎么使用</h2><p>每个版本进入开发前，按 8 个维度评分。平均分达到 3.5 可进入开发，核心维度低于 3 必须先补需求，不直接编码。</p></article>
+    <article class="card panel"><h2>输出什么</h2><p>输出版本评分、缺口清单、开发准入结论、必须补充的测试集和验收口径。后续每次版本评审都复用同一张表。</p></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>外部参考与本地化原则</h2><p>不是照搬某一个框架，而是抽取对 LearnBuddy 有用的质量门。</p></div><span class="pill">Sources</span></div>
+    <div class="table-wrap"><table><thead><tr><th>参考框架</th><th>可借鉴点</th><th>在 LearnBuddy 中转化成什么</th></tr></thead><tbody>
+      <tr><td>用户故事与验收条件</td><td>需求要说明用户是谁、想完成什么、为什么重要，并落到可验收的条件。</td><td>每个版本必须有用户场景、核心任务、完成信号和验收样例。</td></tr>
+      <tr><td>RICE 优先级</td><td>用 Reach、Impact、Confidence、Effort 约束“为什么先做这个”。</td><td>版本进入排期前必须说明影响面、价值、信心和工程成本。</td></tr>
+      <tr><td>ISO/IEC 25010</td><td>软件质量不只看功能，还看可靠性、可用性、性能、维护性、兼容性等。</td><td>版本需求必须覆盖状态恢复、旧数据兼容、可维护契约和测试方式。</td></tr>
+      <tr><td>可用性启发式</td><td>系统状态可见、贴近用户语言、错误可恢复、减少无关信息。</td><td>长任务必须有过程状态；学习页必须清楚当前在学什么、下一步做什么。</td></tr>
+      <tr><td>AI 任务评测</td><td>AI 功能要有任务特定测试集、评分标准和人类反馈闭环。</td><td>内容生成不能只看 JSON 成功，要有多领域 golden set、质量报告和返工规则。</td></tr>
+    </tbody></table></div>
+    <div class="callout" style="margin-top:14px">
+      <b>本地化取舍：</b>我们不用过重的企业级 PRD 模板；只保留能降低返工的质量门：问题是否真实、边界是否清楚、状态是否完整、数据是否可落库、AI 是否可评测、异常是否可恢复、旧数据是否安全。
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>8 维需求成熟度评分</h2><p>每项 0-5 分：0 只有想法，3 可以开发，4 可以测试，5 可以发版。</p></div><span class="pill gold">Quality Gate</span></div>
+    <div class="table-wrap"><table><thead><tr><th>维度</th><th>检查问题</th><th>3 分标准</th><th>5 分标准</th></tr></thead><tbody>
+      <tr><td>1. 用户价值</td><td>解决谁的什么痛点？用户完成后得到什么？</td><td>有明确用户、场景、目标和成功信号。</td><td>有真实案例、反例和可量化指标。</td></tr>
+      <tr><td>2. 范围边界</td><td>本版做什么、不做什么、依赖什么？</td><td>范围、非目标、依赖版本写清楚。</td><td>能防止需求蔓延，并给出后续版本归属。</td></tr>
+      <tr><td>3. 体验流程</td><td>用户从进入、等待、完成、失败、回看分别看到什么？</td><td>有主流程、关键状态和基本错误处理。</td><td>覆盖移动端、空态、失败、重试、回滚和恢复。</td></tr>
+      <tr><td>4. 数据契约</td><td>新增对象、字段、接口、状态机、迁移策略是否清楚？</td><td>核心实体、状态、读写接口可落地。</td><td>有 schema、兼容策略、迁移 dry-run 和回滚方案。</td></tr>
+      <tr><td>5. AI Loop 质量</td><td>AI 输入、来源、生成、评估、返工、停止条件是否完整？</td><td>有生成流程、质量门和失败降级。</td><td>有多轮 critic/revise、来源置信度、预算、trace 和可复盘报告。</td></tr>
+      <tr><td>6. 验收测试</td><td>如何证明做对了？靠人工看还是有评测集？</td><td>有端到端验收场景和基础测试。</td><td>有 golden set、异常集、旧数据集、浏览器截图和自动回归。</td></tr>
+      <tr><td>7. 运营可观测</td><td>上线后怎么知道卡住、质量差、用户不懂？</td><td>有事件、日志、状态页或后台指标。</td><td>有日报、聚类、告警、慢任务定位和用户痛点分析。</td></tr>
+      <tr><td>8. 发版安全</td><td>会不会影响线上用户数据？能否灰度、回滚、降级？</td><td>说明数据安全和基本回退。</td><td>有灰度策略、权限边界、积分影响、回滚脚本和监控阈值。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section" id="score">
+    <div class="section-head"><div><h2>V0.46 / V0.47 初步评估</h2><p>结论：两版都比早期方案可开发，但开发准入程度不同。</p></div><span class="pill">Assessment</span></div>
+    <div class="table-wrap"><table><thead><tr><th>版本</th><th>平均分</th><th>结论</th><th>当前可做</th><th>不建议直接做</th></tr></thead><tbody>
+      <tr><td><b>V0.46 教学内容 Loop v1</b></td><td><span class="score">3.7 / 5</span></td><td>可进入开发准备，但需要先补评测集和接口级细节。</td><td>M1 数据契约、fixtures、LessonBuildGraph skeleton、学习页状态原型。</td><td>不要直接一次性开发完整生成系统；先把质量门和回归样例建起来。</td></tr>
+      <tr><td><b>V0.47 路径级 Loop v1</b></td><td><span class="score warn">3.3 / 5</span></td><td>仍是候选方案，方向清楚，但依赖 V0.46 的真实数据和运行时。</td><td>可以做状态机设计、事件模型、JobReconciler 方案和接口草图。</td><td>不要现在做完整路径级自适应；没有单节质量数据，路径优化会空转。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>分维度评分细表</h2><p>用于定位“还能不能开发”和“卡在哪里”。</p></div><span class="pill">Score Detail</span></div>
+    <div class="table-wrap"><table><thead><tr><th>维度</th><th>V0.46</th><th>V0.46 说明</th><th>V0.47</th><th>V0.47 说明</th></tr></thead><tbody>
+      <tr><td>用户价值</td><td>4.0</td><td>痛点清晰：内容浅、来源弱、交互差。</td><td>4.0</td><td>痛点清晰：进度错位、生成卡住、反馈不回流。</td></tr>
+      <tr><td>范围边界</td><td>4.0</td><td>明确单节内容，不做路径重规划。</td><td>3.5</td><td>有边界，但路径级和后台分析仍容易扩张。</td></tr>
+      <tr><td>体验流程</td><td>3.8</td><td>8 环节和生成过程清楚，但还缺页面线框级状态。</td><td>3.2</td><td>路径首页/计划页/学习页一致性需要更细交互稿。</td></tr>
+      <tr><td>数据契约</td><td>4.0</td><td>实体较完整，但字段类型、接口和迁移策略还需落文档。</td><td>3.5</td><td>状态机对象清楚，但事件去重、并发锁和缓存一致性需细化。</td></tr>
+      <tr><td>AI Loop 质量</td><td>3.6</td><td>有 research/design/draft/critic/revise，但缺评分阈值和样例集。</td><td>3.0</td><td>路径信号回流清楚，但调参策略依赖 V0.46 数据。</td></tr>
+      <tr><td>验收测试</td><td>3.0</td><td>有验收信号，但 golden set、异常集、旧数据集未展开。</td><td>2.8</td><td>端到端状态恢复测试还不够细。</td></tr>
+      <tr><td>运营可观测</td><td>3.5</td><td>生成状态和 QualityReport 有方向，但后台指标需细化。</td><td>4.0</td><td>PathEvent、JobReconciler、PathAnalyzer 方向较完整。</td></tr>
+      <tr><td>发版安全</td><td>3.4</td><td>提到旧数据兼容，但还缺灰度、回滚和积分影响。</td><td>2.8</td><td>涉及任务队列和状态机，数据安全方案还要先设计。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section" id="gaps">
+    <div class="section-head"><div><h2>开发前必须补的缺口</h2><p>不是把需求写得更长，而是补上会影响开发收敛的关键件。</p></div><span class="pill red">Gaps</span></div>
+    <div class="grid2">
+      <article class="card panel">
+        <h2>V0.46 必补</h2>
+        <ul>
+          <li>建立 20-30 条内容质量 golden set：技术、语言、写作、营养、考试、职业转型各覆盖。</li>
+          <li>给 QualityReport 写明确阈值：depth、source、interactivity、clarity、risk。</li>
+          <li>补接口草图：创建生成任务、查询状态、读取 lesson、保存学习输入、重生成。</li>
+          <li>补旧数据兼容样例：旧 explain/practice/produce 到 LessonFlow 的转换 fixtures。</li>
+          <li>补学习页关键状态图：加载、生成中、失败、已完成、回看、重生成。</li>
+        </ul>
+      </article>
+      <article class="card panel">
+        <h2>V0.47 必补</h2>
+        <ul>
+          <li>先等 V0.46 产出真实 QualityReport 和用户学习事件，再锁定路径调参策略。</li>
+          <li>补 PathLoopState 状态机图，明确 current_unit、unlocked、pending_job、completed 的关系。</li>
+          <li>补任务一致性策略：任务已完成但前端仍等待、缓存已存在、重复点击完成、超时重试。</li>
+          <li>补 PathEvent 事件去重和幂等规则，避免重复扣积分和重复生成。</li>
+          <li>补后台分析的最小指标，不要一开始做大而全 BI。</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>建议的开发准入规则</h2><p>以后每个版本进入编码前都按这个规则判定。</p></div><span class="pill gold">Gate</span></div>
+    <div class="table-wrap"><table><thead><tr><th>阶段</th><th>分数区间</th><th>允许动作</th><th>禁止动作</th></tr></thead><tbody>
+      <tr><td>方向想法</td><td>0-2.4</td><td>讨论、调研、竞品分析。</td><td>不进入开发排期。</td></tr>
+      <tr><td>方案草案</td><td>2.5-3.4</td><td>做技术 spike、数据建模、原型验证。</td><td>不做完整功能发版。</td></tr>
+      <tr><td>开发准备</td><td>3.5-4.1</td><td>可排 M1/M2，先做契约、fixtures、接口 skeleton。</td><td>不省略测试集和兼容策略。</td></tr>
+      <tr><td>发版候选</td><td>4.2-5.0</td><td>进入完整实现、端到端验收、灰度和部署。</td><td>不无监控上线。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>参考链接</h2><p>后续体系迭代继续补来源。</p></div><span class="pill gray">References</span></div>
+    <div class="callout refs">
+      <a href="https://www.atlassian.com/agile/project-management/user-stories">Atlassian · User Stories</a>
+      <a href="https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/">Intercom · RICE</a>
+      <a href="https://iso25000.com/index.php/en/iso-25000-standards/iso-25010">ISO 25010 Quality Model</a>
+      <a href="https://www.nngroup.com/articles/ten-usability-heuristics/">NN/g · 10 Usability Heuristics</a>
+      <a href="https://platform.openai.com/docs/guides/evals">OpenAI · Evals</a>
+      <a href="https://arxiv.org/abs/2512.04442">TaskEval · Foundation-model task evals</a>
+    </div>
+  </section>
+
+  <div class="footer">LearnBuddy · 产品需求评估体系 v0.1 · 用于版本开发前质量门和发版验收。</div>
+</main>
+</body>
+</html>

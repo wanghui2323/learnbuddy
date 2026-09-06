@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 需求方案</title>
+<style>
+  :root {
+    --bg: #f7f4ee; --card: #ffffff; --line: #e7e1d6; --paper-2: #efeae0;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd; --amber-dark: #b9852f;
+    --blue: #3d6e9e; --blue-soft: #e3edf5; --green: #4a9d6e; --green-soft: #e7f3ec;
+    --radius: 14px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 8px 24px rgba(43,41,38,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.7; }
+  .topbar { position: sticky; top: 0; z-index: 30; background: #fffdf9ee; backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark)); color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  .ttl { font-weight: 700; font-size: 15px; }
+  .ttl small { font-weight: 500; color: var(--ink-faint); font-size: 12.5px; margin-left: 6px; }
+  .spacer { flex: 1; }
+  .nav { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; padding: 7px 13px; border-radius: 8px; font-weight: 600; }
+  .nav:hover, .nav.active { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 30px 24px 80px; }
+  .hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; border-radius: 18px; padding: 28px 30px; box-shadow: 0 12px 32px rgba(44,110,106,.22); }
+  .hero h1 { font-size: 24px; }
+  .hero p { margin-top: 8px; font-size: 14.5px; max-width: 920px; opacity: .96; }
+  .meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); }
+  .meta .k { font-size: 11px; opacity: .74; letter-spacing: .04em; }
+  .meta .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .quick-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .quick-actions a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 9px; background: rgba(255,255,255,.14); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,.16); }
+  .quick-actions a:hover { background: rgba(255,255,255,.22); }
+  .sec { margin-top: 34px; }
+  .sec h2 { font-size: 20px; margin-bottom: 4px; }
+  .desc { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .split { display: grid; grid-template-columns: 1.04fr .96fr; gap: 14px; }
+  .card, table, .diagram { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .card { padding: 18px 20px; }
+  table { width: 100%; border-collapse: collapse; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #faf7f1; color: var(--ink-soft); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  .diagram { padding: 18px 20px; overflow: auto; }
+  .arch-stack { display: flex; flex-direction: column; gap: 12px; min-width: 700px; }
+  .arch-node { position: relative; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg, #fff, #fcfaf6); padding: 16px 18px; }
+  .arch-node::before { content: ""; position: absolute; left: 0; top: 0; width: 6px; height: 100%; border-radius: 16px 0 0 16px; background: var(--teal); }
+  .arch-node h3 { font-size: 16px; margin-bottom: 6px; }
+  .arch-node p { color: var(--ink-soft); font-size: 13px; }
+  .arch-node ul { margin-top: 10px; padding-left: 18px; color: var(--ink-soft); font-size: 13px; }
+  .arch-arrow { align-self: center; width: 2px; height: 22px; background: linear-gradient(180deg, var(--teal), var(--amber)); position: relative; }
+  .arch-arrow::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 10px; height: 10px; border-right: 2px solid var(--amber); border-bottom: 2px solid var(--amber); transform: translateX(-50%) rotate(45deg); background: #fff; }
+  .flow-stack { display: flex; flex-direction: column; gap: 10px; min-width: 360px; }
+  .flow-step { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: linear-gradient(180deg, #fff, #fcfaf6); }
+  .flow-step b { display: block; font-size: 14px; margin-bottom: 4px; }
+  .flow-step span { display: block; color: var(--ink-soft); font-size: 12.5px; }
+  .flow-branch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .flow-pill { border: 1px dashed var(--line); border-radius: 12px; padding: 10px 12px; background: var(--paper-2); color: var(--ink-soft); font-size: 12.5px; text-align: center; }
+  .h-arrow { align-self: center; width: 18px; height: 2px; background: var(--amber); position: relative; margin: 0 auto; }
+  .h-arrow::after { content: ""; position: absolute; right: -1px; top: 50%; width: 8px; height: 8px; border-top: 2px solid var(--amber); border-right: 2px solid var(--amber); transform: translateY(-50%) rotate(45deg); }
+  @media (max-width: 860px) { .arch-stack { min-width: 0; } .flow-stack { min-width: 0; } .flow-branch { grid-template-columns: 1fr; } }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .b-base { background: var(--green-soft); color: var(--green); }
+  .b-pro { background: var(--amber-soft); color: var(--amber-dark); }
+  .note { background: var(--amber-soft); color: #87561d; border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-top: 12px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .lk { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid var(--line); color: var(--ink); font-size: 13px; background: #fff; }
+  .lk:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .foot { margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: 12.5px; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .ttl small { display: none; } .topbar { padding: 0 14px; gap: 8px; overflow-x: auto; } .wrap { padding: 22px 16px 70px; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">R</div>
+  <div class="ttl">LearnBuddy 需求方案<small>产品定位 · 模式分层 · 商业化</small></div>
+  <div class="spacer"></div>
+  <a class="nav" href="./文档中心.html">文档中心</a>
+  <a class="nav" href="./工作台.html">工作台</a>
+  <a class="nav active" href="./需求方案.html">需求方案</a>
+  <a class="nav" href="./技术方案.html">技术方案</a>
+  <a class="nav" href="./架构总览.html">架构总览</a>
+  <a class="nav" href="./协作机制.html">协作机制</a>
+  <a class="nav" href="./开发方案与计划.html">主方案</a>
+  <a class="nav" href="./Harness技术体系对齐.html">Harness</a>
+  <a class="nav" href="./OpenClaw接入方案.html">OpenClaw</a>
+</div>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>LearnBuddy 学习伙伴 · 需求方案</h1>
+    <p>这页现在用于系统化说明 LearnBuddy 到底要做什么、为什么这样分层、用户会经历什么闭环，以及登录、支付、积分和升级模式怎么挂在产品结构里。你应该可以通过这页判断方案是否完整、阶段是否合理、后续几周要补什么。</p>
+    <div class="meta">
+      <div><div class="k">产品定位</div><div class="v">个性化学习系统</div></div>
+      <div><div class="k">核心差异</div><div class="v">评估 + 路径 + 记忆</div></div>
+      <div><div class="k">双模式</div><div class="v">标准学习 + 个人助理升级</div></div>
+      <div><div class="k">当前新增</div><div class="v">登录 · 支付 · 积分</div></div>
+    </div>
+    <div class="quick-actions">
+      <a href="#need-arch">需求架构图</a>
+      <a href="#journey">用户旅程</a>
+      <a href="#billing-flow">商业化链路</a>
+      <a href="./01-需求方案.md">打开 Markdown 原文</a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>产品定位</h2>
+    <div class="desc">LearnBuddy 不是课程平台，也不是普通聊天机器人，而是把“目标澄清、即时评估、个性化路径、持续执行、记忆回流”做成可复用的学习系统。</div>
+    <div class="grid">
+      <div class="card"><b>元目标</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">把作者 dogfood 过的方法论抽象成面向所有人的平台。</p></div>
+      <div class="card"><b>不限领域</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">语言、编程、写作、营养、考研、职业转型都进入同一引擎。</p></div>
+      <div class="card"><b>用户得到什么</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">不是一份模板计划，而是一套可执行、可考核、可调整的学习闭环。</p></div>
+      <div class="card"><b>首个 demo</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">日语 N3 备考 3 个月，用非技术场景验证通用性。</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="need-arch">
+    <h2>需求架构图</h2>
+    <div class="desc">需求层次要从下往上看：先有基础学习闭环，再有长期陪伴，再接商业化底座，最后才是升级模式。</div>
+    <div class="diagram">
+      <object class="arch-svg" type="image/svg+xml" data="./需求架构图.svg" aria-label="需求架构图"></object>
+    </div>
+    <div class="note">理解顺序要固定：先把基础学习系统做扎实，再叠加升级模式，最后通过账号与商业化底座支撑正式运营。</div>
+  </section>
+
+  <section class="sec" id="journey">
+    <h2>用户旅程闭环图</h2>
+    <div class="desc">用户不会只生成一次路径就结束，而是持续进入“执行 → 评估 → 调整”的循环。</div>
+    <div class="split">
+      <div class="diagram">
+        <object class="arch-svg" type="image/svg+xml" data="./用户旅程闭环图.svg" aria-label="用户旅程闭环图"></object>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th style="width:120px">阶段</th><th>用户感知</th><th>系统职责</th></tr></thead>
+          <tbody>
+            <tr><td><b>进入</b></td><td>像教练在收集你的真实情况</td><td>把自然语言收敛成结构化参数包</td></tr>
+            <tr><td><b>评估</b></td><td>知道自己真实起点，而不是只写一句 baseline</td><td>形成画像和差异化判断依据</td></tr>
+            <tr><td><b>生成</b></td><td>拿到属于自己的学习路径</td><td>输出可执行、可考核、可调整的计划</td></tr>
+            <tr><td><b>执行</b></td><td>每天都知道该学什么、练什么、复习什么</td><td>推荐、学练、学情、提醒联动</td></tr>
+            <tr><td><b>调整</b></td><td>系统越用越懂自己</td><td>记忆、掌握度和重规划持续回流</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>关键需求模块</h2>
+    <div class="desc">通过这张表，你可以判断当前哪些模块已成形，哪些模块决定未来几周是否“OK”。</div>
+    <table>
+      <thead><tr><th style="width:160px">模块</th><th style="width:220px">用户看到什么</th><th>系统必须做到什么</th><th style="width:120px">重要度</th></tr></thead>
+      <tbody>
+        <tr><td><b>对话引导</b></td><td>不是填表，而是被逐步问清目标和约束</td><td>收敛目标、时间、节奏、风格、难点，形成参数包</td><td>P0</td></tr>
+        <tr><td><b>即时基线评估</b></td><td>当场出题并区分“自己会”和“借助 AI 会”</td><td>完成“出题 → 回答 → 判分 → 画像”闭环</td><td>P0</td></tr>
+        <tr><td><b>个性化路径</b></td><td>拿到属于自己的路径，不是模板课表</td><td>能消费画像、目标、预算和约束条件</td><td>P0</td></tr>
+        <tr><td><b>学习空间</b></td><td>每天进入都有清晰任务和反馈</td><td>承载今日任务、学练、学情、复习与自检</td><td>P0</td></tr>
+        <tr><td><b>推荐与重规划</b></td><td>系统知道今天该学什么、卡住时怎么办</td><td>根据掌握度、行为和记忆动态调节路线</td><td>P0</td></tr>
+        <tr><td><b>个人记忆</b></td><td>系统越用越懂你</td><td>偏好、弱项、节奏和背景可以长期沉淀</td><td>P1</td></tr>
+        <tr><td><b>商业化底座</b></td><td>能顺滑登录、购买、开通升级模式</td><td>账号、支付、积分、权益和风控必须成环</td><td>P1</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>用户模式分层</h2>
+    <div class="desc">产品不是一种模式走天下，而是默认模式 + 用户自选升级模式的组合。</div>
+    <table>
+      <thead><tr><th style="width:150px">模式</th><th style="width:120px">定位</th><th>核心能力</th><th style="width:140px">收费</th></tr></thead>
+      <tbody>
+        <tr><td><b>标准学习模式</b></td><td><span class="tag b-base">默认模式</span></td><td>路径生成、学习空间、学练、学情、推荐、复习、基础提醒</td><td>免费或基础订阅</td></tr>
+        <tr><td><b>个人助理模式</b></td><td><span class="tag b-pro">升级模式</span></td><td>托管的专属学习助理、长期记忆、主动提醒、主动复盘、跨端联动、IM 对话入口</td><td>额外收费，用户自选开通</td></tr>
+      </tbody>
+    </table>
+    <div class="note">OpenClaw 只承担升级模式的运行时和承载层，不替代 LearnBuddy 主系统，也不让学习真相源跑到外部去。</div>
+  </section>
+
+  <section class="sec">
+    <h2>商业模式详表</h2>
+    <div class="desc">商品体系按“订阅 + 积分 + 升级模式 + 混合套餐”组织，明确每一类的价格、计费单位、有效期和退款规则。</div>
+    <table>
+      <thead><tr><th style="width:160px">商品</th><th style="width:160px">计费</th><th style="width:160px">有效期</th><th>包含权益</th><th>退款规则</th></tr></thead>
+      <tbody>
+        <tr><td><b>基础订阅（月度）</b></td><td>¥29 / 月</td><td>30 天</td><td>路径生成、学习空间、学练、学情、推荐、复习</td><td>7 天内未使用可全额退款</td></tr>
+        <tr><td><b>基础订阅（年度）</b></td><td>¥288 / 年</td><td>365 天</td><td>同月度权益，价格折扣</td><td>7 天内未使用可全额退款</td></tr>
+        <tr><td><b>积分包（小）</b></td><td>¥18 / 100 积分</td><td>180 天</td><td>扩展高级生成次数、专项练习包</td><td>未消耗部分按比例退款</td></tr>
+        <tr><td><b>积分包（大）</b></td><td>¥168 / 1200 积分</td><td>365 天</td><td>同小包，单价更低</td><td>未消耗部分按比例退款</td></tr>
+        <tr><td><b>个人助理升级（Pro）</b></td><td>¥99 / 月</td><td>30 天，可随时关停</td><td>托管助理、长期记忆、主动提醒、主动复盘、跨端联动</td><td>按已开通天数按比例退款</td></tr>
+        <tr><td><b>混合套餐</b></td><td>¥198 / 月</td><td>30 天</td><td>基础订阅 + 积分包 + Pro 升级打包</td><td>同订阅规则</td></tr>
+      </tbody>
+    </table>
+    <div class="note">赠送积分（如邀请奖励、活动赠送）与付费积分分别记账；赠送积分优先消耗，过期不补不退。</div>
+  </section>
+
+  <section class="sec">
+    <h2>升级模式详表</h2>
+    <div class="desc">升级模式不是单一开关，而是一组能力集合。要让用户清楚开通之后得到什么、关停之后会失去什么。</div>
+    <table>
+      <thead><tr><th style="width:160px">能力</th><th>标准模式</th><th>个人助理升级</th><th style="width:160px">触发 / 关停条件</th></tr></thead>
+      <tbody>
+        <tr><td><b>路径生成</b></td><td>支持</td><td>支持 + 自动适配长期目标</td><td>默认开启；订阅失效则回到标准模式</td></tr>
+        <tr><td><b>学习空间</b></td><td>支持</td><td>支持 + 每日主动推送任务</td><td>推送可关；订阅失效推送关闭</td></tr>
+        <tr><td><b>学练与自检</b></td><td>支持</td><td>支持 + 主动复盘与弱项跟进</td><td>默认开启</td></tr>
+        <tr><td><b>长期记忆</b></td><td>偏好与基础画像</td><td>完整对话 / 节奏 / 弱项历史</td><td>关停 Pro 时停止写入并保留数据</td></tr>
+        <tr><td><b>主动提醒</b></td><td>基础提醒</td><td>每日 / 每周主动触达</td><td>用户可单独关闭推送</td></tr>
+        <tr><td><b>跨端联动</b></td><td>Web 主操作</td><td>Web + Web Push + IM 入口</td><td>IM 入口按通道单独授权</td></tr>
+        <tr><td><b>OpenClaw 承载</b></td><td>不启用</td><td>启用托管运行时</td><td>由用户主动开通；订阅失效自动关停</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>评估闭环细则</h2>
+    <div class="desc">即时基线评估必须有可解释的出题范围和判分标准，独立和协作出题分开跑，避免“会不会”被 LLM 表现掩盖。</div>
+    <table>
+      <thead><tr><th style="width:160px">维度</th><th>独立评估</th><th>协作评估</th><th>画像产出</th></tr></thead>
+      <tbody>
+        <tr><td><b>出题范围</b></td><td>用户目标领域的核心概念、关键操作、典型陷阱</td><td>同一范围，但允许使用 AI 辅助</td><td>领域覆盖矩阵</td></tr>
+        <tr><td><b>题量与时长</b></td><td>6–10 题，控制在 8–12 分钟</td><td>4–6 题，控制在 10–15 分钟</td><td>完成度与耗时</td></tr>
+        <tr><td><b>判分标准</b></td><td>关闭 AI，规则化判分；解释题给要点匹配</td><td>使用 AI 后判分，记录提示词与过程</td><td>双坐标系独立 vs 协作画像</td></tr>
+        <tr><td><b>画像字段</b></td><td>indep_score、indep_gap、indep_risk</td><td>collab_score、collab_uplift、prompt_skill</td><td>写入 user_profile.json</td></tr>
+        <tr><td><b>回写主系统</b></td><td>进入 mastery / memory / recommend</td><td>进入 recommend / replan</td><td>在 generator 消费画像</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="billing-flow">
+    <h2>商业化链路图</h2>
+    <div class="desc">支付、积分和升级模式不是零散功能，而是一条完整运营链路。</div>
+    <div class="split">
+      <div class="diagram">
+        <object class="arch-svg" type="image/svg+xml" data="./商业化链路图.svg" aria-label="商业化链路图"></object>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th style="width:120px">能力</th><th>前置依赖</th></tr></thead>
+          <tbody>
+            <tr><td><b>手机号登录</b></td><td>短信服务商、验证码限频、绑定策略、隐私说明、风控策略</td></tr>
+            <tr><td><b>支付</b></td><td>支付通道、商品体系、订单状态机、回调验签、幂等补偿</td></tr>
+            <tr><td><b>积分体系</b></td><td>积分账户、积分流水、赠送积分、付费/赠送区分、退款规则</td></tr>
+            <tr><td><b>升级模式</b></td><td>订阅权益、积分消费规则、跨端身份和消息触点</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>怎么看接下来几周是否 OK</h2>
+    <div class="desc">如果你要用这页判断排期和节奏，重点看这 4 件事是不是一起推进，而不是只盯一个点。</div>
+    <div class="grid">
+      <div class="card"><b>第一类</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">学习闭环有没有继续变完整：评估、自检、复习、重规划有没有贯通。</p></div>
+      <div class="card"><b>第二类</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">长期连续性有没有增强：后续周、推送回流、个人记忆有没有继续往前走。</p></div>
+      <div class="card"><b>第三类</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">运营底座有没有定清楚：登录、支付、积分、升级模式有没有成链。</p></div>
+      <div class="card"><b>第四类</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">有没有守住边界：不把主系统真相源、Agent、IM、支付混到一起。</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="harness-need">
+    <h2>Harness 能力地图（需求侧）</h2>
+    <div class="desc">用户在产品里感知到的所有“模型在被系统使用”的体验点，背后都对应 harness 体系里的某一层。这里把它们一一对应，避免后面需求评审和 harness 对齐各说各话。</div>
+    <table>
+      <thead><tr><th style="width:60px">层</th><th style="width:140px">产品体验点</th><th>用户感知</th><th>对应 harness 篇</th></tr></thead>
+      <tbody>
+        <tr><td>L1</td><td>不同任务走不同模型</td><td>评估 / 复盘类问题更准，普通对话更省</td><td>04 模型调用与推理控制</td></tr>
+        <tr><td>L2</td><td>对话不会“一问就忘”</td><td>系统持续记得偏好、弱项、节奏</td><td>06 Context · 07 Memory</td></tr>
+        <tr><td>L2</td><td>讲解有据可查</td><td>推荐内容引用了用户上传的资料</td><td>13 RAG</td></tr>
+        <tr><td>L2</td><td>生成失败也有交代</td><td>不会卡死，会提示“暂不可用”并保留输入</td><td>11 输出解析与护栏</td></tr>
+        <tr><td>L3</td><td>输入不会被诱导失控</td><td>异常输入有拦截和审计</td><td>14 安全攻防</td></tr>
+        <tr><td>L4</td><td>个人助理跨端不丢上下文</td><td>Web / Web Push / IM 入口交接自然</td><td>19 协作机制（Handoff / A2A）</td></tr>
+        <tr><td>L5</td><td>每天 / 每周有反馈</td><td>系统告诉你“好不好、贵不贵、要不要调整”</td><td>21 Eval · 22 Token 经济学</td></tr>
+      </tbody>
+    </table>
+    <div class="note">完整 23 篇对齐见 <a href="./Harness技术体系对齐.html">Harness 技术体系对齐.html</a>。</div>
+  </section>
+
+  <section class="sec">
+    <h2>边界与非目标</h2>
+    <div class="desc">把不做什么说清楚，后续排期才不会失焦。</div>
+    <table>
+      <thead><tr><th style="width:180px">主题</th><th>当前边界</th></tr></thead>
+      <tbody>
+        <tr><td><b>主产品边界</b></td><td>继续以 LearnBuddy Web / PWA 为主，不因为 OpenClaw 就推翻主产品结构。</td></tr>
+        <tr><td><b>学习真相源</b></td><td>计划、学情、记忆、推荐、权益都统一在 LearnBuddy 主系统，不在 IM 侧分叉。</td></tr>
+        <tr><td><b>商业化边界</b></td><td>对外卖的是订阅、积分和升级模式，不直接暴露 token 或模型成本。</td></tr>
+        <tr><td><b>移动端边界</b></td><td>当前不做独立 App，不在手机端重做完整学习流程。</td></tr>
+        <tr><td><b>Agent 边界</b></td><td>先把学习闭环做好，再把 agent 接到上层；不允许“什么都上 agent”。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="links">
+    <a class="lk" href="./开发方案与计划.html#progress">查看当前进度</a>
+    <a class="lk" href="./开发方案与计划.html#todo">查看待办任务</a>
+    <a class="lk" href="./开发方案与计划.html">查看主方案</a>
+    <a class="lk" href="./技术方案.html#tech-arch">查看技术总图</a>
+    <a class="lk" href="./技术方案.html#billing-arch">查看支付技术架构</a>
+    <a class="lk" href="./01-需求方案.md">查看 Markdown 真相源</a>
+  </div>
+
+  <div class="foot">
+    LearnBuddy 需求方案页 · 现在包含需求架构图、用户旅程、商业化链路和阶段判断口径 · 深度原文仍以 `01-需求方案.md` 为准
+  </div>
+</div>
+</body>
+</html>

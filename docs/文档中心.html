@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 文档中心</title>
+<style>
+  :root {
+    --bg: #f7f4ee;
+    --card: #ffffff;
+    --paper: #fffdfa;
+    --teal: #2c6e6a;
+    --teal-dark: #235955;
+    --teal-soft: #e4efee;
+    --amber: #d98a3d;
+    --amber-soft: #fbeedd;
+    --ink: #2b2926;
+    --muted: #6b6760;
+    --faint: #a39e94;
+    --line: #e7e1d6;
+    --shadow: 0 1px 2px rgba(43,41,38,.05), 0 12px 30px rgba(43,41,38,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 62px;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--line);
+    background: #fffdf9ee;
+    backdrop-filter: blur(8px);
+  }
+  .logo {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff;
+    font-weight: 800;
+  }
+  .ttl { font-weight: 800; font-size: 16px; white-space: nowrap; }
+  .ttl small { display: block; color: var(--faint); font-weight: 600; font-size: 12px; }
+  .nav {
+    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 9px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 750;
+    white-space: nowrap;
+  }
+  .nav a:hover, .nav a.active { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 30px 24px 78px; }
+  .hero {
+    padding: 30px;
+    border-radius: 20px;
+    background:
+      radial-gradient(circle at 88% 16%, rgba(216,138,61,.22), transparent 30%),
+      linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: #fff;
+    box-shadow: 0 14px 34px rgba(44,110,106,.22);
+  }
+  .hero h1 { font-size: 28px; line-height: 1.24; }
+  .hero p { max-width: 880px; margin-top: 8px; color: rgba(255,255,255,.88); font-size: 15px; }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .metric {
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 14px;
+    background: rgba(255,255,255,.12);
+  }
+  .metric .k { color: rgba(255,255,255,.72); font-size: 12px; font-weight: 700; }
+  .metric .v { margin-top: 2px; font-size: 16px; font-weight: 850; }
+  .sec { margin-top: 34px; scroll-margin-top: 88px; }
+  .sec-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  h2 { font-size: 22px; line-height: 1.3; }
+  .desc { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .pill.gold { background: var(--amber-soft); color: #8a551d; }
+  .pill.gray { background: #eee9df; color: #69625a; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+  .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card, .table-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card { padding: 18px; }
+  .card h3 { margin-top: 9px; font-size: 17px; }
+  .card p { margin-top: 7px; color: var(--muted); font-size: 13.5px; min-height: 44px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .lk {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 11px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: #fff;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .lk:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .table-card { overflow: auto; }
+  table { width: 100%; min-width: 780px; border-collapse: collapse; background: var(--paper); }
+  th, td { padding: 13px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 13px; }
+  th { background: #f3eee5; color: var(--muted); font-size: 12px; }
+  tr:last-child td { border-bottom: 0; }
+  .rule {
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: #fff8ec;
+    border: 1px solid #f2d9b6;
+    color: #7f541c;
+    font-size: 13.5px;
+  }
+  .footer {
+    margin-top: 38px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--faint);
+    text-align: center;
+    font-size: 12.5px;
+  }
+  @media (max-width: 920px) {
+    .topbar { align-items: flex-start; flex-wrap: wrap; }
+    .nav { width: 100%; justify-content: flex-start; margin-left: 0; }
+    .meta, .grid, .grid.two { grid-template-columns: 1fr; }
+    .wrap { padding: 22px 16px 56px; }
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">L</div>
+  <div class="ttl">LearnBuddy 文档中心<small>目录入口 · 不承载版本细节</small></div>
+  <nav class="nav" aria-label="文档导航">
+    <a class="active" href="./文档中心.html">文档中心</a>
+    <a href="./LearnBuddy项目工作台.html">项目工作台</a>
+    <a href="./设计规范.html">设计规范</a>
+    <a href="#versions">版本入口</a>
+    <a href="#product">产品架构</a>
+    <a href="#tech">技术架构</a>
+    <a href="./需求评估体系.html">评估体系</a>
+    <a href="#research">竞品调研</a>
+    <a href="#archive">归档</a>
+  </nav>
+</div>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>LearnBuddy 学习伙伴 · 文档中心</h1>
+    <p>这里是项目文档目录，不再混放具体版本需求。版本细节统一进入项目工作台，产品架构、技术架构、竞品调研和归档资料按类别查看。</p>
+    <div class="meta">
+      <div class="metric"><div class="k">长期真相源</div><div class="v">项目工作台</div></div>
+      <div class="metric"><div class="k">版本管理</div><div class="v">下拉二级入口</div></div>
+      <div class="metric"><div class="k">设计规范</div><div class="v">跨版本准则</div></div>
+      <div class="metric"><div class="k">归档原则</div><div class="v">不占一级入口</div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="start">
+    <div class="sec-head">
+      <div>
+        <h2>推荐查看路径</h2>
+        <div class="desc">日常先看项目工作台；涉及页面体验时先看设计规范；再按需查产品/技术架构、调研或归档。</div>
+      </div>
+      <span class="pill">Start Here</span>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <span class="pill">1</span>
+        <h3>项目工作台</h3>
+        <p>当前版本、版本下拉、需求入口、技术账、验收规则都在这里。</p>
+        <div class="links"><a class="lk" href="./LearnBuddy项目工作台.html">打开项目工作台</a></div>
+      </article>
+      <article class="card">
+        <span class="pill">2</span>
+        <h3>通用设计规范</h3>
+        <p>页面、组件、图片资产、AI 状态和学习流程展示的跨版本准则。</p>
+        <div class="links"><a class="lk" href="./设计规范.html">打开设计规范</a></div>
+      </article>
+      <article class="card">
+        <span class="pill">3</span>
+        <h3>产品架构 / 技术架构</h3>
+        <p>看产品机制、用户路径、系统分层、生成链路和数据边界。</p>
+        <div class="links"><a class="lk" href="#product">产品架构</a><a class="lk" href="#tech">技术架构</a></div>
+      </article>
+      <article class="card">
+        <span class="pill">4</span>
+        <h3>评估体系 / 调研归档</h3>
+        <p>进入开发前先过需求质量门；竞品和技术调研作为版本判断的参考。</p>
+        <div class="links"><a class="lk" href="./需求评估体系.html">评估体系</a><a class="lk" href="#research">竞品调研</a><a class="lk" href="#archive">归档</a></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="versions">
+    <div class="sec-head">
+      <div>
+        <h2>版本入口</h2>
+        <div class="desc">每个版本都有独立三件套页面，详细说明需求方案、技术方案和开发范式。这里仅作为快速入口。</div>
+      </div>
+      <span class="pill gold">Version</span>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr><th style="width:130px">版本</th><th style="width:150px">状态</th><th>主题</th><th style="width:180px">入口</th></tr></thead>
+        <tbody>
+          <tr><td><b>V0.49.1</b></td><td>已验收</td><td>自学可执行层与真实 LLM 质量验收</td><td><a class="lk" href="./versions/v0.49.1-自学可执行层.html">查看三件套</a></td></tr>
+          <tr><td><b>V0.49</b></td><td>已验收</td><td>教学内容密度、展开层与时长合同</td><td><a class="lk" href="./versions/v0.49-教学内容密度补丁.html">查看三件套</a></td></tr>
+          <tr><td><b>V0.48</b></td><td>已提交</td><td>教学内容生成流水线</td><td><a class="lk" href="./versions/v0.48-教学内容流水线.html">查看三件套</a></td></tr>
+          <tr><td><b>V0.47</b></td><td>已开发</td><td>路径级 Loop v1</td><td><a class="lk" href="./versions/v0.47-路径级Loop-v1.html">查看三件套</a></td></tr>
+          <tr><td><b>V0.46</b></td><td>已开发</td><td>教学内容 Loop v1</td><td><a class="lk" href="./versions/v0.46-教学内容Loop-v1.html">查看三件套</a></td></tr>
+          <tr><td><b>V0.45</b></td><td>已开发</td><td>项目工作台与版本管理中心</td><td><a class="lk" href="./versions/v0.45-工作台治理.html">查看三件套</a></td></tr>
+          <tr><td><b>V0.44</b></td><td>方案档案</td><td>教学内容 Loop Engine 方案版，不是已开发版本</td><td><a class="lk" href="./versions/v0.44-内容Loop方案档案.html">查看三件套</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="product">
+    <div class="sec-head">
+      <div>
+        <h2>产品架构</h2>
+        <div class="desc">产品定位、用户路径、学习机制和商业化相关材料。</div>
+      </div>
+      <span class="pill">Product</span>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="pill">需求</span><h3>需求方案</h3><p>产品定位、用户场景、学习机制、商业化需求。</p><div class="links"><a class="lk" href="./需求方案.html">HTML</a><a class="lk" href="./01-需求方案.md">Markdown</a></div></article>
+      <article class="card"><span class="pill gold">设计</span><h3>通用设计规范</h3><p>LearnBuddy 的信息层级、组件语言、视觉资产和 AI 状态表达准则。</p><div class="links"><a class="lk" href="./设计规范.html">打开规范</a></div></article>
+      <article class="card"><span class="pill">原型</span><h3>产品原型</h3><p>早期页面形态和交互原型，仅作为设计背景。</p><div class="links"><a class="lk" href="./产品原型.html">打开原型</a></div></article>
+      <article class="card"><span class="pill">旅程</span><h3>用户旅程闭环</h3><p>从创建路径、学习、反馈到复盘的闭环视角。</p><div class="links"><a class="lk" href="./用户旅程闭环图.svg">查看图</a></div></article>
+      <article class="card"><span class="pill">商业化</span><h3>积分 / 支付 / 权益</h3><p>支付、积分账户和权益链路相关图示。</p><div class="links"><a class="lk" href="./商业化链路图.svg">商业化链路</a><a class="lk" href="./支付权益技术架构.svg">权益架构</a></div></article>
+    </div>
+  </section>
+
+  <section class="sec" id="tech">
+    <div class="sec-head">
+      <div>
+        <h2>技术架构</h2>
+        <div class="desc">系统分层、内容生成、执行链路、RAG/Agent/MCP 和兼容策略。</div>
+      </div>
+      <span class="pill">Tech</span>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="pill">总览</span><h3>架构总览</h3><p>三层架构、闭环机制和路线图。</p><div class="links"><a class="lk" href="./架构总览.html">打开</a><a class="lk" href="./技术架构图.svg">技术架构图</a></div></article>
+      <article class="card"><span class="pill">方案</span><h3>技术方案</h3><p>Agent / Skill / MCP / Memory / RAG 等技术分层。</p><div class="links"><a class="lk" href="./技术方案.html">HTML</a><a class="lk" href="./02-技术方案.md">Markdown</a></div></article>
+      <article class="card"><span class="pill">链路</span><h3>生成与执行链路</h3><p>学习路径生成、内容生成和工具执行的关键链路。</p><div class="links"><a class="lk" href="./生成链路.svg">生成链路</a><a class="lk" href="./执行链路.svg">执行链路</a></div></article>
+      <article class="card"><span class="pill">协作</span><h3>协作机制</h3><p>文档治理、DoD、更新顺序和协作边界。</p><div class="links"><a class="lk" href="./协作机制.html">HTML</a><a class="lk" href="./04-进度管理.md">Markdown</a></div></article>
+      <article class="card"><span class="pill gold">评估</span><h3>产品需求评估体系</h3><p>开发前用 8 维成熟度评分评估版本需求，避免凭感觉推进。</p><div class="links"><a class="lk" href="./需求评估体系.html">打开评估体系</a></div></article>
+    </div>
+  </section>
+
+  <section class="sec" id="research">
+    <div class="sec-head">
+      <div>
+        <h2>竞品与外部调研</h2>
+        <div class="desc">这些是参考材料或未来候选，不直接等同于当前开发版本。</div>
+      </div>
+      <span class="pill gray">Research</span>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="pill">竞品</span><h3>AI-Shifu 对比</h3><p>课程运行时、内容交付和产品机制的对比分析。</p><div class="links"><a class="lk" href="./AI-Shifu对比分析报告.html">打开报告</a></div></article>
+      <article class="card"><span class="pill gray">技术调研</span><h3>Harness 技术体系</h3><p>模型、Agent、外部工程体系的技术对齐材料。</p><div class="links"><a class="lk" href="./Harness技术体系对齐.html">打开</a></div></article>
+      <article class="card"><span class="pill gray">未来候选</span><h3>OpenClaw 接入方案</h3><p>个人助理升级模式候选，不属于当前确认开发主线。</p><div class="links"><a class="lk" href="./OpenClaw接入方案.html">打开</a></div></article>
+    </div>
+  </section>
+
+  <section class="sec" id="archive">
+    <div class="sec-head">
+      <div>
+        <h2>归档与原文</h2>
+        <div class="desc">早期材料保留为背景，不再作为当前状态真相源。</div>
+      </div>
+      <span class="pill gray">Archive</span>
+    </div>
+    <div class="grid two">
+      <article class="card"><span class="pill gray">旧总览</span><h3>早期工作台与主方案</h3><p>早期大而全总览，后续以项目工作台和 SPEC ADR 为准。</p><div class="links"><a class="lk" href="./工作台.html">早期工作台</a><a class="lk" href="./开发方案与计划.html">主方案 HTML</a><a class="lk" href="./03-开发方案与计划.md">主方案 Markdown</a></div></article>
+      <article class="card"><span class="pill gray">专项档案</span><h3>V0.44 教学内容 Loop</h3><p>方案打磨和外部调研归档，不是已开发版本。</p><div class="links"><a class="lk" href="./教学内容Loop开发工作台.html">打开档案</a></div></article>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="rule">
+      维护规则：新增需求先进入项目工作台的版本池；进入开发前必须有版本号、范围、产物、验收口径、独立三件套页面，并通过需求评估体系初评。涉及页面、组件、图片资产或 AI 状态展示的迭代，先对照通用设计规范。文档中心只维护目录入口，不再承载版本细节。
+    </div>
+  </section>
+
+  <div class="footer">LearnBuddy 文档中心 · 目录入口只做导航，版本细节回到项目工作台维护。</div>
+</main>
+</body>
+</html>

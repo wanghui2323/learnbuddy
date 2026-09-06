@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>LearnBuddy · Harness 系统审计</title>
+<style>
+  :root {
+    --bg:#f6f4ef; --paper:#fff; --ink:#252724; --muted:#686b65; --line:#dddcd5;
+    --teal:#236b65; --teal-soft:#e5f0ee; --blue:#355f8a; --blue-soft:#e7eef6;
+    --amber:#a96520; --amber-soft:#f8ead7; --red:#a4473d; --red-soft:#f6e5e1;
+    --green:#337451; --green-soft:#e5f1e9; --shadow:0 8px 24px rgba(37,39,36,.06);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  a{color:inherit}
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;min-height:56px;padding:0 24px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+  .brand{display:flex;align-items:center;gap:10px;min-width:max-content;font-weight:750}
+  .logo{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--teal);color:#fff}
+  .nav{display:flex;gap:2px;margin-left:auto;overflow:auto}
+  .nav a{display:flex;align-items:center;min-height:44px;padding:0 11px;border-radius:8px;color:var(--muted);font-size:13px;font-weight:650;text-decoration:none;white-space:nowrap}
+  .nav a:hover,.nav a:focus-visible,.nav a.active{background:var(--teal-soft);color:var(--teal);outline:none}
+  .wrap{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:30px 0 72px}
+  .hero{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.8fr);gap:24px;padding:28px;border:1px solid #cfdedb;border-radius:18px;background:linear-gradient(135deg,#f9fffd,#edf5f2);box-shadow:var(--shadow)}
+  .eyebrow{color:var(--teal);font-size:12px;font-weight:800;text-transform:uppercase}
+  h1{margin:7px 0 10px;font-size:30px;line-height:1.25;letter-spacing:-.02em}
+  .lead{max-width:760px;margin:0;color:#50544f;font-size:15.5px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none}
+  .btn.primary{border-color:var(--teal);background:var(--teal);color:#fff}
+  .btn:hover,.btn:focus-visible{box-shadow:0 0 0 3px rgba(35,107,101,.13);outline:none}
+  .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}
+  .metric{min-height:92px;padding:14px;border:1px solid #d7e3e0;border-radius:12px;background:rgba(255,255,255,.82)}
+  .metric .k{color:var(--muted);font-size:12px}
+  .metric .v{margin-top:4px;font-size:23px;font-weight:800;line-height:1.25}
+  .metric.wide{grid-column:1/-1;min-height:auto}
+  .metric.wide .v{font-size:15px;color:var(--amber)}
+  .section{margin-top:34px;scroll-margin-top:76px}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}
+  h2{margin:0;font-size:20px;line-height:1.35}
+  .section-head p{margin:0;color:var(--muted);font-size:13px}
+  .callout{padding:18px 20px;border-left:4px solid var(--teal);border-radius:0 12px 12px 0;background:var(--paper);box-shadow:var(--shadow)}
+  .callout strong{display:block;margin-bottom:5px;font-size:16px}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .panel{padding:18px;border:1px solid var(--line);border-radius:13px;background:var(--paper);box-shadow:var(--shadow)}
+  .panel h3{margin:0 0 8px;font-size:15px}
+  .panel ul{margin:0;padding-left:19px;color:#4e514c}
+  .panel li+li{margin-top:5px}
+  .flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:stretch}
+  .flow-step{position:relative;padding:15px 14px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+  .flow-step:not(:last-child)::after{content:"→";position:absolute;right:-10px;top:50%;z-index:2;color:var(--teal);font-weight:900;transform:translate(50%,-50%)}
+  .flow-step .n{color:var(--teal);font-size:11px;font-weight:800}
+  .flow-step strong{display:block;margin:4px 0 3px}
+  .flow-step span{color:var(--muted);font-size:12.5px}
+  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px;background:var(--paper);box-shadow:var(--shadow)}
+  table{width:100%;min-width:820px;border-collapse:collapse}
+  th,td{padding:12px 13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{position:sticky;top:0;background:#f4f2ed;color:#5e625d;font-size:12px}
+  tr:last-child td{border-bottom:0}
+  code{padding:1px 5px;border-radius:5px;background:#f0eee8;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{display:inline-flex;align-items:center;min-height:26px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:800;white-space:nowrap}
+  .tag.good{background:var(--green-soft);color:var(--green)}
+  .tag.part{background:var(--amber-soft);color:var(--amber)}
+  .tag.p0{background:var(--red-soft);color:var(--red)}
+  .tag.p1{background:var(--amber-soft);color:var(--amber)}
+  .tag.p2{background:var(--blue-soft);color:var(--blue)}
+  .roadmap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+  .phase{padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+  .phase .id{color:var(--teal);font-size:12px;font-weight:850}
+  .phase h3{margin:4px 0 8px;font-size:14px}
+  .phase p{margin:0;color:var(--muted);font-size:12.5px}
+  .gate{border-color:#e3c4bf;background:#fffaf9}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .list{margin:0;padding:0;list-style:none}
+  .list li{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .list li:last-child{border-bottom:0}
+  .check,.stop{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;font-size:12px;font-weight:900}
+  .check{background:var(--green-soft);color:var(--green)}
+  .stop{background:var(--red-soft);color:var(--red)}
+  .foot{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+  @media(max-width:900px){
+    .topbar{align-items:flex-start;padding:10px 16px}.nav{margin-left:0}.brand{min-height:44px}.hero{grid-template-columns:1fr}.flow,.roadmap{grid-template-columns:1fr 1fr}.flow-step::after{display:none}
+  }
+  @media(max-width:620px){
+    .topbar{display:block;padding-bottom:7px}.nav{margin-top:4px}.wrap{width:min(100% - 24px,1160px);padding-top:18px}.hero{padding:20px}.grid-2,.split,.flow,.roadmap{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric.wide{grid-column:1/-1}h1{font-size:25px}.section-head{display:block}.section-head p{margin-top:4px}.panel{padding:15px}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="logo">H</span><span>LearnBuddy Harness 审计</span></div>
+  <nav class="nav" aria-label="文档导航">
+    <a href="./文档中心.html">文档中心</a>
+    <a href="./LearnBuddy项目工作台.html">项目工作台</a>
+    <a href="./架构总览.html">架构总览</a>
+    <a class="active" href="./Harness技术体系对齐.html">Harness 审计</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Implementation audit · 2026-07-12</div>
+      <h1>当前实现已经可用，下一步要统一控制面</h1>
+      <p class="lead">LearnBuddy 已具备持久对象、受控 Workflow、质量门、失败恢复和 Eval。短板不是 Agent 数量，而是画像到课程的运行合同、跨入口语义一致性，以及能够回放整次产出的统一证据链。</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#priorities">查看优先级</a>
+        <a class="btn" href="#roadmap">查看 V0.54 路线</a>
+        <a class="btn" href="./05-Harness技术体系对齐.md">阅读完整 Markdown</a>
+      </div>
+    </div>
+    <div class="metrics" aria-label="审计摘要">
+      <div class="metric"><div class="k">当前测试</div><div class="v">398</div></div>
+      <div class="metric"><div class="k">发布阻塞</div><div class="v">1</div></div>
+      <div class="metric"><div class="k">P1 问题</div><div class="v">7</div></div>
+      <div class="metric"><div class="k">核心判断</div><div class="v">不加多 Agent</div></div>
+      <div class="metric wide"><div class="k">版本事实</div><div class="v">线上 V0.52；V0.53 本地回归完成，尚未发布</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="judgment">
+    <div class="section-head"><h2>执行判断</h2><p>先明确方向，再看技术清单</p></div>
+    <div class="callout">
+      <strong>V0.53 不应扩 scope；V0.54 应把“画像 → 深度教学 → 学习证据”接成闭环。</strong>
+      现有架构最值得保留的是“确定性规则优先、LLM 只处理语义重活、低置信进入复核”。最需要修复的是不同入口行为漂移、上下文缺少信任/预算合同、运行证据无法用同一 ID 回放。
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>当前控制链</h2><p>模型只是其中一个执行组件</p></div>
+    <div class="flow">
+      <div class="flow-step"><div class="n">01</div><strong>前馈</strong><span>目标、画像、Memory、RAG、时长合同</span></div>
+      <div class="flow-step"><div class="n">02</div><strong>执行</strong><span>固定/动态 Workflow 与模型路由</span></div>
+      <div class="flow-step"><div class="n">03</div><strong>确定性验证</strong><span>结构、DAG、质量门、状态守卫</span></div>
+      <div class="flow-step"><div class="n">04</div><strong>语义验证</strong><span>Rubric evaluator、Critic、人工抽样</span></div>
+      <div class="flow-step"><div class="n">05</div><strong>持久反馈</strong><span>Evidence、学习结果、推荐、重规划</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>做得好的地方</h2><p>这些是后续演进必须保留的资产</p></div>
+    <div class="grid-2">
+      <article class="panel"><h3>技术分层克制</h3><ul><li>掌握度、调度、阶段闸门、推荐和重规划尽量使用确定性代码。</li><li>LLM 只承担出题、开放题评分、路径大纲和教学写作等语义重活。</li></ul></article>
+      <article class="panel"><h3>V0.53 证据链完整</h3><ul><li>Assessment、Response、ScoreEvidence、AbilityProfile 保持同一身份。</li><li>低置信追加题、异议和双人人工门避免模型自证正确。</li></ul></article>
+      <article class="panel"><h3>内容不是单次 Prompt</h3><ul><li>检索、课设、写作、确定性质量门、Critic、bounded revise、best 保留已成链。</li><li>后台任务、旧缓存升级和失败不覆盖好缓存具备生产形态。</li></ul></article>
+      <article class="panel"><h3>学习 Loop 已闭合</h3><ul><li>答题和产出进入掌握度、Memory、SM-2、推荐与重规划。</li><li>路径调整必须确认，可拒绝、可撤销，不把 LLM 建议直接落地。</li></ul></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>七域成熟度</h2><p>绿色不是“无需改”，而是主链已经成立</p></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>域</th><th>状态</th><th>现有优势</th><th>主要缺口</th><th>下一步</th></tr></thead>
+        <tbody>
+          <tr><td>模型与 Prompt</td><td><span class="tag part">部分闭环</span></td><td>chat/reasoner、解析、超时、fallback</td><td>内容 Prompt 版本与显式容灾不足</td><td>先接 run/eval，再优化缓存</td></tr>
+          <tr><td>Context</td><td><span class="tag part">部分闭环</span></td><td>按场景注入 RAG、信号、时长合同</td><td>无预算、裁剪记录、信任分区、压缩</td><td><code>ContextSnapshot</code></td></tr>
+          <tr><td>Memory</td><td><span class="tag part">基础可靠</span></td><td>作用域、来源、确定性派生、删除</td><td>缺 provenance/confidence/expiry/conflict</td><td>补治理，不存流程</td></tr>
+          <tr><td>Tool / MCP</td><td><span class="tag part">地基可用</span></td><td>13 工具、访问守卫、stdio MCP</td><td>Web/MCP 运行合同不一致</td><td>统一 application service</td></tr>
+          <tr><td>Workflow / Loop</td><td><span class="tag good">主链较强</span></td><td>bounded loop、推荐、重规划、阶段闸门</td><td>重启后只能整轮重试</td><td>安全 checkpoint</td></tr>
+          <tr><td>Eval / 观测</td><td><span class="tag part">能看见</span></td><td>398 tests、V0.53 Eval、Release Loop、反馈、trace</td><td>缺统一 run_id 与内容人工基准</td><td>Evidence Plane</td></tr>
+          <tr><td>安全 / 运行时</td><td><span class="tag part">Web 强、Agent 弱</span></td><td>鉴权、限流、Secure Cookie、导出删除</td><td>通用 Prompt injection 隔离和工具审批不足</td><td>Agent 通道单独发布门</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="priorities">
+    <div class="section-head"><h2>问题与优先级</h2><p>P0 是发布门；P1 才是下一阶段工程主线</p></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>优先级</th><th>ID</th><th>问题</th><th>影响</th><th>建议</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag p0">P0</span></td><td>P0-01</td><td>V0.53 未完成人工复核、备份、部署和线上回归</td><td>不能把本地通过写成已上线</td><td>先过人工一致率/MAE 与生产门</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>P1-01</td><td>六维画像未显式进入 lesson 运行时</td><td>诊断无法精确改变单节教学</td><td>新增 LessonContextSnapshot</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>P1-02</td><td>Web 与 MCP 能力语义漂移</td><td>外部 Agent 可绕过额度、任务、缓存和质量合同</td><td>canonical application service</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>P1-03</td><td>usage/trace/job/evidence 无共同 run_id</td><td>失败不可完整回放，版本难比较</td><td>统一 Evidence Plane</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>P1-04</td><td>Context 缺 trust zone 与预算</td><td>外部内容可能注入指令并造成 context rot</td><td>四区上下文 + 裁剪记录</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>P1-05</td><td>内容 Eval 偏结构正确</td><td>结构完整不等于真能学会</td><td>跨领域、画像配对人工 Eval</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>P1-06</td><td>长内容任务不可断点续跑</td><td>重启后重复 180 秒级生成</td><td>持久 stage artifact</td></tr>
+          <tr><td><span class="tag p1">P1</span></td><td>P1-07</td><td>旧 Harness 文档与待办漂移</td><td>AI Coding Agent 会重复建设或追热点</td><td>以本审计替换名词清单</td></tr>
+          <tr><td><span class="tag p2">P2</span></td><td>P2</td><td>Memory 治理、结构化工具错误、缓存前缀、混合存储一致性、provider 容灾</td><td>影响长期治理和成本</td><td>不抢占 V0.54 主线</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>目标控制面</h2><p>Web、MCP 和未来 Agent 必须共用业务语义</p></div>
+    <div class="flow">
+      <div class="flow-step"><div class="n">ADAPTER</div><strong>Web / MCP</strong><span>只做鉴权、协议转换和呈现</span></div>
+      <div class="flow-step"><div class="n">GATEWAY</div><strong>InvocationContext</strong><span>用户、通道、权限、额度、run_id</span></div>
+      <div class="flow-step"><div class="n">SERVICE</div><strong>Domain Service</strong><span>assessment/path/lesson/learning</span></div>
+      <div class="flow-step"><div class="n">CONTROL</div><strong>Context + Workflow</strong><span>预算、trust zone、checkpoint、stop</span></div>
+      <div class="flow-step"><div class="n">EVIDENCE</div><strong>Evidence Plane</strong><span>版本、token、延迟、质量、回放</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="roadmap">
+    <div class="section-head"><h2>V0.53 → V0.54 路线</h2><p>每一步都有独立退出门，但仍属于一个可发布版本</p></div>
+    <div class="roadmap">
+      <article class="phase gate"><div class="id">GATE 0</div><h3>发布 V0.53</h3><p>双人人工评分、备份、部署、线上回归；不插入新需求。</p></article>
+      <article class="phase"><div class="id">V0.54-M1</div><h3>合同与 Eval</h3><p>18 条多领域/多画像 Lesson Eval，冻结 ContextSnapshot 与 LessonRun。</p></article>
+      <article class="phase"><div class="id">V0.54-M2</div><h3>画像消费</h3><p>六维能力真实改变讲解、练习、AI 协作和验收任务。</p></article>
+      <article class="phase"><div class="id">V0.54-M3</div><h3>证据与恢复</h3><p>统一 run_id、trust zone、stage artifact、预算和 stop reason。</p></article>
+      <article class="phase"><div class="id">V0.54-M4</div><h3>发布验证</h3><p>盲评对比、真实 DeepSeek、双端、缓存/重启/注入负例。</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>保留与停止</h2><p>Harness 建设必须由真实问题触发</p></div>
+    <div class="split">
+      <article class="panel">
+        <h3>继续建设</h3>
+        <ul class="list">
+          <li><span class="check">✓</span><span>ContextSnapshot、trust zone 与裁剪证据</span></li>
+          <li><span class="check">✓</span><span>Prompt/model/eval 版本和统一 run_id</span></li>
+          <li><span class="check">✓</span><span>跨领域 Lesson Eval 与人工盲评</span></li>
+          <li><span class="check">✓</span><span>外部 Agent 开放前的工具权限、计量与审计</span></li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3>移出当前主线</h3>
+        <ul class="list">
+          <li><span class="stop">×</span><span>自由多 Agent、Agent Team、A2A</span></li>
+          <li><span class="stop">×</span><span>Procedural Memory 自动学习做事流程</span></li>
+          <li><span class="stop">×</span><span>没有用户问题的通用 ReAct / Workflow 框架</span></li>
+          <li><span class="stop">×</span><span>为架构整洁而迁移全部 JSON/SQLite</span></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>验证边界</h2><p>避免把“文档写完”当成产品完成</p></div>
+    <div class="panel">
+      <ul>
+        <li>本次已重新运行全量 pytest：398 passed，4 条 FastAPI 生命周期弃用警告。</li>
+        <li>本次只重新验证本审计页面的桌面与 390px 展示；没有重跑真实 DeepSeek 与核心业务浏览器流程。</li>
+        <li>V0.53 的真实状态仍是“本地开发与工程回归完成，待人工复核与发布”。</li>
+        <li>MCP 当前是开发者预览地基，不能宣称与 Web 产品完全等价。</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="foot">LearnBuddy Harness 系统审计 · 详细证据、对象图、闭环评分、旧待办处置与完成门见 <a href="./05-Harness技术体系对齐.md">Markdown 真相源</a> · 2026-07-12</footer>
+</main>
+</body>
+</html>

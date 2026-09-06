@@ -1,0 +1,91 @@
+<svg viewBox="0 0 920 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="需求架构图">
+  <defs>
+    <marker id="arr-need" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-need-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-need-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-need-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-need-4" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e3edf5" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-need-5" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#efeae0" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .n-title { font: 700 14px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .n-sub { font: 400 11.5px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .n-tag { font: 700 10.5px -apple-system, "PingFang SC", sans-serif; fill: #fff; }
+    .n-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+    .n-card { stroke: #d8d2c4; stroke-width: 1; }
+  </style>
+
+  <!-- 主柱：从上到下 5 层 -->
+  <rect x="60" y="40" width="800" height="92" rx="14" fill="url(#g-need-1)" class="n-card" />
+  <text x="80" y="68" class="n-title">用户入口层</text>
+  <text x="80" y="88" class="n-sub">用户直接看到与操作的界面入口</text>
+  <text x="80" y="110" class="n-sub">对话首页 · 学习路径 · 学习空间 · 学练 · 学情 · 自检</text>
+
+  <rect x="60" y="178" width="800" height="92" rx="14" fill="url(#g-need-2)" class="n-card" />
+  <text x="80" y="206" class="n-title">学习闭环层</text>
+  <text x="80" y="226" class="n-sub">决定产品是不是真的会带你学</text>
+  <text x="80" y="248" class="n-sub">即时基线评估 · 个性化路径 · 今日任务 · 复习 · 自检 · 重规划</text>
+
+  <rect x="60" y="316" width="800" height="92" rx="14" fill="url(#g-need-3)" class="n-card" />
+  <text x="80" y="344" class="n-title">长期陪伴层</text>
+  <text x="80" y="364" class="n-sub">让系统随着使用变得更懂用户</text>
+  <text x="80" y="386" class="n-sub">个人记忆 · 偏好与弱项沉淀 · 主动提醒 · 跨任务复用</text>
+
+  <rect x="60" y="454" width="800" height="92" rx="14" fill="url(#g-need-4)" class="n-card" />
+  <text x="80" y="482" class="n-title">账号与商业化底座</text>
+  <text x="80" y="502" class="n-sub">支撑正式运营但不改变学习主线</text>
+  <text x="80" y="524" class="n-sub">注册登录 · 手机号绑定 · 支付 · 积分账户 · 赠送积分 · 订阅权益</text>
+
+  <rect x="60" y="592" width="800" height="92" rx="14" fill="url(#g-need-5)" class="n-card" />
+  <text x="80" y="620" class="n-title">升级模式层</text>
+  <text x="80" y="640" class="n-sub">在主系统之上叠加更强陪伴能力</text>
+  <text x="80" y="662" class="n-sub">个人助理模式 · OpenClaw 承载 · IM 入口 · 跨端联动</text>
+
+  <!-- 主干箭头 -->
+  <line x1="460" y1="132" x2="460" y2="178" class="n-conn" marker-end="url(#arr-need)" />
+  <line x1="460" y1="270" x2="460" y2="316" class="n-conn" marker-end="url(#arr-need)" />
+  <line x1="460" y1="408" x2="460" y2="454" class="n-conn" marker-end="url(#arr-need)" />
+  <line x1="460" y1="546" x2="460" y2="592" class="n-conn" marker-end="url(#arr-need)" />
+
+  <!-- 左侧的标签条 -->
+  <g>
+    <rect x="-9999" y="0" width="0" height="0" />
+  </g>
+
+  <!-- 右侧流入与回流示意 -->
+  <text x="690" y="64" class="n-sub">触达与回流</text>
+  <path d="M880 90 C 905 90, 905 224, 880 224" class="n-conn" marker-end="url(#arr-need)" />
+  <path d="M880 224 C 905 224, 905 362, 880 362" class="n-conn" marker-end="url(#arr-need)" />
+  <path d="M880 362 C 905 362, 905 500, 880 500" class="n-conn" marker-end="url(#arr-need)" />
+  <path d="M880 500 C 905 500, 905 638, 880 638" class="n-conn" marker-end="url(#arr-need)" />
+
+  <!-- 层序号圆点 -->
+  <circle cx="40" cy="86" r="14" fill="#2c6e6a" />
+  <text x="40" y="90" text-anchor="middle" class="n-tag">L1</text>
+  <circle cx="40" cy="224" r="14" fill="#4a9d6e" />
+  <text x="40" y="228" text-anchor="middle" class="n-tag">L2</text>
+  <circle cx="40" cy="362" r="14" fill="#d98a3d" />
+  <text x="40" y="366" text-anchor="middle" class="n-tag">L3</text>
+  <circle cx="40" cy="500" r="14" fill="#3d6e9e" />
+  <text x="40" y="504" text-anchor="middle" class="n-tag">L4</text>
+  <circle cx="40" cy="638" r="14" fill="#7b5ea7" />
+  <text x="40" y="642" text-anchor="middle" class="n-tag">L5</text>
+</svg>

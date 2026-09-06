@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · V0.44 教学内容 Loop 专项档案</title>
+<style>
+  :root{
+    --bg:#f6f2eb;
+    --paper:#fffdfa;
+    --ink:#282623;
+    --muted:#746f68;
+    --line:#e2d9cc;
+    --teal:#27776f;
+    --teal-dark:#1f5f59;
+    --teal-soft:#e4f1ee;
+    --gold:#d88a31;
+    --gold-soft:#fff1dc;
+    --shadow:0 14px 34px rgba(50,42,31,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1.72}
+  a{color:inherit}
+  .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:18px;min-height:76px;padding:0 42px;background:rgba(255,253,250,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+  .logo{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--teal-dark);color:white;font-weight:900}
+  .brand{font-size:20px;font-weight:900;white-space:nowrap}
+  .brand small{display:block;color:var(--muted);font-size:12px;font-weight:700}
+  .nav{margin-left:auto;display:flex;gap:8px;overflow:auto}
+  .nav a{flex:0 0 auto;padding:10px 13px;border-radius:13px;text-decoration:none;color:#625c55;font-weight:800}
+  .nav a.active,.nav a:hover{background:var(--teal-soft);color:var(--teal-dark)}
+  .wrap{max-width:1120px;margin:0 auto;padding:34px 28px 70px}
+  .hero{border-radius:28px;padding:38px;color:white;background:linear-gradient(135deg,#1f5f59 0%,#2d7f76 58%,#385c48 100%);box-shadow:var(--shadow)}
+  .kicker{display:inline-flex;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);color:#e5fffb;font-size:13px;font-weight:850}
+  h1{max-width:880px;margin:18px 0 10px;font-size:40px;line-height:1.18;letter-spacing:0}
+  .hero p{max-width:880px;margin:0;color:rgba(255,255,255,.82);font-size:17px}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 14px;border-radius:13px;text-decoration:none;font-weight:850;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.12);color:white}
+  .btn.primary{background:white;color:var(--teal-dark)}
+  .sec{margin-top:34px}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:14px}
+  h2{margin:0;font-size:28px}
+  .desc{color:var(--muted);font-size:15px}
+  .pill{display:inline-flex;align-items:center;justify-content:center;padding:5px 11px;border-radius:999px;background:var(--teal-soft);color:var(--teal-dark);font-size:13px;font-weight:850}
+  .pill.gold{background:var(--gold-soft);color:#8b551e}
+  .pill.gray{background:#eee9df;color:#69625a}
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px}
+  .card h3{margin:10px 0 8px;font-size:20px}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+  .table-wrap{overflow:auto;border-radius:16px;border:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;background:var(--paper);min-width:760px}
+  th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:#f2ece1;color:#4d4740;font-size:13px}
+  td{font-size:14px}
+  tr:last-child td{border-bottom:0}
+  ul{margin:8px 0 0;padding-left:18px}
+  li{margin:6px 0}
+  .footer{margin-top:36px;padding:20px;color:var(--muted);text-align:center;font-size:13px}
+  @media(max-width:900px){.topbar{padding:12px 18px;align-items:flex-start;flex-wrap:wrap}.nav{width:100%;margin-left:0}.wrap{padding:22px 16px 48px}.hero{padding:26px}h1{font-size:30px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.44 专项档案<small>教学内容 Loop Engine</small></div>
+  <nav class="nav" aria-label="页面导航">
+    <a class="active" href="./LearnBuddy项目工作台.html">项目工作台</a>
+    <a href="#summary">本期结论</a>
+    <a href="#loop">Loop Map</a>
+    <a href="#contracts">数据契约</a>
+    <a href="#archive">归档</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">已归档 · V0.44</span>
+    <h1>教学内容 Loop Engine 方案版</h1>
+    <p>本页只保留 V0.44 专项结论：LearnBuddy 的教学内容生成要从“Prompt 出稿”升级为可检查、可返工、可恢复的内容生产 Loop。全项目需求、技术方案和进度请回到主工作台按版本号查看。</p>
+    <div class="actions">
+      <a class="btn primary" href="./LearnBuddy项目工作台.html">进入 LearnBuddy 项目工作台</a>
+      <a class="btn" href="./AI-Shifu对比分析报告.html">查看 AI-Shifu 对比</a>
+      <a class="btn" href="./文档中心.html">返回文档中心</a>
+    </div>
+  </section>
+
+  <section class="sec" id="summary">
+    <div class="sec-head">
+      <div>
+        <h2>本期结论</h2>
+        <div class="desc">这页不再承担长期工作台职责，只作为 V0.44 专项档案。</div>
+      </div>
+      <span class="pill">V0.44</span>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="pill">产品</span><h3>内容必须能被学习</h3><p>每节课要回答本节解决什么问题、学完能做什么、依据什么来源、怎么互动、怎么验收。</p></article>
+      <article class="card"><span class="pill gold">技术</span><h3>生成必须形成闭环</h3><p>目标接地、资料研究、课设规划、内容生成、质量审查、定向返工和保存运行单。</p></article>
+      <article class="card"><span class="pill gray">边界</span><h3>先协议后重构</h3><p>先固化数据契约和测试集，不一次性引入复杂自由 Agent，不破坏线上实例。</p></article>
+    </div>
+  </section>
+
+  <section class="sec" id="loop">
+    <div class="sec-head">
+      <div>
+        <h2>Loop Map</h2>
+        <div class="desc">V0.46 之后的实现要围绕这条链路拆解。</div>
+      </div>
+      <span class="pill">Content Loop</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>阶段</th><th>目标</th><th>关键产物</th></tr></thead>
+        <tbody>
+          <tr><td>目标接地</td><td>识别学习命题、多义词、目标产出和是否需要联网。</td><td>LearningIntent</td></tr>
+          <tr><td>资料研究</td><td>收集网页、文档、视频/B站、课程和案例来源。</td><td>ResearchPack / source_pack</td></tr>
+          <tr><td>课设规划</td><td>先设计本节问题、学完能做、主线、互动和验收。</td><td>LessonSpec</td></tr>
+          <tr><td>内容生成</td><td>按先想、看懂、图解、例子、动手、练习、收束组织。</td><td>LessonFlow</td></tr>
+          <tr><td>质量审查</td><td>检查深度、准确性、来源覆盖、互动性和可读性。</td><td>QualityReport</td></tr>
+          <tr><td>返工保存</td><td>定向返工不合格部分，并保存阶段、耗时、来源和结果。</td><td>RunSheet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="contracts">
+    <div class="sec-head">
+      <div>
+        <h2>后续数据契约</h2>
+        <div class="desc">下一版 V0.46 从这些对象开始实现。</div>
+      </div>
+      <span class="pill gold">V0.46 输入</span>
+    </div>
+    <div class="card">
+      <ul>
+        <li><b>LearningIntent</b>：领域、目标产出、水平、投入、偏好、约束。</li>
+        <li><b>ResearchPack</b>：网页、文档、视频/B站、书、课程、案例，含摘要和适用环节。</li>
+        <li><b>LessonSpec</b>：本节问题、学完能做、主线、图解需求、互动点、验收点。</li>
+        <li><b>LessonFlow</b>：8 环节结构、每环节动作、输入输出、可回看状态。</li>
+        <li><b>QualityReport / RunSheet</b>：质量分、失败原因、返工建议、生成阶段、缓存路径。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="archive">
+    <div class="sec-head">
+      <div>
+        <h2>归档链接</h2>
+        <div class="desc">主入口和相关参考。</div>
+      </div>
+      <span class="pill gray">Archive</span>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="pill">主入口</span><h3>LearnBuddy 项目工作台</h3><p>后续按版本号查看需求、技术方案和进度。</p><p><a href="./LearnBuddy项目工作台.html">打开</a></p></article>
+      <article class="card"><span class="pill">参考</span><h3>AI-Shifu 对比</h3><p>课程运行时、provider adapter、debug/trace 等参考。</p><p><a href="./AI-Shifu对比分析报告.html">打开</a></p></article>
+      <article class="card"><span class="pill">ADR</span><h3>SPEC</h3><p>ADR-041/042 和版本日志。</p><p><a href="../SPEC.md">打开</a></p></article>
+    </div>
+  </section>
+
+  <div class="footer">V0.44 教学内容 Loop 专项档案 · 主项目管理已迁移到 LearnBuddy 项目工作台。</div>
+</main>
+</body>
+</html>

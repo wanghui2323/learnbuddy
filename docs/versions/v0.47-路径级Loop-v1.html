@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V0.47 路径级 Loop v1 · 三件套</title>
+<link rel="stylesheet" href="./version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.47 路径级 Loop v1<small>需求方案 · 技术方案 · 开发范式</small></div>
+  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">已开发 · 已验证 · 路径级 Loop v1</span>
+    <h1>让整条学习路径随着学习行为持续优化</h1>
+    <p>V0.47 要解决的不是“再生成更多内容”，而是先让路径运行机制可信：用户学到哪里就从哪里继续，完成一天后下一天能提前准备，异常状态能被发现和恢复。后台质量分析和自适应重规划保留到后续版本。</p>
+    <div class="meta"><span class="pill gold">状态：已开发</span><span class="pill">提交：807323b</span><span class="pill gray">回归：259 passed</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求方案</h2><p>把学习路径从静态计划升级为“可继续、可恢复、可解释”的运行系统。</p><ul><li>按完成进度推进，不按自然日期强制跳课。</li><li>完成当天后自动准备下一天，减少等待。</li><li>学习首页、计划页和学习页读取同一个当前学习位置。</li><li>生成卡住、保存失败、缓存已存在等异常要有明确状态。</li><li>反馈驱动重规划和后台分析进入后续版本。</li></ul></article>
+    <article class="card panel"><h2>技术方案</h2><p>围绕路径状态账本、完成事件、预生成队列和状态恢复实现。</p><ul><li><code>PathLoopState</code> 保存当前可学位置、解锁状态和预生成任务。</li><li><code>PathEvent</code> 记录完成、预生成、恢复和异常。</li><li><code>pre_generation</code> 负责下一天内容生成、轮询、恢复和超时提示。</li><li><code>/api/instance/{id}/path-loop</code> 暴露路径状态。</li><li>前端轮询状态并在退出重进后恢复。</li></ul></article>
+    <article class="card panel"><h2>开发范式</h2><p>先把状态做准，再做自动优化。</p><ul><li>状态账本独立落盘，不直接迁移主数据。</li><li>完成事件幂等写入，避免重复奖励和重复预生成。</li><li>缺少新状态时从旧 completion 数据懒初始化。</li><li>先支持下一天预生成，再扩展到整周预生成。</li><li>后台日报和自适应调整等待真实数据后再立版本。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>开发完成记录</h2><p>V0.47 v1 已完成路径运行态主链路，并明确保留后续边界。</p></div><span class="pill gold">Release Record</span></div>
+    <div class="table-wrap"><table><thead><tr><th>项目</th><th>完成情况</th></tr></thead><tbody>
+      <tr><td>提交记录</td><td><code>807323b feat(path): 落地路径级 Loop v0.47 状态与预生成</code></td></tr>
+      <tr><td>核心产物</td><td><code>core/path_loop.py</code>、<code>path_loop.json</code>、PathEvent、<code>pre_generation</code> 状态、<code>/api/instance/{id}/path-loop</code>、完成当天触发下一天预生成、学习页/计划页状态恢复。</td></tr>
+      <tr><td>兼容策略</td><td>旧实例不迁移主数据；缺少 PathLoopState 时从 <code>lesson_completions</code> 和现有缓存推导当前进度并懒初始化。</td></tr>
+      <tr><td>验证结果</td><td><code>pytest -q</code> 全量通过 259 项；本地浏览器验证实例页、学习页和路径状态展示；未登录接口返回 401，鉴权边界正常。</td></tr>
+      <tr><td>后续边界</td><td>自动重写整条路径、后台每日质量分析、跨周批量预生成、SignalReducer 深度自适应不计入 V0.47 v1，进入后续版本确认。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>核心问题映射</h2><p>每个问题都必须对应产品需求、技术方案和验收信号，避免只写方向。</p></div><span class="pill gold">Problem Matrix</span></div>
+    <div class="table-wrap"><table><thead><tr><th>核心问题</th><th>产品需求</th><th>技术方案</th><th>验收信号</th></tr></thead><tbody>
+      <tr><td>日期和学习进度错位</td><td>用户几天没学不会自动跳到后面；学习首页始终显示“当前应该继续的天”。</td><td>PathLoopState 使用 completion_cursor，而不是 date_cursor；路由进入时通过 getCurrentLearningUnit(instance_id,user_id) 计算当前可学单元。</td><td>断更 3 天后回到路径，仍进入未完成的 D1/D2；后续天只显示目录和锁定状态。</td></tr>
+      <tr><td>下一天内容没有准备</td><td>用户完成一天后，系统自动准备下一天内容；下次进入优先看到“已准备好”。</td><td>lesson_completed 事件创建 PreGenerateJob；队列写入 queued/running/succeeded/failed/stale；成功后写入 lesson_cache。</td><td>完成 D1 后 1 分钟内出现 D2 生成任务；刷新学习首页能看到 D2 的明确状态。</td></tr>
+      <tr><td>生成页长时间卡住</td><td>用户能看到生成是否仍在进行、是否已经完成、是否失败、是否可重试。</td><td>前端轮询 job status；后端 reconcile_job_status 检查缓存、文件、任务锁和超时；超过阈值自动转 failed_timeout。</td><td>不会出现“页面还在转圈但退出再进发现已完成”；超时后有重试入口和失败原因。</td></tr>
+      <tr><td>反馈没有影响后续学习</td><td>用户点“太浅/有错/想换方向/重新生成原因”后，后续内容深度、案例和练习会变化。</td><td>PathSignal 聚合 feedback、QualityReport、wrong_answers、regenerate_reason；SignalReducer 生成 next_lesson_constraints。</td><td>下一天生成日志能看到使用了哪些信号；学习页能解释“因为你反馈 X，所以今天调整 Y”。</td></tr>
+      <tr><td>路径不会主动恢复断更</td><td>用户断更后不被惩罚，也不直接进入新内容；先给一个恢复任务。</td><td>inactive_days >= 阈值时创建 recovery_mode；Planner 在下一天加入轻量复习和恢复检查。</td><td>断更后首页显示“先恢复一下”，并提供 5-10 分钟复习任务。</td></tr>
+      <tr><td>后台不知道哪里出问题</td><td>管理员能看到路径级失败、等待、低质量内容和高频痛点。</td><td>PathAnalyzer 每日聚合 PathEvent、PreGenerateJob、QualityReport、Feedback；生成 AdminPathReport。</td><td>后台分析页可按日期查看低分内容、卡住任务、失败原因、用户反馈聚类。</td></tr>
+      <tr><td>旧路径数据结构不一致</td><td>旧用户路径仍可打开，不因新状态机缺字段而报错。</td><td>PathStateAdapter 为旧实例补默认值；读写分离，新字段缺失时懒初始化。</td><td>线上旧路径打开正常；迁移脚本 dry-run 无破坏性写入。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>产品需求清单</h2><p>V0.47 是路径级闭环，不重新做单节内容生成；它消费 V0.46 的单节结果。</p></div><span class="pill">PRD</span></div>
+    <div class="table-wrap"><table><thead><tr><th>优先级</th><th>模块</th><th>具体需求</th><th>验收方式</th></tr></thead><tbody>
+      <tr><td>P0</td><td>当前学习位置</td><td>学习首页、计划页、学习页统一读取同一个 current_unit；当前天开放入口，后续天可看目录但不能进入。</td><td>三个页面显示的当前周/天一致；不会出现首页 D2、计划页 D1 的错位。</td></tr>
+      <tr><td>P0</td><td>完成事件</td><td>完成一天时写入 completed_at、score_summary、outputs、feedback_summary，并触发下一天准备。</td><td>刷新页面不丢完成状态；重复点击完成不会重复创建任务。</td></tr>
+      <tr><td>P0</td><td>下一天预生成</td><td>支持“准备中、已准备、准备失败、可重试、无需准备”五种状态。</td><td>用户能分辨是卡住、失败还是已完成；每种状态都有对应按钮或说明。</td></tr>
+      <tr><td>P0</td><td>任务恢复</td><td>用户退出学习页或刷新后，系统能根据 job_id 和缓存恢复生成状态。</td><td>退出再进入不会丢任务；已生成内容不会重复扣积分和重复生成。</td></tr>
+      <tr><td>P0</td><td>路径级数据回流</td><td>汇总 QualityReport、用户反馈、错题、产出、耗时、重生成要求和跳过行为，形成 PathSignal。</td><td>下一天生成能读取 PathSignal；后台能查看信号摘要。</td></tr>
+      <tr><td>P1</td><td>轻量自适应</td><td>根据信号调整下一天的讲解深度、案例类型、练习难度、复习比例和来源偏好。</td><td>系统能解释“为什么明天增加复习/降低难度/补来源”。</td></tr>
+      <tr><td>P1</td><td>用户确认机制</td><td>目标、周期、每周结构等大幅调整必须确认；讲解深度、练习难度等轻量调整可自动执行。</td><td>自动调整日志可追踪；不会悄悄改变学习目标。</td></tr>
+      <tr><td>P1</td><td>后台每日分析</td><td>每天生成管理员报告：用户活跃、内容低分、卡住节点、搜索失败、生成超时、投诉/反馈聚类。</td><td>后台分析页能按日期查看问题和建议处理动作。</td></tr>
+      <tr><td>P2</td><td>路径级复盘</td><td>每周结束后生成一份“本周学情复盘”，包括掌握变化、错点、下一周建议。</td><td>完成一周后，学情页能看到本周结构化分析。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>开发准入补强</h2><p>V0.47 不是把更多自动化堆上去，而是先让路径运行状态可信、可恢复、可解释。</p></div><span class="pill gold">Readiness Gate</span></div>
+    <div class="table-wrap"><table><thead><tr><th>缺口</th><th>补强动作</th><th>产出物</th><th>验收标准</th></tr></thead><tbody>
+      <tr><td>PathLoopState 状态机不明确</td><td>先定义 not_started、current_available、lesson_running、lesson_completed、next_preparing、next_ready、job_failed、recovery_needed 八类状态。</td><td>状态机图 / 状态矩阵</td><td>学习首页、计划页、学习页三处读取同一状态，不出现互相矛盾。</td></tr>
+      <tr><td>任务一致性和幂等不足</td><td>所有完成、预生成、重试、保存动作都必须有 idempotency_key、cache_key 和 lock 规则。</td><td>幂等规则表</td><td>重复点击、刷新、退出重进不会重复生成、重复扣积分或重复奖励。</td></tr>
+      <tr><td>PathEvent 事件缺少最小集</td><td>定义 lesson_completed、feedback_added、job_created、job_succeeded、job_failed、user_inactive、plan_adjusted、runtime_recovered。</td><td>事件 schema</td><td>后续学情分析和后台日报不再靠猜状态，而是消费事件。</td></tr>
+      <tr><td>SignalReducer 边界不清</td><td>把自动调整分成轻量自动和重大确认两类：深度/练习/复习比例可自动；目标/周期/周结构必须确认。</td><td>调整权限表</td><td>系统能解释每次调整原因，且不会悄悄改变用户的核心学习目标。</td></tr>
+      <tr><td>生成完成检测不可靠</td><td>新增 JobReconciler，对比任务状态、缓存文件、LessonFlow 是否存在、前端轮询状态。</td><td>任务恢复规则</td><td>不会再出现“页面还在质量审查，但退出再进已经生成完成”的错位。</td></tr>
+      <tr><td>后台没有运营视角</td><td>最小后台指标包括 stuck_jobs、failed_jobs、low_quality_lessons、regenerate_reasons、feedback_clusters、inactive_paths。</td><td>AdminPathReport</td><td>每天能看到哪些路径卡住、低质、被重生成或用户断更。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>状态机草图</h2><p>路径级 Loop 的第一真相源是状态机，不是页面按钮，也不是自然日期。</p></div><span class="pill">State Machine</span></div>
+    <div class="table-wrap"><table><thead><tr><th>状态</th><th>含义</th><th>允许动作</th><th>退出条件</th></tr></thead><tbody>
+      <tr><td>not_started</td><td>路径已创建但用户还没有开始第一天。</td><td>开始 D1、查看计划、返回学习空间。</td><td>用户点击开始 D1。</td></tr>
+      <tr><td>current_available</td><td>当前天内容已经可学。</td><td>进入学习、查看当周目录、查看学情。</td><td>进入学习页后变为 lesson_running。</td></tr>
+      <tr><td>lesson_running</td><td>用户正在学习当前天。</td><td>保存步骤、回看已学、继续学习、退出后恢复。</td><td>完成当天或用户退出。</td></tr>
+      <tr><td>lesson_completed</td><td>当天已经完成，奖励、产出和反馈已记录。</td><td>查看完成内容、触发下一天准备。</td><td>PreGenerateJob 创建成功。</td></tr>
+      <tr><td>next_preparing</td><td>下一天正在生成或质检。</td><td>查看进度、离开页面、重试失败任务。</td><td>任务成功、失败或超时。</td></tr>
+      <tr><td>next_ready</td><td>下一天已生成并可进入。</td><td>开始下一天、查看计划。</td><td>用户开始下一天。</td></tr>
+      <tr><td>job_failed</td><td>预生成失败或超时，原因已保存。</td><td>重试、降级生成、联系后台排查。</td><td>重试成功或用户放弃。</td></tr>
+      <tr><td>recovery_needed</td><td>用户断更或状态不一致，需要先恢复。</td><td>做恢复任务、重新同步状态。</td><td>恢复任务完成或 JobReconciler 修复成功。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>幂等与恢复规则</h2><p>这些规则直接约束开发，避免路径运行中出现重复、卡死和数据错位。</p></div><span class="pill">Recovery</span></div>
+    <div class="table-wrap"><table><thead><tr><th>场景</th><th>系统规则</th><th>用户体验</th><th>验收</th></tr></thead><tbody>
+      <tr><td>重复点击完成</td><td>同一 lesson_id + user_id + step_id 只接受一次完成事件，后续返回 already_completed。</td><td>不会重复奖励积分，不会重复创建下一天任务。</td><td>连续点击 5 次完成，只产生 1 条 lesson_completed。</td></tr>
+      <tr><td>任务成功但 UI 仍等待</td><td>JobReconciler 发现 lesson_cache 存在且 QualityReport 有效时，将 job 状态改为 succeeded。</td><td>刷新后直接进入已准备状态。</td><td>模拟前端断线后恢复，页面不再无限显示质量审查。</td></tr>
+      <tr><td>任务 running 超时</td><td>超过 timeout_seconds 后自动转 failed_timeout，保留 partial_trace 和 retry_payload。</td><td>看到失败原因和重试按钮，而不是盲等。</td><td>超时任务 1 分钟内进入可重试状态。</td></tr>
+      <tr><td>缓存存在但 PathLoopState 缺失</td><td>读取路径时懒初始化 PathLoopState，并从已完成 lesson 反推 completion_cursor。</td><td>旧路径仍能打开，当前进度不丢。</td><td>旧实例 dry-run 通过，页面无报错。</td></tr>
+      <tr><td>下一天重复预生成</td><td>unit_id + signal_hash 生成 cache_key；相同 cache_key 直接复用。</td><td>不会因为刷新或重复触发导致成本翻倍。</td><td>同一 unit 重复触发只生成一个有效任务。</td></tr>
+      <tr><td>用户改了路径目标</td><td>重大目标变化创建 plan_adjustment_pending，不自动覆盖原路径。</td><td>用户确认后才重规划。</td><td>目标、周期、周结构变化都有确认记录。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>技术方案拆解</h2><p>这里说明 V0.47 需要新增哪些核心对象、接口和后台任务。</p></div><span class="pill">Tech Plan</span></div>
+    <div class="table-wrap"><table><thead><tr><th>层级</th><th>组件</th><th>职责</th><th>关键字段 / 接口</th></tr></thead><tbody>
+      <tr><td>状态层</td><td>PathLoopState</td><td>路径运行时的唯一真相源，负责当前可学位置、解锁、队列、信号摘要。</td><td>instance_id、user_id、current_week、current_day、completion_cursor、unlocked_units、pending_jobs、signal_summary、updated_at。</td></tr>
+      <tr><td>事件层</td><td>PathEvent</td><td>记录路径运行中的事实，供状态机、分析和回放使用。</td><td>lesson_completed、feedback_added、job_created、job_succeeded、job_failed、user_inactive、plan_adjusted。</td></tr>
+      <tr><td>队列层</td><td>PreGenerateJob</td><td>管理下一天内容生成任务，防止重复生成和无法收敛。</td><td>job_id、unit_id、status、attempts、started_at、deadline_at、finished_at、error_code、cache_key。</td></tr>
+      <tr><td>恢复层</td><td>JobReconciler</td><td>检查“页面状态、任务状态、缓存文件”是否一致，修复已完成但前端仍卡住的问题。</td><td>GET /api/path/jobs/{job_id}/status；reconcile_cache_exists(job_id)；timeout_to_failed(job_id)。</td></tr>
+      <tr><td>信号层</td><td>SignalReducer</td><td>把单节学习行为转成下一天可用的规划约束。</td><td>quality_score、low_depth_reason、wrong_concepts、feedback_tags、preferred_source_type、regenerate_reason。</td></tr>
+      <tr><td>规划层</td><td>NextUnitPlanner</td><td>根据当前路径、信号和未学目录，生成下一天的 lesson request。</td><td>build_next_request(path_state, signal_summary, next_unit_outline)。</td></tr>
+      <tr><td>分析层</td><td>PathAnalyzer</td><td>面向管理员聚合路径问题，不直接影响用户路径。</td><td>daily_path_report、failure_clusters、slow_jobs、low_quality_lessons、feedback_clusters。</td></tr>
+      <tr><td>兼容层</td><td>PathStateAdapter</td><td>旧数据缺字段时懒初始化，保护线上用户数据。</td><td>load_or_initialize_state(instance_id,user_id)、migrate_dry_run、schema_version。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>关键流程</h2><p>用事件驱动路径闭环，避免按自然日期硬推。</p></div><span class="pill">Flow</span></div>
+    <div class="table-wrap"><table><thead><tr><th>触发事件</th><th>系统动作</th><th>用户侧呈现</th><th>后台记录</th></tr></thead><tbody>
+      <tr><td>完成一天</td><td>保存当天学习结果，创建下一天预生成任务。</td><td>提示“下一天正在准备”，但用户可以离开。</td><td>lesson_completed、queue_created、quality_summary。</td></tr>
+      <tr><td>预生成成功</td><td>写入下一天 lesson cache，更新 PathLoopState。</td><td>学习首页显示“下一天已准备好”。</td><td>generation_done、duration、source_count、quality_score。</td></tr>
+      <tr><td>预生成失败</td><td>保存失败原因，提供重试，不影响已完成内容。</td><td>显示“准备失败，可重试”，不假装还在生成。</td><td>generation_failed、error_type、retry_count。</td></tr>
+      <tr><td>用户反馈内容问题</td><td>记录反馈，影响后续内容深度和来源策略。</td><td>提示“已记录，会用于后续安排”。</td><td>feedback_signal、affected_modules。</td></tr>
+      <tr><td>连续断更</td><td>不跳课，生成恢复建议和轻量复习。</td><td>回到当前天，并提示“先补一个恢复任务”。</td><td>inactive_days、recovery_plan。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>边界与依赖</h2><p>V0.47 v1 先完成状态与预生成，质量信号驱动的自动优化留给后续。</p></div><span class="pill gray">Dependency</span></div>
+    <div class="callout"><b>本版边界：</b>V0.47 已在不依赖完整后台分析的前提下先完成状态机、完成事件、下一天预生成和恢复机制；QualityReport、PathSignal 和后台日报用于后续自适应版本。</div>
+    <div class="table-wrap"><table><thead><tr><th>依赖数据</th><th>为什么必须有</th><th>没有时的处理</th></tr></thead><tbody>
+      <tr><td>QualityReport</td><td>路径级 Loop 需要知道哪节内容太浅、来源弱、互动差，才能调整后续内容。</td><td>只允许做状态机和任务恢复，不启用自适应策略。</td></tr>
+      <tr><td>LessonRuntime</td><td>需要知道用户看过、选过、写过、完成过哪些步骤。</td><td>只能按完成状态推进，不做细粒度学习分析。</td></tr>
+      <tr><td>PathSignal</td><td>需要把反馈、错题、重生成原因汇总成下一天约束。</td><td>下一天沿用原计划，不自动改变难度和来源偏好。</td></tr>
+      <tr><td>ResearchPack</td><td>需要判断用户是否偏好权威文档、论文、视频或案例来源。</td><td>默认沿用 V0.46 的来源策略。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>本版本不做什么</h2><p>把边界写清楚，避免路径级 Loop 变成一次性大重构。</p></div><span class="pill gray">Out of Scope</span></div>
+    <div class="table-wrap"><table><thead><tr><th>不做</th><th>原因</th><th>后续放在哪里</th></tr></thead><tbody>
+      <tr><td>全自动重写整条学习路径</td><td>风险太高，会破坏用户已经确认的目标和计划。</td><td>后续在路径级 Loop v2 中引入“用户确认式重规划”。</td></tr>
+      <tr><td>跨周批量预生成全部内容</td><td>成本高、容易过期，也会放大低质量内容风险。</td><td>先做下一天，真实稳定后再做下一周。</td></tr>
+      <tr><td>复杂推送系统</td><td>当前核心是路径状态和预生成，不是通知渠道。</td><td>移动端推送或飞书 IM 单独立版本。</td></tr>
+      <tr><td>重新设计单节内容结构</td><td>这是 V0.46 的职责，V0.47 只消费单节质量报告和学习信号。</td><td>回到 V0.46 教学内容 Loop v1。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>后续策略待真实数据确认</h2><p>这些不是 V0.47 v1 的完成阻塞，而是后续自适应和后台分析版本需要继续收敛的策略参数。</p></div><span class="pill gray">Data Needed</span></div>
+    <div class="table-wrap"><table><thead><tr><th>待确认项</th><th>确认依据</th><th>默认策略</th></tr></thead><tbody>
+      <tr><td>预生成频率</td><td>单节生成耗时、积分消耗、失败率和用户打开频率。</td><td>只预生成下一天，不批量预生成整周。</td></tr>
+      <tr><td>超时阈值</td><td>V0.46 LessonBuildGraph 的 P50/P90/P99 耗时。</td><td>超过 P99 + 30 秒进入 failed_timeout。</td></tr>
+      <tr><td>重规划触发</td><td>断更天数、低分内容、错题、重生成次数、用户反馈强度。</td><td>先只做轻量恢复任务，不自动重写周计划。</td></tr>
+      <tr><td>自动调整权限</td><td>用户对自动调整的接受度和后续学习完成率。</td><td>讲解深度、练习难度自动；目标、周期、周结构确认。</td></tr>
+      <tr><td>后台指标阈值</td><td>真实 stuck_jobs、failed_jobs、low_quality_lessons 的分布。</td><td>先展示绝对数量和明细，不做复杂告警。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>本版收口结论</h2><p>V0.47 v1 已作为独立版本完成，后续不在本版继续塞需求。</p></div><span class="pill gold">Decision</span></div>
+    <div class="callout"><b>收口结论：</b>V0.47 v1 已完成状态机、事件、幂等恢复和下一天预生成，先修复“卡住/错位/重复”的用户体验问题。自适应重规划和后台质量分析进入后续版本，等真实 QualityReport、LessonRuntime 和 PathSignal 积累后再启用。</div>
+  </section>
+  <div class="footer">V0.47 · 路径级 Loop v1 · 已开发。</div>
+</main>
+</body>
+</html>

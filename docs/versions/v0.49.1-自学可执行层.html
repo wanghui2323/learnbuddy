@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V0.49.1 自学可执行层 · 已验收</title>
+<link rel="stylesheet" href="./version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.49.1 自学可执行层<small>已开发 · 已验收 · 需求方案 · 技术方案 · 验收口径</small></div>
+  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">已验收 · V0.49 之后的体验质量补丁 · ADR-048</span>
+    <h1>让 90 分钟课程从“内容更厚”变成“学习者能独立完成”</h1>
+    <p>V0.49 的工程质量 loop 已经跑通，真实 DeepSeek golden case 也通过了密度、展开层和时长合同。但从学习者视角看，课程仍像一份加厚讲义：个性化信号有时像标签堆叠，练习缺少模板、参考答案和高阶产出，90 分钟学习计划还不够可执行。V0.49.1 不重开大架构，而是把下一轮 loop 聚焦在自学可执行层：语言像个人学习任务，产出有模板，练习有参考答案，验收能判断用户是否真的学会。</p>
+    <div class="meta"><span class="pill gold">状态：真实 LLM 验收通过</span><span class="pill">目标：自学可执行</span><span class="pill gray">耗时：183.82s</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求方案</h2><p>用户选择每天 1-2 小时，不应该拿到一份只能看 20 分钟的提纲，也不应该只看到“读一读、复述一下”。</p><ul><li>学习者打开页面后能知道接下来 90 分钟每一步做什么。</li><li>核心任务必须有模板、示例、参考答案或评分标准。</li><li>练习要能暴露理解错误，而不是只做选择题或短复述。</li><li>个性化要自然落在任务难度、检查点和反馈标准里。</li></ul></article>
+    <article class="card panel"><h2>技术方案</h2><p>沿用 V0.49 的受控流水线和 bounded quality loop，只新增自学可执行性约束。</p><ul><li>prompt 禁止课堂话术和原始学员标签堆叠。</li><li>质量门新增模板、参考答案、高阶练习和自学语言检查。</li><li>critic 新增 <code>self_study_fit</code>、<code>artifact_completeness</code>、<code>assessment_authenticity</code>。</li><li>真实样本继续走后台任务，300 秒硬预算内验收。</li></ul></article>
+    <article class="card panel"><h2>开发范式</h2><p>这是一轮工程 loop，不是一次拍脑袋改 prompt。实际推进中先暴露真实失败，再加确定性兜底，最终第三轮线上样本过关。</p><ul><li>首轮真实 LLM 因自学产物不足失败，证明质量门有效。</li><li>第二轮加入长课自学合同兜底后通过，但 critic 仍指出样例不够直接。</li><li>第三轮强化“已填写参考答案”后通过，并且 critic 无阻断项。</li><li>V0.49.1 收口后进入部署前回归和线上重生成对比。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>Loop 目标</h2><p>这轮不是追求更长，而是让学习者能开始、推进、产出、检查。</p></div><span class="pill">Loop Goal</span></div>
+    <div class="table-wrap"><table><thead><tr><th>指标</th><th>问题表现</th><th>V0.49.1 目标</th></tr></thead><tbody>
+      <tr><td>知识完备性</td><td>内容有机制和边界，但缺少可迁移的完整知识框架。</td><td>核心卡必须给出概念关系、判断流程、边界条件和常见误区。</td></tr>
+      <tr><td>学习质量</td><td>用户看完知道“是什么”，但不一定能做出一个可检查产物。</td><td>每节 60 分钟以上课程必须有模板化产出和参考答案。</td></tr>
+      <tr><td>需求匹配度</td><td>90 分钟合同存在，但活动计划仍可能像短课拉长。</td><td><code>activity_plan</code> 必须把时间分配到读、做、改、验收，而不是泛泛列步骤。</td></tr>
+      <tr><td>个性化构建</td><td>学员信号容易以“已具备/薄弱点”标签形式出现。</td><td>个性化必须自然进入任务难度、提示粒度、验收标准和错误预警。</td></tr>
+      <tr><td>自学可执行性</td><td>像老师讲课材料，不像一个人独立学习的工作单。</td><td>禁止课堂话术；页面能直接指导一个人完成学习和产出。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>开发 Loop</h2><p>每一轮都用同一套节奏推进，避免无限发散。</p></div><span class="pill gold">Engineering Loop</span></div>
+    <div class="table-wrap"><table><thead><tr><th>阶段</th><th>做什么</th><th>输出物</th><th>停止信号</th></tr></thead><tbody>
+      <tr><td>1. 观察</td><td>用当前线上模型生成 90 分钟 golden lesson，记录耗时、质量分、人工阅读问题。</td><td>样本 JSON、预览 HTML、人工审计结论。</td><td>问题能归因到自学执行层，而不是泛泛说“不够好”。</td></tr>
+      <tr><td>2. 设假设</td><td>只选择 1-2 个可验证改动，例如“增加参考答案会提升产出可执行性”。</td><td>SPEC ADR / 版本任务页更新。</td><td>假设能被测试或真实样本验证。</td></tr>
+      <tr><td>3. 实现</td><td>改 prompt、质量门、critic 或渲染，保持旧 schema 兼容。</td><td>代码与测试。</td><td>单测通过，旧 lesson 不破。</td></tr>
+      <tr><td>4. 真测</td><td>用线上接入的 LLM 重新跑同一类课程，统计 wall time 和 loop 轮数。</td><td>质量报告、耗时、预览页。</td><td>300 秒硬预算内完成或转后台可恢复。</td></tr>
+      <tr><td>5. 人读</td><td>从学习者视角判断能否独立完成 60-90 分钟学习。</td><td>通过/不通过 + 具体下一轮改动。</td><td>连续一轮无明确可迭代项，或达到验收门。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>已落地任务包</h2><p>优先补最影响学习体验的四件事，并把它们变成质量门。</p></div><span class="pill">Patch Scope</span></div>
+    <div class="table-wrap"><table><thead><tr><th>任务</th><th>落点</th><th>验收信号</th></tr></thead><tbody>
+      <tr><td>自学语言规范</td><td><code>lesson_write.md</code>、<code>lesson_revise.md</code>、critic prompt。</td><td>生成内容不出现“课堂/同学/老师带你”等课堂话术，也不暴露原始学员标签。</td></tr>
+      <tr><td>模板化产出</td><td><code>produce</code>、核心卡 <code>expansions[]</code> 或增量 <code>study_pack</code>。</td><td>至少 1 个可直接填写的架构图/规则表/检查清单/评分表模板。</td></tr>
+      <tr><td>参考答案与样例</td><td><code>worked_example</code>、<code>produce</code>、<code>practice</code>。</td><td>至少 1 个完整参考答案或样例产物，用户能对照修改自己的答案。</td></tr>
+      <tr><td>高阶练习</td><td><code>practice</code> 与 <code>rubric</code>。</td><td>至少 1 个 critique / repair / design review 类型任务，能测边界判断和迁移能力。</td></tr>
+      <tr><td>质量门补强</td><td><code>core/content_quality.py</code> 与相关测试。</td><td>缺模板、缺参考答案、缺高阶练习的 90 分钟课程不能被标为高质量通过。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>真实验收记录</h2><p>使用线上接入 DeepSeek 模型跑同类 90 分钟 Agent memory 样本，记录 wall time 与停止原因。</p></div><span class="pill gold">Real LLM</span></div>
+    <div class="table-wrap"><table><thead><tr><th>轮次</th><th>结果</th><th>关键数据</th><th>结论</th></tr></thead><tbody>
+      <tr><td>Round 1</td><td>未通过</td><td>266.77s / quality 47 / activity 25min / stop_reason=revise_failed</td><td>真实样本暴露模板缺失与修订链路失败，说明不能只靠 prompt。</td></tr>
+      <tr><td>Round 2</td><td>通过但继续打磨</td><td>186.20s / quality 100 / activity 100min / critic pass</td><td>确定性自学合同兜底有效；critic 仍提示参考答案不够直接。</td></tr>
+      <tr><td>Round 3</td><td>通过</td><td>183.82s / quality 100 / activity 100min / stop_reason=critic_pass</td><td>模板、已填参考答案、高阶练习、rubric 与自学语言检查全部通过。</td></tr>
+    </tbody></table></div>
+    <div class="callout"><b>最终样本：</b><code>estimated_minutes=90</code>，<code>teaching_chars=4709</code>，<code>dense_teaching_cards=3</code>，<code>expansion_blocks=5</code>，<code>self_study_template/reference_answer/high_order_practice=true</code>；critic 11 项评分最低 88，未发现课堂话术或原始个性化标签。</div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>验收门</h2><p>只有真实样本和人工阅读都过，才算 V0.49.1 收口。</p></div><span class="pill gold">Acceptance Gate</span></div>
+    <div class="table-wrap"><table><thead><tr><th>验收项</th><th>通过标准</th></tr></thead><tbody>
+      <tr><td>自动化测试</td><td>新增/扩展内容质量测试；核心链路测试通过，合并前跑完整 pytest。</td></tr>
+      <tr><td>真实 LLM</td><td>使用线上接入模型跑同类 90 分钟样本，记录总耗时、轮数、stop_reason 和质量分。</td></tr>
+      <tr><td>时间受控</td><td>首请求超时后能转后台；后台硬预算默认 300 秒，不能前端一直等待到报错。</td></tr>
+      <tr><td>自学产物</td><td>lesson 中至少包含 1 个模板、1 个参考答案/样例、1 个高阶练习、1 个清晰 rubric。</td></tr>
+      <tr><td>人工学习视角</td><td>打开最终预览页后，学习者不需要老师解释，也能知道 60-90 分钟如何完成、如何检查、如何改进。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>停止条件</h2><p>Loop 必须有结束，而不是一直“再优化一下”。</p></div><span class="pill gray">Stop Rule</span></div>
+    <div class="callout"><b>停止结论：</b>第三轮真实 LLM 样本满足验收门，耗时低于 300 秒硬预算，质量门、critic 和人工阅读都不再出现学习阻断项，V0.49.1 收口。后续若继续提升，应进入新版本，不在本补丁里无限扩张。</div>
+  </section>
+  <div class="footer">V0.49.1 · 自学可执行层 · 已完成代码实现、真实 LLM 验收与工程 loop 收口。</div>
+</main>
+</body>
+</html>

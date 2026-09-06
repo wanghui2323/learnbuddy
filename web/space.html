@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 学习空间</title>
+<link rel="stylesheet" href="/common.css">
+<script src="/common.js?v=0.54"></script>
+<style>
+  :root {
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd;
+    --paper: #f7f4ee; --paper-2: #efeae0; --card: #ffffff;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --line: #e7e1d6; --red: #c2603f; --red-soft: #f8e8e1; --green: #4a9d6e;
+    --radius: 16px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 10px 30px rgba(43,41,38,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans", "Microsoft YaHei", sans-serif;
+    background: var(--paper); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  header {
+    background: #fffdf9; border-bottom: 1px solid var(--line); padding: 14px 22px;
+    display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 10;
+  }
+  header .logo { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff; font-weight: 700; font-size: 19px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(44,110,106,.25); }
+  header .title { font-weight: 700; font-size: 16px; }
+  header .tagline { font-size: 12px; color: var(--ink-faint); }
+  header .spacer { flex: 1; }
+  .runtime-mode { min-height: 28px; display: inline-flex; align-items: center; justify-content: center; padding: 4px 10px; border-radius: 999px; background: var(--paper-2); color: var(--ink-soft); font-size: 11.5px; font-weight: 750; white-space: nowrap; }
+  .runtime-mode.cloud { background: var(--amber-soft); color: #8a5a1f; }
+  .runtime-mode.personal { background: var(--teal-soft); color: var(--teal-dark); }
+  .btn { font: inherit; cursor: pointer; border: none; border-radius: 11px; font-weight: 600; padding: 10px 18px; transition: all .15s; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; }
+  .btn.primary { background: var(--teal); color: #fff; }
+  .btn.primary:hover { background: var(--teal-dark); }
+  .btn.ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: var(--paper-2); }
+  .btn.sm { padding: 7px 13px; font-size: 13px; border-radius: 9px; }
+  .btn.disabled, .hero .hbtn.disabled { opacity: .62; cursor: not-allowed; }
+  .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; filter: grayscale(.2); }
+  .btn:focus-visible, .runtime-link:focus-visible { outline: 3px solid rgba(44,110,106,.24); outline-offset: 2px; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 24px 64px; }
+  .page-head h1 { font-size: 26px; letter-spacing: -.4px; }
+  .page-head p { color: var(--ink-soft); margin-top: 5px; font-size: 14.5px; }
+  .hint { background: var(--amber-soft); border-radius: 12px; padding: 12px 16px; font-size: 13.5px; color: #8a5a1f; margin: 18px 0 4px; display: none; }
+  .hint.limit { background: #fbeee8; color: var(--red); border: 1px solid #f0d2c3; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 14px; }
+  .icard { position: relative; z-index: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(43,41,38,.04); display: flex; flex-direction: column; gap: 10px; transition: all .15s; }
+  .icard:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 10px 26px rgba(44,110,106,.12); }
+  .icard.menu-open { z-index: 80; }
+  .icard.paused { opacity: .72; }
+  .icard .top { display: flex; align-items: flex-start; gap: 12px; }
+  .icard .emoji { width: 44px; height: 44px; border-radius: 12px; background: var(--teal-soft); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .icard .dom { font-weight: 700; font-size: 15.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .icard .tgt { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pills { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pill { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: var(--paper-2); color: var(--ink-soft); }
+  .pill.status-active { background: #e7f3ec; color: var(--green); }
+  .pill.status-paused { background: var(--paper-2); color: var(--ink-soft); }
+  .pill.status-draft { background: var(--amber-soft); color: var(--amber); }
+  .pill.status-done { background: var(--teal-soft); color: var(--teal-dark); }
+  .pill.status-archived { background: var(--paper-2); color: var(--ink-faint); }
+  .prog { margin-top: 2px; }
+  .prog .track { height: 8px; background: var(--paper-2); border-radius: 5px; overflow: hidden; }
+  .prog .track > span { display: block; height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--teal), var(--amber)); }
+  .prog .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+  .acts { display: flex; gap: 8px; margin-top: auto; padding-top: 2px; flex-wrap: wrap; }
+  .acts .grow { flex: 1; }
+  .icon-btn { background: transparent; border: 1px solid var(--line); border-radius: 9px; cursor: pointer; padding: 7px 11px; font: inherit; font-size: 13px; color: var(--ink-soft); transition: all .15s; }
+  .icon-btn:hover { background: var(--paper-2); }
+  .icon-btn.danger:hover { background: var(--red-soft); color: var(--red); border-color: var(--red); }
+  .menu-wrap { position: relative; z-index: 1; }
+  .menu-btn { width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .card-menu { display: none; position: absolute; right: 0; top: calc(100% + 6px); min-width: 124px; background: #fffdf9; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 30px rgba(43,41,38,.16); padding: 5px; z-index: 90; }
+  .menu-wrap.open .card-menu { display: block; }
+  .menu-item { width: 100%; background: transparent; border: 0; border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 13px; color: var(--ink); display: flex; align-items: center; gap: 8px; cursor: pointer; text-align: left; }
+  .menu-item:hover { background: var(--paper-2); }
+  .menu-item.danger { color: var(--red); }
+  .menu-item.danger:hover { background: var(--red-soft); }
+
+  .empty { text-align: center; padding: 9vh 20px; }
+  .empty .big { font-size: 21px; font-weight: 700; }
+  .empty p { color: var(--ink-soft); margin: 8px 0 22px; }
+  .loading { text-align: center; padding: 12vh 0; color: var(--ink-faint); }
+
+  /* 我的积分账户（弹层） */
+  .overlay { position: fixed; inset: 0; background: rgba(43,41,38,.45); display: none; align-items: flex-start; justify-content: center; z-index: 100; padding: 6vh 18px; overflow-y: auto; }
+  .overlay.show { display: flex; }
+  .sheet { background: var(--card); border-radius: 18px; box-shadow: 0 24px 60px rgba(43,41,38,.28); width: 100%; max-width: 640px; overflow: hidden; }
+  .sheet .head { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--line); background: #fffdf9; }
+  .sheet .head h2 { font-size: 16px; flex: 1; }
+  .sheet .head .x { cursor: pointer; border: none; background: var(--paper-2); width: 30px; height: 30px; border-radius: 8px; font-size: 17px; color: var(--ink-soft); }
+  .sheet .body { padding: 18px 20px 22px; max-height: calc(90vh - 64px); overflow-y: auto; }
+  .mini-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 12px; }
+  .mini { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .mini .k { font-size: 12px; color: var(--ink-soft); } .mini .v { font-size: 20px; font-weight: 700; margin-top: 3px; letter-spacing: -.4px; }
+  .mini .v small { font-size: 12px; color: var(--ink-faint); font-weight: 600; }
+  .blk { margin-top: 20px; } .blk h3 { font-size: 13px; color: var(--ink-soft); margin-bottom: 9px; }
+  .uchart { display: flex; align-items: flex-end; gap: 2px; height: 96px; }
+  .uchart .bar { flex: 1; background: linear-gradient(180deg, var(--teal), var(--teal-dark)); border-radius: 3px 3px 0 0; min-height: 2px; }
+  .uchart .bar.zero { background: var(--paper-2); }
+  .uchart-x { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-faint); margin-top: 5px; }
+  .srow { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+  .quota-bar { height: 9px; background: var(--paper-2); border-radius: 5px; overflow: hidden; margin-top: 7px; }
+  .quota-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), var(--amber)); }
+  .rlist { max-height: 190px; overflow-y: auto; }
+  .rlist .ri { display: flex; gap: 10px; font-size: 12.5px; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+  .rlist .ri .t { color: var(--ink-faint); min-width: 96px; } .rlist .ri .s { color: var(--teal-dark); font-weight: 600; min-width: 64px; }
+  .account-section { border: 1px solid var(--line); border-radius: 13px; padding: 14px 16px; margin-bottom: 12px; }
+  .account-section h3 { font-size: 14px; margin-bottom: 5px; }
+  .account-section p { color: var(--ink-soft); font-size: 12.5px; }
+  .account-profile { display: grid; grid-template-columns: 90px 1fr; gap: 5px 12px; margin-top: 10px; font-size: 13px; }
+  .account-profile span { color: var(--ink-soft); }
+  .account-actions { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  .integration-status { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12.5px; font-weight:700; color:var(--ink-soft); }
+  .integration-dot { width:8px; height:8px; border-radius:50%; background:var(--ink-faint); flex:0 0 auto; }
+  .integration-status.active { color:var(--green); }
+  .integration-status.active .integration-dot { background:var(--green); }
+  .binding-code { display:none; margin-top:10px; padding:10px 12px; border-radius:10px; background:var(--teal-soft); color:var(--teal-dark); font:700 16px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.04em; word-break:break-all; }
+  .reminder-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:12px; }
+  .reminder-fields label { display:flex; flex-direction:column; gap:5px; font-size:11.5px; color:var(--ink-soft); }
+  .reminder-fields input,.reminder-fields select { width:100%; border:1.5px solid var(--line); border-radius:9px; padding:8px 9px; background:var(--card); color:var(--ink); font:inherit; font-size:13px; }
+  .reminder-toggle { flex-direction:row !important; align-items:center; align-self:end; min-height:37px; }
+  .reminder-toggle input { width:auto; }
+  .account-danger { border-color: #edcbbd; background: #fffaf8; }
+  .account-danger h3 { color: var(--red); }
+  .account-danger input { width: min(300px, 100%); border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 11px; font: inherit; font-size: 13px; outline: none; }
+  .account-danger input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(194,96,63,.1); }
+  .btn.danger { color: #fff; background: var(--red); }
+  .btn.danger:hover { background: #a94f33; }
+  .account-msg { min-height: 19px; margin-top: 7px; color: var(--red); font-size: 12.5px; }
+  .scene-name { text-transform: capitalize; }
+
+  /* path action dialog */
+  .path-dialog { align-items: center; padding: 18px; }
+  .path-sheet { background: #fffdf9; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 22px 60px rgba(43,41,38,.22); width: min(440px, 100%); padding: 18px; }
+  .path-sheet .dh { display: flex; align-items: flex-start; gap: 12px; }
+  .path-sheet .di { width: 36px; height: 36px; border-radius: 10px; background: var(--teal-soft); color: var(--teal-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .path-sheet h3 { font-size: 17px; line-height: 1.35; }
+  .path-sheet .desc { margin-top: 4px; color: var(--ink-soft); font-size: 13px; }
+  .path-sheet label { display: block; margin-top: 16px; font-size: 12.5px; font-weight: 800; color: var(--ink-soft); }
+  .path-sheet input { width: 100%; margin-top: 7px; border: 1.5px solid var(--line); border-radius: 11px; padding: 11px 12px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; outline: none; }
+  .path-sheet input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(44,110,106,.1); }
+  .path-error { min-height: 20px; margin-top: 7px; color: var(--red); font-size: 12.5px; }
+  .path-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; }
+  .path-actions .btn { padding: 9px 16px; border-radius: 10px; }
+  .path-actions .btn:disabled { opacity: .55; cursor: not-allowed; }
+
+  /* icons */
+  .ic { display: inline-block; vertical-align: -.18em; flex-shrink: 0; }
+  header .chip-ic { vertical-align: -.18em; margin-right: 3px; }
+
+  /* hero greeting */
+  .hero { background: #fffdf9; color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 15px 18px; box-shadow: 0 1px 2px rgba(43,41,38,.04); }
+  .hero h1 { font-size: 20px; letter-spacing: 0; }
+  .hero .sub { margin-top: 3px; font-size: 13.5px; color: var(--ink-soft); max-width: 760px; }
+  .hero .heroact { margin-top: 12px; display: flex; gap: 9px; flex-wrap: wrap; }
+  .hero .hbtn { background: var(--teal-soft); border: 1px solid #c9ddda; color: var(--teal-dark); border-radius: 9px; padding: 7px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: all .15s; }
+  .hero .hbtn:hover { background: #d7e9e7; }
+  .runtime-strip { min-height: 48px; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fffdf9; display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; color: var(--ink-soft); font-size: 12.5px; }
+  .runtime-strip.cloud { background: #fffaf2; border-color: #f0e3cf; }
+  .runtime-strip.personal { background: #f1f8f7; border-color: #c9ddda; }
+  .runtime-strip.fallback { border-style: dashed; color: var(--ink-faint); }
+  .runtime-strip-copy { display: inline-flex; align-items: center; gap: 8px; }
+  .runtime-strip-copy::before { content: ''; width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--ink-faint); }
+  .runtime-strip.cloud .runtime-strip-copy::before { background: var(--amber); }
+  .runtime-strip.personal .runtime-strip-copy::before { background: var(--green); }
+  .runtime-strip-actions { display: flex; align-items: center; justify-content: flex-end; gap: 7px; flex-wrap: wrap; }
+  .runtime-strip-actions[hidden], .personal-agent-setup[hidden], .runtime-link[hidden] { display: none; }
+  .runtime-quota { color: #8a5a1f; font-weight: 750; white-space: nowrap; }
+  .runtime-link { min-height: 32px; display: inline-flex; align-items: center; justify-content: center; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--teal-dark); font: inherit; font-size: 12px; font-weight: 750; text-decoration: none; cursor: pointer; }
+  .runtime-link:hover:not([aria-disabled="true"]):not(:disabled) { border-color: var(--teal); background: var(--teal-soft); }
+  .runtime-link[aria-disabled="true"], .runtime-link:disabled { color: var(--ink-faint); cursor: not-allowed; }
+  .personal-agent-setup { margin-top: 10px; padding: 11px 12px; border-radius: 10px; background: var(--teal-soft); }
+  .personal-agent-setup ul { margin: 8px 0 0 18px; color: var(--ink-soft); font-size: 12px; }
+  .personal-agent-setup li + li { margin-top: 3px; }
+
+  /* overview stats */
+  .ov { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+  .ov .o { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 2px rgba(43,41,38,.04); }
+  .ov .o .oi { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ov .o .oi.teal { background: var(--teal-soft); color: var(--teal-dark); }
+  .ov .o .oi.amber { background: var(--amber-soft); color: var(--amber); }
+  .ov .o .oi.green { background: #e7f3ec; color: var(--green); }
+  .ov .o .ov-v { font-size: 18px; font-weight: 700; letter-spacing: 0; line-height: 1.1; }
+  .ov .o .ov-k { font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
+  @media (max-width: 720px) { .ov { grid-template-columns: repeat(2, 1fr); } }
+
+  /* today focus strip */
+  .focus { margin-top: 22px; }
+  .focus .ftitle { font-size: 13px; font-weight: 700; color: var(--ink-soft); display: flex; align-items: center; gap: 7px; margin-bottom: 11px; }
+  .focus .frow { display: flex; align-items: center; gap: 13px; background: #fffaf2; border: 1px solid #f0e3cf; border-radius: 13px; padding: 12px 16px; margin-bottom: 9px; transition: all .15s; }
+  .focus .frow:hover { border-color: var(--amber); transform: translateX(2px); }
+  .focus .frow .fic { width: 34px; height: 34px; border-radius: 9px; background: var(--amber-soft); color: var(--amber); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .focus .frow .ft { font-weight: 600; font-size: 14px; }
+  .focus .frow .fm { font-size: 12px; color: var(--ink-faint); margin-top: 1px; }
+  .focus .frow .fgo { margin-left: auto; }
+  .credit-panel { display:none !important; margin: 12px 0; background: #fffdf9; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 14px; align-items: center; gap: 12px; }
+  .credit-panel .coin { width: 42px; height: 42px; border-radius: 13px; background: var(--amber-soft); color: #8a5a1f; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .credit-panel .ct { flex:1; min-width:0; }
+  .credit-panel .cv { font-size:22px; font-weight:800; line-height:1.1; color:var(--ink); }
+  .credit-panel .ck { font-size:12.5px; color:var(--ink-soft); margin-top:3px; }
+  .credit-panel .ca { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  @media (max-width: 640px) { .credit-panel { align-items:flex-start; } .credit-panel .ca { justify-content:flex-start; } }
+
+  .page-head h2 { font-size: 18px; }
+  .sec-divider { display: flex; align-items: baseline; gap: 10px; margin-top: 20px; }
+  .sec-divider h2 { font-size: 18px; } .sec-divider span { font-size: 13px; color: var(--ink-faint); }
+
+  /* card cover */
+  .icard { padding: 0; overflow: hidden; }
+  .icard { overflow: visible; }
+  .icard .cover { height: 54px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px 12px 0 0; }
+  .icard .cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .icard .cover .glyph { color: rgba(255,255,255,.92); position: relative; z-index: 1; transform: scale(.78); }
+  .icard .cover.cat-language { background: linear-gradient(135deg,#3a7bd5,#2c6e6a); }
+  .icard .cover.cat-stem { background: linear-gradient(135deg,#6a5acd,#4a3f9e); }
+  .icard .cover.cat-humanity { background: linear-gradient(135deg,#c2603f,#a8472a); }
+  .icard .cover.cat-skill { background: linear-gradient(135deg,#2c6e6a,#235955); }
+  .icard .cover.cat-professional { background: linear-gradient(135deg,#d98a3d,#b5702a); }
+  .icard .cover.cat-other { background: linear-gradient(135deg,#6b6760,#4a463f); }
+  .icard .pad { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .icard .miniprog { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-soft); }
+  .icard .miniprog .due-tag { color: var(--amber); font-weight: 700; }
+  @media (max-width: 640px) {
+    header { padding: 10px 12px; gap: 8px; }
+    header .logo { width: 34px; height: 34px; border-radius: 10px; }
+    header .title { font-size: 15px; line-height: 1.2; }
+    header .tagline { display: none; }
+    header .spacer { flex: 1 1 auto; }
+    .runtime-mode { max-width: 92px; overflow: hidden; text-overflow: ellipsis; padding-inline: 8px; }
+    #adminLink, #userChip { display: none !important; }
+    #usageChip { width: 36px; height: 34px; padding: 0; margin-right: 0 !important; justify-content: center; font-size: 0 !important; }
+    #usageChip .ic { width: 15px; height: 15px; }
+    #newBtn, #accountBtn, #logoutBtn { width: 38px; height: 34px; padding: 0; justify-content: center; font-size: 0; border-radius: 10px; }
+    #newBtn .ic, #accountBtn .ic, #logoutBtn .ic { width: 16px; height: 16px; }
+    .wrap { padding: 16px 12px 48px; }
+    .hero { padding: 14px 15px; }
+    .hero h1 { font-size: 18px; }
+    .runtime-strip { align-items: stretch; flex-direction: column; }
+    .runtime-strip-actions { justify-content: flex-start; }
+    .runtime-link { flex: 1 1 128px; }
+    .ov { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
+    .reminder-fields { grid-template-columns:1fr; }
+    .sec-divider { margin-top: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">L</div>
+  <div>
+    <div class="title">LearnBuddy 学习空间</div>
+    <div class="tagline">学习路径 · 复习节奏 · 伙伴提醒</div>
+  </div>
+  <div class="spacer"></div>
+  <span class="runtime-mode" id="runtimeMode" aria-live="polite">识别版本中</span>
+  <span id="usageChip" onclick="openUsage()" title="点击查看我的积分账户" style="cursor:pointer;font-size:12.5px;color:var(--ink-soft);background:var(--teal-soft);padding:5px 11px;border-radius:20px;margin-right:4px;display:none"></span>
+  <a id="adminLink" class="btn ghost sm" href="/admin" style="display:none"></a>
+  <span id="userChip" style="font-size:13px;color:var(--ink-soft);margin-right:4px"></span>
+  <a class="btn primary" href="/" id="newBtn"></a>
+  <button class="btn ghost sm" id="accountBtn" onclick="openAccount()" title="账号与数据"></button>
+  <button class="btn ghost sm" id="logoutBtn" onclick="logout()"></button>
+</header>
+
+<div class="overlay" id="usageOverlay" onclick="if(event.target===this)closeUsage()">
+  <div class="sheet">
+    <div class="head"><h2>我的积分账户</h2><button class="x" onclick="closeUsage()">✕</button></div>
+    <div class="body" id="usageBody"><div class="loading">加载中…</div></div>
+  </div>
+</div>
+
+<div class="overlay" id="accountOverlay" onclick="if(event.target===this)closeAccount()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+    <div class="head"><h2 id="accountTitle">账号与数据</h2><button class="x" onclick="closeAccount()">✕</button></div>
+    <div class="body">
+      <section class="account-section">
+        <h3>当前账号</h3>
+        <p>这里显示登录身份，不包含密码和会话密钥。</p>
+        <div class="account-profile"><span>名称</span><b id="accountName">—</b><span>邮箱</span><b id="accountEmail">—</b></div>
+      </section>
+      <section class="account-section" id="feishuIntegrationSection" hidden>
+        <h3 id="feishuIntegrationTitle">飞书学习助手</h3>
+        <p id="managedFeishuCopy">绑定后，你可以在自己的飞书里和 LearnBuddy 对话，查计划、记录进度并接收个人提醒。你不需要创建飞书应用。</p>
+        <div id="managedFeishuBinding">
+          <div class="integration-status" id="feishuStatus"><span class="integration-dot"></span><span>正在检查…</span></div>
+          <div class="binding-code" id="feishuBindingCode" aria-live="polite"></div>
+          <div class="account-actions">
+            <button class="btn primary sm" id="createBindingCodeBtn" onclick="createFeishuBindingCode()">生成绑定码</button>
+            <button class="btn ghost sm" id="copyBindingCodeBtn" onclick="copyFeishuBindingCode()" style="display:none">复制绑定码</button>
+            <button class="btn ghost sm" id="unbindFeishuBtn" onclick="unbindFeishu()" style="display:none">解除绑定</button>
+          </div>
+          <div class="account-msg" id="feishuMessage" role="status"></div>
+        </div>
+        <div class="personal-agent-setup" id="personalAgentSetup" hidden>
+          <div class="integration-status" id="personalAgentStatus"><span class="integration-dot"></span><span>正在读取集成能力…</span></div>
+          <ul>
+            <li>使用你自己的飞书应用与 OpenClaw，不共享机器人或凭据。</li>
+            <li>连接后可在飞书对话、调整学习计划并接收个人提醒。</li>
+          </ul>
+          <div class="account-actions"><a class="btn primary sm" id="openAgentSetupLink">查看配置说明</a></div>
+          <div class="account-msg" id="personalAgentMessage" role="status"></div>
+        </div>
+      </section>
+      <section class="account-section" id="reminderIntegrationSection" hidden>
+        <h3>个人学习提醒</h3>
+        <p>提醒规则与你的 LearnBuddy 账号绑定；暂停或解绑后不会继续发飞书消息。</p>
+        <div class="reminder-fields">
+          <label>学习路径<select id="reminderInstance"><option value="">通用学习提醒</option></select></label>
+          <label>提醒时间<input id="reminderTime" type="time" value="08:00" /></label>
+          <label>提醒日<select id="reminderDays"><option value="everyday">每天</option><option value="weekday">工作日</option><option value="weekend">周末</option></select></label>
+          <label class="reminder-toggle"><input id="reminderEnabled" type="checkbox" checked /> 启用主动提醒</label>
+        </div>
+        <div class="account-actions"><button class="btn ghost sm" id="saveReminderBtn" onclick="saveReminderPolicy()">保存提醒设置</button></div>
+        <div class="account-msg" id="reminderMessage" role="status"></div>
+      </section>
+      <section class="account-section" id="accountExportSection">
+        <h3 id="accountExportTitle">导出我的数据</h3>
+        <p id="accountExportCopy">下载对话、学习记录、基线评估和学习路径的 JSON 副本；安全密钥不会包含在内。</p>
+        <div class="account-actions"><button class="btn ghost sm" id="exportAccountBtn" onclick="downloadAccountData()">导出 JSON</button></div>
+      </section>
+      <section class="account-section account-danger">
+        <h3>删除 LearnBuddy 账号</h3>
+        <p id="accountDeleteCopy">这只会永久删除当前 LearnBuddy 服务中的账号、学习路径、对话和学习记录，且无法恢复。请输入当前密码再次确认。</p>
+        <div class="account-actions">
+          <input id="deleteAccountPassword" type="password" autocomplete="current-password" placeholder="输入当前密码" />
+          <button class="btn danger sm" id="deleteAccountBtn" onclick="deleteAccount()">永久删除</button>
+        </div>
+        <div class="account-msg" id="accountMessage" role="status"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="overlay path-dialog" id="renameOverlay" onclick="if(event.target===this)closeRenameDialog()">
+  <div class="path-sheet" role="dialog" aria-modal="true" aria-labelledby="renameTitle">
+    <div class="dh">
+      <div class="di" id="renameIcon"></div>
+      <div>
+        <h3 id="renameTitle">重命名学习路径</h3>
+        <div class="desc">只修改学习空间里显示的路径名称，不会影响已生成的计划和学习记录。</div>
+      </div>
+    </div>
+    <label for="renameInput">路径名称</label>
+    <input id="renameInput" maxlength="60" autocomplete="off" />
+    <div class="path-error" id="renameError"></div>
+    <div class="path-actions">
+      <button class="btn ghost" type="button" onclick="closeRenameDialog()">取消</button>
+      <button class="btn primary" type="button" id="renameSubmit" onclick="submitRename()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="hero" id="hero" style="display:none"></section>
+  <section class="runtime-strip" id="runtimeStrip" role="status" aria-live="polite">
+    <span class="runtime-strip-copy" id="runtimeStripCopy">正在识别运行模式…</span>
+    <span class="runtime-strip-actions" id="runtimeStripActions" hidden>
+      <span class="runtime-quota" id="runtimeQuota"></span>
+      <a class="runtime-link" id="spaceGithubLink">GitHub 源码</a>
+      <a class="runtime-link" id="spaceDeployLink">部署自己的 LearnBuddy</a>
+      <button class="runtime-link" id="runtimeAgentButton" type="button" onclick="openAccount()" hidden>配置飞书 / OpenClaw</button>
+    </span>
+  </section>
+  <section class="credit-panel" id="creditPanel"></section>
+  <div class="ov" id="overview" style="display:none"></div>
+  <section class="focus" id="focus" style="display:none"></section>
+  <div class="sec-divider"><h2>我的学习路径</h2><span id="subtitle"></span></div>
+  <div class="hint" id="hint"></div>
+  <div id="content"><div class="loading">加载学习空间…</div></div>
+</div>
+
+<script>
+const ICONS = {
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+  bolt:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  play:'<path d="M7 4v16l13-8z"/>',
+  pause:'<path d="M8 5v14M16 5v14"/>',
+  more:'<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  trash:'<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
+  chart:'<path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7" rx="1"/><rect x="12" y="6" width="3" height="11" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/>',
+  arrowRight:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  layers:'<path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>',
+  message:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/>',
+  book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.2 5.2L4 17l3 3 5.5-5.5a4 4 0 0 0 5.2-5.2l-2.4 2.4-2.1-.6-.6-2.1z"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  sparkle:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>',
+  checkSquare:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/>',
+};
+function icon(name, size=18){ return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`; }
+const CAT_GLYPH = { language:'message', stem:'flask', humanity:'book', skill:'wrench', professional:'briefcase', other:'sparkle' };
+const STATUS_LABEL = { draft: '待开始', active: '学习中', paused: '已暂停', done: '已完成', archived: '已归档' };
+let OVERVIEW = null;
+let INSTANCE_LIMITS = null;
+let renameTarget = null;
+let RUNTIME_CAPABILITIES = {
+  edition: 'legacy', registration: 'enabled', quota_mode: 'platform', llm_credentials: 'platform',
+  llm_configured: null, feishu: true, openclaw: false, backup_restore: false, admin_console: true,
+  setup_required: false, links: {}, source: 'fallback'
+};
+
+function configureRuntimeLink(element, url, unavailableTitle) {
+  if (!element) return;
+  if (url) {
+    element.href = url;
+    element.target = '_blank';
+    element.rel = 'noopener noreferrer';
+    element.removeAttribute('aria-disabled');
+    element.removeAttribute('title');
+    return;
+  }
+  element.removeAttribute('href');
+  element.removeAttribute('target');
+  element.setAttribute('aria-disabled', 'true');
+  element.title = unavailableTitle;
+}
+
+function applyPersonalAgentState(runtime) {
+  const supported = runtime.feishu || runtime.openclaw;
+  const status = document.getElementById('personalAgentStatus');
+  status.className = 'integration-status';
+  const label = runtime.feishu && runtime.openclaw
+    ? '当前版本支持配置飞书与 OpenClaw'
+    : (supported ? '当前版本支持部分 Agent 能力，请查看配置说明' : '当前部署未开放 Agent 连接能力');
+  status.innerHTML = `<span class="integration-dot"></span><span>${label}</span>`;
+  const setupUrl = runtime.links.setup || runtime.links.deploy;
+  configureRuntimeLink(document.getElementById('openAgentSetupLink'), setupUrl, '请在部署目录查看 OpenClaw / 飞书配置说明');
+  document.getElementById('personalAgentMessage').textContent = setupUrl
+    ? '只有完成一次真实消息往返后，才能确认连接成功。'
+    : '请在部署目录中查看 README；只有真实消息往返后，才能确认连接成功。';
+}
+
+function applySpaceRuntime(runtime) {
+  RUNTIME_CAPABILITIES = runtime || RUNTIME_CAPABILITIES;
+  const mode = document.getElementById('runtimeMode');
+  const strip = document.getElementById('runtimeStrip');
+  const copy = document.getElementById('runtimeStripCopy');
+  const actions = document.getElementById('runtimeStripActions');
+  const github = document.getElementById('spaceGithubLink');
+  const deploy = document.getElementById('spaceDeployLink');
+  const agentButton = document.getElementById('runtimeAgentButton');
+  const feishuSection = document.getElementById('feishuIntegrationSection');
+  const reminderSection = document.getElementById('reminderIntegrationSection');
+  const managedBinding = document.getElementById('managedFeishuBinding');
+  const personalSetup = document.getElementById('personalAgentSetup');
+  mode.className = 'runtime-mode';
+  strip.className = 'runtime-strip';
+  actions.hidden = true;
+  github.hidden = false;
+  deploy.hidden = false;
+  agentButton.hidden = true;
+  feishuSection.hidden = false;
+  reminderSection.hidden = false;
+  feishuSection.style.display = '';
+  reminderSection.style.display = '';
+  managedBinding.style.display = '';
+  personalSetup.hidden = true;
+
+  if (runtime.edition === 'cloud') {
+    mode.textContent = '在线体验';
+    mode.classList.add('cloud');
+    strip.classList.add('cloud');
+    copy.textContent = '在线体验版 · 免费额度有限，长期使用请私有部署';
+    document.getElementById('runtimeQuota').textContent = '额度加载中…';
+    configureRuntimeLink(github, runtime.links.github, '部署方尚未配置源码地址');
+    configureRuntimeLink(deploy, runtime.links.deploy, '部署方尚未配置私有部署说明');
+    actions.hidden = false;
+    feishuSection.hidden = true;
+    reminderSection.hidden = true;
+    feishuSection.style.display = 'none';
+    reminderSection.style.display = 'none';
+  } else if (runtime.edition === 'personal') {
+    mode.textContent = '我的 LearnBuddy';
+    mode.classList.add('personal');
+    strip.classList.add('personal');
+    copy.textContent = runtime.llm_configured === true
+      ? '数据归你管理 · 自有模型已配置（BYOK）'
+      : (runtime.llm_configured === false
+        ? '数据归你管理 · 请先在本地 .env 配置模型（BYOK）'
+        : '数据归你管理 · 模型密钥由你配置（BYOK）');
+    github.hidden = true;
+    deploy.hidden = true;
+    agentButton.hidden = false;
+    actions.hidden = false;
+    document.querySelector('header .tagline').textContent = '私人学习空间 · 数据与凭据由你管理';
+    document.getElementById('accountTitle').textContent = '我的 LearnBuddy 设置';
+    document.getElementById('feishuIntegrationTitle').textContent = '飞书与 OpenClaw 学习助手';
+    document.getElementById('managedFeishuCopy').textContent = '使用你自己的飞书应用和 OpenClaw 连接 LearnBuddy，凭据只保存在你的部署环境。';
+    managedBinding.style.display = '';
+    personalSetup.hidden = false;
+    reminderSection.hidden = !(runtime.feishu || runtime.openclaw);
+    reminderSection.style.display = runtime.feishu || runtime.openclaw ? '' : 'none';
+    document.getElementById('accountExportTitle').textContent = '导出我的学习数据';
+    document.getElementById('accountExportCopy').textContent = runtime.backup_restore
+      ? '这里下载 JSON 数据副本；完整备份与恢复请使用部署脚本，模型与飞书密钥不会写入导出文件。'
+      : '下载对话、学习记录、基线评估和学习路径的 JSON 副本；安全密钥不会包含在内。';
+    document.getElementById('accountDeleteCopy').textContent = '这只会永久删除当前 LearnBuddy 部署中的账号、学习路径、对话和学习记录，且无法恢复。OpenClaw 会话、OpenClaw 凭据和飞书应用凭据不会自动删除，请按部署指南单独清理。请输入当前密码再次确认。';
+    applyPersonalAgentState(runtime);
+  } else {
+    mode.textContent = '兼容模式';
+    strip.classList.add('fallback');
+    copy.textContent = '运行模式暂未读取，已按当前服务配置继续。';
+  }
+}
+
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+
+function pathProgress(instance) {
+  const progress = instance && instance.progress ? instance.progress : {};
+  const week = Math.max(1, Number(progress.current_week) || 1);
+  const day = Math.max(1, Number(progress.current_day) || 1);
+  const completed = Math.max(0, Number(progress.completed_units) || 0);
+  const total = Math.max(0, Number(progress.total_units) || 0);
+  const pct = Math.max(0, Math.min(100, Number(progress.progress_percent) || 0));
+  const label = progress.status === 'completed'
+    ? `已完成 ${completed} / ${total || completed} 个学习单元`
+    : `当前 W${week} · D${day}${total ? ` · 已完成 ${completed}/${total}` : ''}`;
+  return { week, day, completed, total, pct, label };
+}
+
+async function logout() {
+  try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (e) {}
+  location.href = '/login';
+}
+
+function fmtTokens(n) {
+  n = n || 0;
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + 'k';
+  return String(n);
+}
+
+function fallbackLimits(list) {
+  const current = (list || []).filter(i => ['active','draft','paused'].includes(i.status || 'draft')).length;
+  return { max: 5, current, remaining: Math.max(0, 5 - current) };
+}
+
+function getLimits(list) {
+  const fallback = fallbackLimits(list);
+  const raw = INSTANCE_LIMITS || (OVERVIEW && OVERVIEW.limits) || fallback;
+  const max = raw.max || fallback.max || 5;
+  const current = Math.max(raw.current || 0, fallback.current || 0);
+  return { max, current, remaining: Math.max(0, max - current) };
+}
+
+function canCreateInstance(list) {
+  const limits = getLimits(list);
+  return (limits.remaining || 0) > 0;
+}
+
+function limitText(list) {
+  const limits = getLimits(list);
+  return `你当前已有 ${limits.current || 0}/${limits.max || 5} 个在建学习任务。先删除、完成或归档一个，再新建下一条学习路径。`;
+}
+
+function showLimitHint() {
+  alert(limitText());
+}
+
+function syncCreateButton(list) {
+  const btn = document.getElementById('newBtn');
+  if (!btn) return;
+  if (canCreateInstance(list)) {
+    btn.href = '/';
+    btn.classList.remove('disabled');
+    btn.onclick = null;
+    btn.title = '新建学习路径';
+  } else {
+    btn.href = 'javascript:void(0)';
+    btn.classList.add('disabled');
+    btn.onclick = (ev) => { ev.preventDefault(); showLimitHint(); };
+    btn.title = limitText(list);
+  }
+}
+
+async function loadUser() {
+  try {
+    const res = await fetch('/api/auth/me');
+    if (res.status === 401) { location.href = '/login'; return; }
+    const d = await res.json();
+    if (d.user) {
+      window.__user = d.user;
+      window.__userName = d.user.name || (d.user.email||'').split('@')[0];
+      document.getElementById('userChip').textContent = d.user.name || d.user.email;
+      if (d.user.is_admin && RUNTIME_CAPABILITIES.admin_console && RUNTIME_CAPABILITIES.edition !== 'personal') {
+        const al = document.getElementById('adminLink');
+        al.style.display = '';
+        al.innerHTML = `${icon('settings',15)} 管理后台`;
+      }
+    }
+  } catch (e) {}
+  if (RUNTIME_CAPABILITIES.quota_mode !== 'platform' || RUNTIME_CAPABILITIES.edition === 'personal') return;
+  try {
+    const r = await fetch('/api/usage?lite=1');
+    if (!r.ok) {
+      const runtimeQuota = document.getElementById('runtimeQuota');
+      if (runtimeQuota && RUNTIME_CAPABILITIES.edition === 'cloud') {
+        runtimeQuota.textContent = r.status === 401 ? '登录后查看额度' : '额度暂不可用';
+      }
+      return;
+    }
+    if (r.ok) {
+      const data = await r.json();
+      const c = data.credits || (data.quota && data.quota.credits) || {};
+      const chip = document.getElementById('usageChip');
+      let txt = `${icon('bolt',13)} 积分 ${fmtTokens(Math.max(0, c.balance || 0))}`;
+      if ((c.spent || 0) > 0) txt += ` · 已用 ${fmtTokens(c.spent)}`;
+      chip.innerHTML = txt;
+      if ((c.balance || 0) <= 0) { chip.style.background = 'var(--red-soft)'; chip.style.color = 'var(--red)'; }
+      chip.style.display = '';
+      const runtimeQuota = document.getElementById('runtimeQuota');
+      if (runtimeQuota && RUNTIME_CAPABILITIES.edition === 'cloud') {
+        runtimeQuota.textContent = `剩余 ${fmtTokens(Math.max(0, c.balance || 0))} 积分`;
+      }
+      renderCreditPanel(c);
+    }
+  } catch (e) {
+    const runtimeQuota = document.getElementById('runtimeQuota');
+    if (runtimeQuota && RUNTIME_CAPABILITIES.edition === 'cloud') runtimeQuota.textContent = '额度暂不可用';
+  }
+}
+
+function renderCreditPanel(c) {
+  const box = document.getElementById('creditPanel');
+  if (!box) return;
+  const reward = c.study_reward_points || 20;
+  const daily = c.study_reward_daily_limit || 60;
+  box.innerHTML = `
+    <div class="coin">${icon('bolt',20)}</div>
+    <div class="ct">
+      <div class="cv">${fmtTokens(Math.max(0, c.balance || 0))} 积分</div>
+      <div class="ck">生成学习路径、讲解和复盘会消耗积分；完成一节学习奖励 ${reward} 积分，每天最多奖励 ${daily} 积分。</div>
+    </div>
+    <div class="ca">
+      <button class="btn ghost sm" onclick="openUsage()">${icon('chart',14)} 查看明细</button>
+      <button class="btn primary sm" onclick="openUsage()">${icon('bolt',14)} 兑换积分卡</button>
+    </div>`;
+  box.style.display = 'flex';
+}
+
+function greetWord() {
+  const h = new Date().getHours();
+  if (h < 5) return '夜深了'; if (h < 11) return '早上好'; if (h < 13) return '中午好';
+  if (h < 18) return '下午好'; return '晚上好';
+}
+
+function renderHero(name, ov, list) {
+  const hero = document.getElementById('hero');
+  const due = ov ? ov.due_count : 0;
+  const limits = getLimits(list);
+  const active = (ov && typeof ov.active === 'number') ? ov.active : limits.current;
+  let sub;
+  if (!list.length) sub = '你还没有学习路径。和 LearnBuddy 聊几句，生成第一条个性化学习路径。';
+  else if (due > 0) sub = `你有 <b>${active}</b> 条学习路径在推进，今天 <b>${due}</b> 个知识点到期该复习了。`;
+  else sub = `你有 <b>${active}/${limits.max}</b> 条在建学习路径。今天没有到期复习，从下面选一条继续。`;
+  const emptyCreate = !list.length && canCreateInstance(list)
+    ? `<div class="heroact"><a class="hbtn" href="/">${icon('plus',16)} 新建学习路径</a></div>`
+    : '';
+  hero.innerHTML = `
+    <h1>${greetWord()}，${esc(name||'同学')}</h1>
+    <div class="sub">${sub}</div>
+    ${emptyCreate}`;
+  hero.style.display = '';
+}
+
+function renderOverview(ov) {
+  if (!ov) return;
+  const box = document.getElementById('overview');
+  box.innerHTML = `
+    <div class="o"><div class="oi teal">${icon('layers',19)}</div><div><div class="ov-v">${ov.systems}</div><div class="ov-k">学习路径</div></div></div>
+    <div class="o"><div class="oi green">${icon('target',19)}</div><div><div class="ov-v">${ov.topics_studied}</div><div class="ov-k">已学知识点</div></div></div>
+    <div class="o"><div class="oi amber">${icon('flame',19)}</div><div><div class="ov-v" style="${ov.due_count?'color:var(--amber)':''}">${ov.due_count}</div><div class="ov-k">待复习</div></div></div>
+    <div class="o"><div class="oi teal">${icon('chart',19)}</div><div><div class="ov-v">${ov.objective_pct}<span style="font-size:13px;color:var(--ink-faint)">%</span></div><div class="ov-k">客观答对率</div></div></div>`;
+  box.style.display = '';
+}
+
+function renderFocus(ov) {
+  const box = document.getElementById('focus');
+  if (!ov || !(ov.focus||[]).length) { box.style.display = 'none'; return; }
+  box.innerHTML = `<div class="ftitle">${icon('flame',15)} 今天一起学什么 · 到期复习</div>` +
+    ov.focus.map(f => `<a class="frow" href="/instance/${encodeURIComponent(f.instance_id)}" style="text-decoration:none;color:inherit">
+      <div class="fic">${icon('refresh',17)}</div>
+      <div><div class="ft">${esc(f.topic)}</div><div class="fm">${esc(f.domain)} · 到期 ${f.next_due.slice(5)} · 自评：${esc(f.self_label)}</div></div>
+      <div class="fgo">${icon('arrowRight',18)}</div>
+    </a>`).join('');
+  box.style.display = '';
+}
+
+async function load() {
+  let data;
+  try {
+    const insRes = await fetch('/api/instances');
+    if (insRes.status === 401) { location.href = '/login'; return; }
+    data = await insRes.json();
+  } catch (e) {
+    document.getElementById('content').innerHTML = '<div class="empty"><div class="big">加载失败</div><p>' + esc(e.message) + '</p></div>';
+    return;
+  }
+  const list = (data.instances || []).slice().sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+  window.__instances = list;
+  OVERVIEW = null;
+  INSTANCE_LIMITS = data.limits || fallbackLimits(list);
+  syncCreateButton(list);
+  const sub = document.getElementById('subtitle');
+  const hint = document.getElementById('hint');
+  hint.style.display = 'none';
+  hint.className = 'hint';
+
+  renderHero(window.__userName, OVERVIEW, list);
+
+  if (!list.length) {
+    sub.textContent = '';
+    const emptyAction = canCreateInstance(list)
+      ? `<a class="btn primary" href="/">${icon('plus',17)} 新建学习路径</a>`
+      : `<button class="btn primary disabled" onclick="showLimitHint()">${icon('plus',17)} 新建已达上限</button>`;
+    document.getElementById('content').innerHTML =
+      `<div class="empty"><div class="big">学习空间还空着</div><p>和 LearnBuddy 聊几句，生成你的第一条个性化学习路径。</p>${emptyAction}</div>`;
+    return;
+  }
+
+  updatePathSummary(list);
+
+  document.getElementById('content').innerHTML =
+    '<div class="grid">' + list.map(renderCard).join('') + '</div>';
+
+  loadOverviewLater(list);
+}
+
+function updatePathSummary(list) {
+  const sub = document.getElementById('subtitle');
+  const hint = document.getElementById('hint');
+  const limits = getLimits(list);
+  const activeCount = limits.current;
+  sub.textContent = `共 ${list.length} 套 · ${activeCount}/${limits.max} 套在建`;
+  hint.style.display = 'none';
+  hint.className = 'hint';
+  if (activeCount >= limits.max) {
+    hint.style.display = 'block';
+    hint.className = 'hint limit';
+    hint.innerHTML = `${icon('flame',15)} ${esc(limitText(list))}`;
+  } else if (activeCount >= 3) {
+    hint.style.display = 'block';
+    hint.innerHTML = `${icon('flame',15)} 你同时在推进 ${activeCount} 条学习路径。并行越多、每条越慢；最多保留 ${limits.max} 条在建任务。`;
+  }
+}
+
+async function loadOverviewLater(list) {
+  try {
+    const res = await fetch('/api/overview');
+    if (!res.ok) return;
+    OVERVIEW = await res.json();
+    INSTANCE_LIMITS = OVERVIEW.limits || INSTANCE_LIMITS;
+    syncCreateButton(list);
+    renderHero(window.__userName, OVERVIEW, list);
+    renderOverview(OVERVIEW);
+    renderFocus(OVERVIEW);
+    updatePathSummary(list);
+    document.getElementById('content').innerHTML =
+      '<div class="grid">' + list.map(renderCard).join('') + '</div>';
+  } catch (e) {}
+}
+
+function renderCard(i) {
+  const cat = i.domain_category || 'other';
+  const glyph = CAT_GLYPH[cat] || 'sparkle';
+  const p = pathProgress(i);
+  const status = i.status || 'draft';
+  const statusLbl = STATUS_LABEL[status] || status;
+  const st = (OVERVIEW && OVERVIEW.per_instance) ? OVERVIEW.per_instance[i.id] : null;
+  const primaryLabel = status === 'draft' ? '开始学习' : (status === 'paused' ? '恢复学习' : (status === 'done' ? '查看学习' : '继续学习'));
+  const safeId = esc(JSON.stringify(i.id || ''));
+  const safeDomain = esc(JSON.stringify(i.domain || ''));
+  const primaryAction = status === 'draft' || status === 'paused'
+    ? `<button class="btn primary sm grow" onclick="continuePath(${safeId}, '${status}', event)" style="justify-content:center">${icon('arrowRight',15)} ${primaryLabel}</button>`
+    : `<a class="btn primary sm grow" href="/instance/${encodeURIComponent(i.id)}" style="justify-content:center">${icon('arrowRight',15)} ${primaryLabel}</a>`;
+
+  let progLine;
+  if (st && st.topics_studied > 0) {
+    progLine = `<div class="miniprog">${icon('target',14)} 已学 ${st.topics_studied} 个知识点 · 客观 ${st.objective_pct}%` +
+      (st.due > 0 ? ` · <span class="due-tag">${st.due} 待复习</span>` : '') + `</div>`;
+  } else {
+    progLine = `<div class="prog"><div class="track"><span style="width:${p.pct}%"></span></div><div class="lbl">${p.label}</div></div>`;
+  }
+
+  return `
+  <div class="icard ${status}">
+    <div class="cover cat-${cat}"><img src="/assets/cover-${cat}.png" alt="" onerror="this.remove()"><span class="glyph">${icon(glyph,34)}</span></div>
+    <div class="pad">
+      <div>
+        <div class="dom">${esc(i.domain)}</div>
+        <div class="tgt">${esc(i.target)}</div>
+      </div>
+      <div class="pills">
+        <span class="pill status-${status}">${statusLbl}</span>
+        <span class="pill">${i.weeks || '?'} 周</span>
+        <span class="pill">${esc(i.intensity || 'standard')}</span>
+      </div>
+      ${progLine}
+      <div class="acts">
+        ${primaryAction}
+        <div class="menu-wrap" id="menu-${esc(i.id)}">
+          <button class="icon-btn menu-btn" onclick="toggleCardMenu(${safeId}, event)" title="更多">${icon('more',16)}</button>
+          <div class="card-menu" role="menu">
+            <button class="menu-item" onclick="renamePath(${safeId}, ${safeDomain}, event)">${icon('edit',14)} 重命名</button>
+            <button class="menu-item danger" onclick="del(${safeId}, ${safeDomain}, event)">${icon('trash',14)} 删除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function closeCardMenus(exceptId) {
+  document.querySelectorAll('.menu-wrap.open').forEach(el => {
+    if (!exceptId || el.id !== `menu-${exceptId}`) {
+      el.classList.remove('open');
+      const card = el.closest('.icard');
+      if (card) card.classList.remove('menu-open');
+    }
+  });
+}
+
+function toggleCardMenu(id, ev) {
+  ev.preventDefault(); ev.stopPropagation();
+  const box = document.getElementById(`menu-${id}`);
+  if (!box) return;
+  const willOpen = !box.classList.contains('open');
+  closeCardMenus(id);
+  box.classList.toggle('open', willOpen);
+  const card = box.closest('.icard');
+  if (card) card.classList.toggle('menu-open', willOpen);
+}
+
+async function renamePath(id, domain, ev) {
+  ev.preventDefault(); ev.stopPropagation();
+  closeCardMenus();
+  openRenameDialog(id, domain || '');
+}
+
+function openRenameDialog(id, domain) {
+  renameTarget = { id, domain };
+  document.getElementById('renameIcon').innerHTML = icon('edit', 18);
+  const input = document.getElementById('renameInput');
+  const error = document.getElementById('renameError');
+  const submit = document.getElementById('renameSubmit');
+  input.value = domain || '';
+  error.textContent = '';
+  submit.disabled = false;
+  document.getElementById('renameOverlay').classList.add('show');
+  requestAnimationFrame(() => {
+    input.focus();
+    input.select();
+  });
+}
+
+function closeRenameDialog() {
+  document.getElementById('renameOverlay').classList.remove('show');
+  renameTarget = null;
+  document.getElementById('renameError').textContent = '';
+}
+
+async function submitRename() {
+  if (!renameTarget) return;
+  const input = document.getElementById('renameInput');
+  const error = document.getElementById('renameError');
+  const submit = document.getElementById('renameSubmit');
+  const name = input.value.trim();
+  if (!name) {
+    error.textContent = '路径名称不能为空。';
+    input.focus();
+    return;
+  }
+  if (name === renameTarget.domain) {
+    closeRenameDialog();
+    return;
+  }
+  submit.disabled = true;
+  error.textContent = '';
+  try {
+    const res = await fetch(`/api/instance/${encodeURIComponent(renameTarget.id)}/plan`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain: name }),
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(()=>({}));
+      throw new Error(d.detail || '重命名失败');
+    }
+    closeRenameDialog();
+    load();
+  } catch (e) {
+    error.textContent = e.message || '重命名失败，请稍后再试。';
+    submit.disabled = false;
+    input.focus();
+  }
+}
+
+async function continuePath(id, status, ev) {
+  ev.preventDefault(); ev.stopPropagation();
+  try {
+    if (status === 'draft' || status === 'paused') {
+      const res = await fetch(`/api/instance/${encodeURIComponent(id)}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'active' }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(()=>({}));
+        throw new Error(d.detail || '进入失败');
+      }
+    }
+    location.href = `/instance/${encodeURIComponent(id)}`;
+  } catch (e) { alert('进入失败：' + e.message); }
+}
+
+async function setStatus(id, status, ev) {
+  ev.preventDefault(); ev.stopPropagation();
+  try {
+    const res = await fetch(`/api/instance/${encodeURIComponent(id)}/status`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(()=>({}));
+      throw new Error(d.detail || '操作失败');
+    }
+    load();
+  } catch (e) { alert('操作失败：' + e.message); }
+}
+
+async function del(id, domain, ev) {
+  ev.preventDefault(); ev.stopPropagation();
+  closeCardMenus();
+  if (!confirm(`确定删除「${domain}」？此操作不可恢复，将永久删除这条学习路径的全部数据。`)) return;
+  try {
+    await fetch(`/api/instance/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    load();
+  } catch (e) { alert('删除失败：' + e.message); }
+}
+
+const SCENE_LABEL = { chat: '对话', generate: '生成路径', lesson: '学练单元', other: '其他' };
+function ftime(s){ return s ? s.replace('T',' ').slice(5,16) : '—'; }
+
+function usageBars(daily) {
+  daily = daily || [];
+  const max = Math.max(1, ...daily.map(d => d.calls || 0));
+  const bars = daily.map(d => {
+    const n = d.calls || 0;
+    const h = Math.round(n / max * 100);
+    return `<div class="bar ${n ? '' : 'zero'}" style="height:${Math.max(h,2)}%" title="${d.date.slice(5)}: ${n} 次"></div>`;
+  }).join('');
+  const f = daily.length ? daily[0].date.slice(5) : '', l = daily.length ? daily[daily.length-1].date.slice(5) : '';
+  return `<div class="uchart">${bars}</div><div class="uchart-x"><span>${f}</span><span>${l}</span></div>`;
+}
+
+async function openUsage() {
+  document.getElementById('usageOverlay').classList.add('show');
+  const box = document.getElementById('usageBody');
+  box.innerHTML = '<div class="loading">加载中…</div>';
+  let d;
+  try { const r = await fetch('/api/usage'); if(r.status===401){location.href='/login';return;} d = await r.json(); }
+  catch(e){ box.innerHTML = '<div class="loading">加载失败</div>'; return; }
+  const s = d.summary || {}, c = d.credits || (d.quota && d.quota.credits) || {};
+  const quotaBlock = `
+    <div class="blk">
+      <h3>积分额度</h3>
+      <div class="srow" style="border:none;padding-bottom:2px"><span>已用 <b>${fmtTokens(c.spent||0)}</b> / 累计获得 ${fmtTokens(c.granted||0)}</span><span>剩 <b>${fmtTokens(Math.max(0,c.balance||0))}</b></span></div>
+      <div class="quota-bar"><span style="width:${Math.min(100, Math.round(((c.spent||0)/Math.max(1,c.granted||0))*100))}%"></span></div>
+      <div class="limit-box" style="margin-top:12px">
+        <input id="redeemCode" placeholder="输入积分卡号" style="font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;min-width:180px" />
+        <button class="btn primary sm" onclick="redeemCard()">兑换积分卡</button>
+      </div>
+    </div>`;
+  const scenes = (s.by_scene||[]).map(x =>
+    `<div class="srow"><span class="scene-name">${SCENE_LABEL[x.scene]||x.scene||'其他'}</span><b>${x.calls} 次</b></div>`
+  ).join('') || '<div class="srow" style="color:var(--ink-faint)">还没有消耗记录</div>';
+
+  box.innerHTML = `
+    <div class="mini-cards">
+      <div class="mini"><div class="k">当前积分</div><div class="v">${fmtTokens(Math.max(0,c.balance||0))}</div></div>
+      <div class="mini"><div class="k">累计获得</div><div class="v">${fmtTokens(c.granted||0)}</div></div>
+      <div class="mini"><div class="k">累计消耗</div><div class="v">${fmtTokens(c.spent||0)}</div></div>
+      <div class="mini"><div class="k">学习调用</div><div class="v">${s.calls||0}</div></div>
+    </div>
+    ${quotaBlock}
+    <div class="blk"><h3>最近积分流水</h3><div class="rlist">${creditRows(c.recent)}</div></div>
+    <div class="blk"><h3>按学习场景</h3>${scenes}</div>
+    <div style="margin-top:16px;font-size:11.5px;color:var(--ink-faint)">积分用于生成学习路径、讲解、复盘和知识图谱等 AI 学习能力。</div>`;
+}
+function closeUsage(){ document.getElementById('usageOverlay').classList.remove('show'); }
+function openAccount(){
+  const user = window.__user || {};
+  document.getElementById('accountName').textContent = user.name || '—';
+  document.getElementById('accountEmail').textContent = user.email || '—';
+  document.getElementById('deleteAccountPassword').value = '';
+  document.getElementById('accountMessage').textContent = '';
+  document.getElementById('accountOverlay').classList.add('show');
+  if (RUNTIME_CAPABILITIES.edition === 'personal') {
+    applyPersonalAgentState(RUNTIME_CAPABILITIES);
+    loadFeishuIntegration();
+    loadReminderPolicy();
+  } else if (RUNTIME_CAPABILITIES.edition === 'legacy') {
+    loadFeishuIntegration();
+    loadReminderPolicy();
+  }
+}
+function closeAccount(){ document.getElementById('accountOverlay').classList.remove('show'); }
+function integrationMessage(id, text, ok=false){
+  const box = document.getElementById(id);
+  box.textContent = text || '';
+  box.style.color = ok ? 'var(--green)' : 'var(--red)';
+}
+function weekdaysMode(days){
+  const key = (days || []).join(',');
+  if(key === '1,2,3,4,5') return 'weekday';
+  if(key === '6,7') return 'weekend';
+  return 'everyday';
+}
+function weekdaysValue(mode){
+  if(mode === 'weekday') return [1,2,3,4,5];
+  if(mode === 'weekend') return [6,7];
+  return [1,2,3,4,5,6,7];
+}
+async function loadFeishuIntegration(){
+  const status = document.getElementById('feishuStatus');
+  const createBtn = document.getElementById('createBindingCodeBtn');
+  const unbindBtn = document.getElementById('unbindFeishuBtn');
+  const instanceSelect = document.getElementById('reminderInstance');
+  const previousInstance = instanceSelect.value;
+  instanceSelect.innerHTML = '<option value="">通用学习提醒</option>' + (window.__instances||[]).map(i =>
+    `<option value="${esc(i.id||'')}">${esc(i.name||i.domain||i.target||i.id||'学习路径')}</option>`
+  ).join('');
+  if(previousInstance) instanceSelect.value = previousInstance;
+  window.__feishuBindingCode = '';
+  document.getElementById('feishuBindingCode').style.display = 'none';
+  document.getElementById('copyBindingCodeBtn').style.display = 'none';
+  createBtn.disabled = true;
+  unbindBtn.style.display = 'none';
+  status.className = 'integration-status';
+  status.innerHTML = '<span class="integration-dot"></span><span>正在检查…</span>';
+  integrationMessage('feishuMessage','');
+  try {
+    const response = await fetch('/api/integrations/feishu', {cache:'no-store'});
+    if(response.status === 401){ location.href='/login'; return; }
+    if(!response.ok) throw new Error('暂时无法读取飞书集成状态');
+    const data = await response.json();
+    window.__feishuIntegration = data;
+    createBtn.disabled = !data.configured;
+    if(!data.configured){
+      const isPersonal = RUNTIME_CAPABILITIES.edition === 'personal';
+      status.innerHTML = `<span class="integration-dot"></span><span>${isPersonal ? '尚未完成 Agent 签名密钥配置' : '服务器待配置，功能入口已就绪'}</span>`;
+      integrationMessage('feishuMessage', isPersonal
+        ? '请先按配置说明完成 OpenClaw 与飞书应用设置，再回来生成绑定码。'
+        : '等管理员完成密钥与飞书机器人发布后，即可生成绑定码。');
+    } else if(data.binding){
+      status.className = 'integration-status active';
+      status.innerHTML = `<span class="integration-dot"></span><span>已绑定飞书身份 ${esc(data.binding.external_user_hint||'')}</span>`;
+      createBtn.textContent = '重新生成绑定码';
+      unbindBtn.style.display = '';
+    } else {
+      status.innerHTML = '<span class="integration-dot"></span><span>尚未绑定</span>';
+      createBtn.textContent = '生成绑定码';
+      unbindBtn.style.display = 'none';
+    }
+  } catch(error) {
+    status.innerHTML = '<span class="integration-dot"></span><span>状态读取失败</span>';
+    integrationMessage('feishuMessage', error.message || '请稍后重试。');
+  }
+}
+async function loadReminderPolicy(){
+  integrationMessage('reminderMessage','');
+  try {
+    const response = await fetch('/api/reminders/policy', {cache:'no-store'});
+    if(response.status === 401){ location.href='/login'; return; }
+    if(!response.ok) throw new Error('暂时无法读取提醒设置');
+    const data = await response.json();
+    const policy = data.policy;
+    if(!policy) return;
+    document.getElementById('reminderInstance').value = policy.instance_id || '';
+    document.getElementById('reminderTime').value = policy.local_time || '08:00';
+    document.getElementById('reminderDays').value = weekdaysMode(policy.weekdays);
+    document.getElementById('reminderEnabled').checked = !!policy.enabled;
+  } catch(error) {
+    integrationMessage('reminderMessage', error.message || '提醒设置读取失败，请稍后重试。');
+  }
+}
+async function createFeishuBindingCode(){
+  const button = document.getElementById('createBindingCodeBtn');
+  button.disabled = true;
+  integrationMessage('feishuMessage','');
+  try {
+    const response = await fetch('/api/integrations/feishu/binding-code', {method:'POST'});
+    const data = await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.detail || '生成绑定码失败');
+    window.__feishuBindingCode = data.code;
+    const codeBox = document.getElementById('feishuBindingCode');
+    codeBox.textContent = data.code;
+    codeBox.style.display = 'block';
+    document.getElementById('copyBindingCodeBtn').style.display = '';
+    integrationMessage('feishuMessage','请在 10 分钟内把这个绑定码发给 LearnBuddy 飞书机器人。',true);
+  } catch(error) {
+    integrationMessage('feishuMessage',error.message || '生成失败。');
+  } finally { button.disabled = false; }
+}
+async function copyFeishuBindingCode(){
+  const code = window.__feishuBindingCode || '';
+  if(!code) return;
+  try {
+    await navigator.clipboard.writeText(code);
+    integrationMessage('feishuMessage','已复制，现在发给 LearnBuddy 飞书机器人。',true);
+  } catch(error) { integrationMessage('feishuMessage','复制失败，请手动选中绑定码。'); }
+}
+async function unbindFeishu(){
+  if(!confirm('确认解除飞书绑定？解绑后旧 Agent 令牌会立即失效，也不再发学习提醒。')) return;
+  const response = await fetch('/api/integrations/feishu/binding', {method:'DELETE'});
+  if(!response.ok){ integrationMessage('feishuMessage','解绑失败，请稍后重试。'); return; }
+  window.__feishuBindingCode = '';
+  document.getElementById('feishuBindingCode').style.display = 'none';
+  document.getElementById('copyBindingCodeBtn').style.display = 'none';
+  integrationMessage('feishuMessage','已解除飞书绑定。',true);
+  await loadFeishuIntegration();
+}
+async function saveReminderPolicy(){
+  const button = document.getElementById('saveReminderBtn');
+  button.disabled = true;
+  integrationMessage('reminderMessage','');
+  const body = {
+    instance_id: document.getElementById('reminderInstance').value,
+    timezone: 'Asia/Shanghai',
+    local_time: document.getElementById('reminderTime').value || '08:00',
+    weekdays: weekdaysValue(document.getElementById('reminderDays').value),
+    enabled: document.getElementById('reminderEnabled').checked
+  };
+  try {
+    const response = await fetch('/api/reminders/policy', {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data = await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.detail || '保存失败');
+    integrationMessage('reminderMessage', body.enabled ? '提醒设置已保存。' : '主动提醒已暂停。', true);
+  } catch(error) { integrationMessage('reminderMessage',error.message || '保存失败。'); }
+  finally { button.disabled = false; }
+}
+async function downloadAccountData(){
+  const button = document.getElementById('exportAccountBtn');
+  button.disabled = true;
+  button.textContent = '正在导出…';
+  try {
+    const response = await fetch('/api/account/export', { cache:'no-store' });
+    if(response.status === 401){ location.href='/login'; return; }
+    if(!response.ok) throw new Error(await response.text() || '导出失败');
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `learnbuddy-account-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    document.getElementById('accountMessage').textContent = error.message || '导出失败，请稍后重试。';
+  } finally {
+    button.disabled = false;
+    button.textContent = '导出 JSON';
+  }
+}
+async function deleteAccount(){
+  const password = document.getElementById('deleteAccountPassword').value;
+  const message = document.getElementById('accountMessage');
+  const button = document.getElementById('deleteAccountBtn');
+  if(!password){ message.textContent = '请先输入当前密码。'; return; }
+  const personalCleanup = RUNTIME_CAPABILITIES.edition === 'personal'
+    ? ' OpenClaw 会话、OpenClaw 凭据和飞书应用凭据需按部署指南单独清理。'
+    : '';
+  if(!confirm(`最后确认：永久删除 LearnBuddy 账号及其学习数据？${personalCleanup}此操作无法恢复。`)) return;
+  button.disabled = true;
+  button.textContent = '正在删除…';
+  message.textContent = '';
+  try {
+    const response = await fetch('/api/account', {
+      method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password})
+    });
+    if(!response.ok) throw new Error(await response.text() || '删除失败');
+    localStorage.removeItem('itutor_session_id');
+    localStorage.removeItem('learnbuddy:session_owner');
+    sessionStorage.removeItem('learnbuddy:active_generate_job');
+    location.href = '/login';
+  } catch (error) {
+    message.textContent = error.message || '删除失败，请检查密码后重试。';
+    button.disabled = false;
+    button.textContent = '永久删除';
+  }
+}
+function creditRows(rows){
+  rows = rows || [];
+  return rows.slice(0,20).map(r => {
+    const sign = (r.delta||0) > 0 ? '+' : '';
+    const color = (r.delta||0) >= 0 ? 'var(--green)' : 'var(--ink-soft)';
+    return `<div class="ri"><span class="t">${ftime(r.created_at)}</span><span class="s">${esc(reasonLabel(r.reason))}</span><span style="color:${color};font-weight:700">${sign}${r.delta} 积分</span></div>`;
+  }).join('') || '<div class="ri" style="color:var(--ink-faint)">暂无积分流水</div>';
+}
+function reasonLabel(r){
+  return ({signup_bonus:'注册送分', admin_grant:'赠送积分', card_redeem:'积分卡', llm_usage:'学习消耗', study_reward:'完成奖励'})[r] || '积分变动';
+}
+async function redeemCard(){
+  const input = document.getElementById('redeemCode');
+  const code = (input && input.value || '').trim();
+  if(!code){ alert('请输入积分卡号'); return; }
+  const res = await fetch('/api/credits/redeem', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({code})
+  });
+  if(!res.ok){ alert(await res.text() || '兑换失败'); return; }
+  await loadUser();
+  openUsage();
+}
+document.addEventListener('click', () => closeCardMenus());
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeUsage();
+    closeAccount();
+    closeRenameDialog();
+    closeCardMenus();
+  }
+});
+document.getElementById('renameInput').addEventListener('keydown', e => {
+  if (e.isComposing || e.keyCode === 229) return;
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    submitRename();
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    closeRenameDialog();
+  }
+});
+
+// PWA Service Worker（Web Push 入口）
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+document.getElementById('newBtn').innerHTML = `${icon('plus',16)} 新建学习路径`;
+document.getElementById('accountBtn').innerHTML = `${icon('settings',15)} 账号与数据`;
+document.getElementById('logoutBtn').innerHTML = `${icon('logout',15)} 登出`;
+document.querySelector('#usageOverlay .head h2').innerHTML = `${icon('chart',17)} 我的积分账户`;
+async function initSpace(){
+  if (window.LearnBuddyRuntime) {
+    const runtime = await window.LearnBuddyRuntime.load();
+    applySpaceRuntime(runtime);
+  } else {
+    applySpaceRuntime(RUNTIME_CAPABILITIES);
+  }
+  await loadUser();
+  await load();
+}
+initSpace();
+</script>
+</body>
+</html>

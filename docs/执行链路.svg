@@ -1,0 +1,89 @@
+<svg viewBox="0 0 940 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="执行链路">
+  <defs>
+    <marker id="arr-exe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-exe-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-exe-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-exe-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <style>
+    .ex-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .ex-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .ex-card { stroke: #d8d2c4; stroke-width: 1; }
+    .ex-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+  </style>
+
+  <rect x="40" y="40" width="220" height="60" rx="12" fill="url(#g-exe-1)" class="ex-card" />
+  <text x="60" y="64" class="ex-title">用户进入学习空间</text>
+  <text x="60" y="84" class="ex-sub">开始真实执行</text>
+
+  <line x1="150" y1="100" x2="150" y2="138" class="ex-conn" marker-end="url(#arr-exe)" />
+
+  <rect x="40" y="142" width="220" height="60" rx="12" fill="url(#g-exe-2)" class="ex-card" />
+  <text x="60" y="166" class="ex-title">recommend.py</text>
+  <text x="60" y="186" class="ex-sub">生成今日任务</text>
+
+  <line x1="150" y1="202" x2="150" y2="240" class="ex-conn" marker-end="url(#arr-exe)" />
+
+  <rect x="40" y="244" width="220" height="60" rx="12" fill="url(#g-exe-3)" class="ex-card" />
+  <text x="60" y="268" class="ex-title">content.py / rag.py</text>
+  <text x="60" y="288" class="ex-sub">生成讲解与练习</text>
+
+  <line x1="150" y1="304" x2="150" y2="342" class="ex-conn" marker-end="url(#arr-exe)" />
+
+  <rect x="40" y="346" width="220" height="60" rx="12" fill="url(#g-exe-1)" class="ex-card" />
+  <text x="60" y="370" class="ex-title">events / mastery</text>
+  <text x="60" y="390" class="ex-sub">学习反馈写入</text>
+
+  <line x1="150" y1="406" x2="150" y2="444" class="ex-conn" marker-end="url(#arr-exe)" />
+
+  <rect x="40" y="448" width="220" height="60" rx="12" fill="url(#g-exe-2)" class="ex-card" />
+  <text x="60" y="472" class="ex-title">memory.py</text>
+  <text x="60" y="492" class="ex-sub">沉淀偏好与弱项</text>
+
+  <line x1="150" y1="508" x2="150" y2="540" class="ex-conn" marker-end="url(#arr-exe)" />
+
+  <text x="40" y="540" class="ex-sub">最终 → replan.py / scheduler.py 调整下一步</text>
+
+  <!-- 右侧：并行能力 -->
+  <rect x="380" y="40" width="240" height="60" rx="12" fill="url(#g-exe-3)" class="ex-card" />
+  <text x="400" y="64" class="ex-title">phases.py</text>
+  <text x="400" y="84" class="ex-sub">阶段闸门</text>
+
+  <rect x="380" y="142" width="240" height="60" rx="12" fill="url(#g-exe-3)" class="ex-card" />
+  <text x="400" y="166" class="ex-title">mastery.py</text>
+  <text x="400" y="186" class="ex-sub">规则化掌握度计算</text>
+
+  <rect x="380" y="244" width="240" height="60" rx="12" fill="url(#g-exe-3)" class="ex-card" />
+  <text x="400" y="268" class="ex-title">scheduler.py</text>
+  <text x="400" y="288" class="ex-sub">SM-2 / FSRS 调度</text>
+
+  <rect x="380" y="346" width="240" height="60" rx="12" fill="url(#g-exe-3)" class="ex-card" />
+  <text x="400" y="370" class="ex-title">replan.py</text>
+  <text x="400" y="390" class="ex-sub">动态重规划</text>
+
+  <rect x="380" y="448" width="240" height="60" rx="12" fill="url(#g-exe-3)" class="ex-card" />
+  <text x="400" y="472" class="ex-title">notify.py</text>
+  <text x="400" y="492" class="ex-sub">推送 payload 产出</text>
+
+  <!-- 连接线 -->
+  <line x1="260" y1="70" x2="380" y2="70" class="ex-conn" marker-end="url(#arr-exe)" />
+  <line x1="260" y1="172" x2="380" y2="172" class="ex-conn" marker-end="url(#arr-exe)" />
+  <line x1="260" y1="274" x2="380" y2="274" class="ex-conn" marker-end="url(#arr-exe)" />
+  <line x1="260" y1="376" x2="380" y2="376" class="ex-conn" marker-end="url(#arr-exe)" />
+  <line x1="260" y1="478" x2="380" y2="478" class="ex-conn" marker-end="url(#arr-exe)" />
+
+  <!-- 回流闭环 -->
+  <path d="M620 478 C 760 478, 760 70, 620 70" class="ex-conn" stroke-dasharray="5 4" />
+  <text x="700" y="270" class="ex-sub">回流修正推荐</text>
+</svg>

@@ -1,0 +1,22 @@
+{
+  "name": "@learnbuddy/openclaw-learnbuddy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LearnBuddy requester-scoped MCP and Feishu account binding for OpenClaw",
+  "dependencies": {
+    "typebox": "^1.1.39"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.8.2"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.8.2",
+      "minGatewayVersion": "2026.8.2"
+    }
+  }
+}

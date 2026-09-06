@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V0.46 教学内容 Loop v1 · 三件套</title>
+<link rel="stylesheet" href="./version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.46 教学内容 Loop v1<small>需求方案 · 技术方案 · 开发范式</small></div>
+  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">已开发 · 已验证 · 可独立发版功能</span>
+    <h1>让 LearnBuddy 生成真正能学的单节内容</h1>
+    <p>V0.46 的核心不是把 prompt 写长，而是建立单节内容的可控生产线：先理解学习目标，再收集来源，再设计教学链，再生成互动内容，再用质量门评审和返工，最后把内容渲染成用户真的能学的一节课。</p>
+    <div class="meta"><span class="pill gold">状态：已开发</span><span class="pill">提交：74180b6</span><span class="pill gray">回归：259 passed</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求方案</h2><p>把“AI 生成一段讲解”升级为“生成一节可学习任务”。</p><ul><li>第一天内容默认可用，用户进入学习页能直接开始。</li><li>每节课围绕一个明确问题，不再堆大段泛泛讲解。</li><li>来源可以包含网页、官方文档、论文/书刊、视频和 B 站链接。</li><li>每个环节都有学习动作：判断、看懂、复述、动手、练习、收束。</li><li>已学环节可回看，用户可带要求重新生成。</li></ul></article>
+    <article class="card panel"><h2>技术方案</h2><p>用受控 LessonBuildGraph 替代一次性 prompt。</p><ul><li>ResearchPack 负责资料收集、来源分类和置信度。</li><li>LessonSpec 负责本节目标、难度、边界和教学链设计。</li><li>LessonFlow 负责 8 环节内容、互动题、产出任务和来源引用。</li><li>QualityReport 负责深度、来源、互动、可读性和风险评审。</li><li>LessonRuntime 负责状态、回看、输入、结构图和持久化。</li></ul></article>
+    <article class="card panel"><h2>开发范式</h2><p>每个生成节点都要可观察、可失败、可返工。</p><ul><li>先定义数据契约和 fixture，再接模型生成。</li><li>先单节闭环稳定，再优化页面体验。</li><li>质量门不过就预算内返工，仍失败则保存原因。</li><li>前端必须展示生成阶段，不能让用户盲等。</li><li>浏览器截图验收学习页，不只看 JSON。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>开发完成记录</h2><p>V0.46 已按 v1 范围完成，这里记录真实交付结果。</p></div><span class="pill gold">Release Record</span></div>
+    <div class="table-wrap"><table><thead><tr><th>项目</th><th>完成情况</th></tr></thead><tbody>
+      <tr><td>提交记录</td><td><code>74180b6 feat(lesson): 落地教学内容 Loop v0.46 契约与运行态</code></td></tr>
+      <tr><td>核心产物</td><td>新增 LessonFlow v0.46 契约、结构化 8 环节字段、<code>lesson_runtime</code> 独立落盘、学习页运行态读写、选择与手动输入分离、旧 lesson cache 兼容读取。</td></tr>
+      <tr><td>兼容策略</td><td>旧实例继续可打开；缺少新字段时走降级展示，不迁移线上主数据，不覆盖用户已有学习记录。</td></tr>
+      <tr><td>验证结果</td><td>随 V0.47 回归测试全量通过：<code>pytest -q</code> 259 passed；本地浏览器已检查实例页、学习页和运行态保存链路。</td></tr>
+      <tr><td>后续边界</td><td>多轮深度搜索 Critic、后台内容质量日报、路径级自适应重规划不混入本版，进入后续版本继续拆解。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>核心问题映射</h2><p>V0.46 只解决“单节学习内容是否值得学”，不把路径重规划提前混进来。</p></div><span class="pill gold">Problem Matrix</span></div>
+    <div class="table-wrap"><table><thead><tr><th>核心问题</th><th>产品需求</th><th>技术方案</th><th>验收信号</th></tr></thead><tbody>
+      <tr><td>内容太浅</td><td>每节课围绕一个真实学习问题展开，必须有概念边界、关键规则、真实例子、常见误区和产出任务。</td><td>LessonSpec 明确 learning_question、learning_outcome、depth_level、must_cover、avoid_generic；QualityReport 检查 depth_score。</td><td>随机生成 3 个领域课程，用户能说出“本节解决什么、学完能做什么”。</td></tr>
+      <tr><td>来源弱</td><td>用户能看到内容依据，不再只看到“AI 生成”。技术、行业、学术、政策类主题默认检索来源。</td><td>ResearchPack 记录 source_type、title、url、authority、used_for、confidence；SourceSelector 过滤低质来源。</td><td>每节课至少 3 条有效来源或明确失败原因；来源能在学习页展示。</td></tr>
+      <tr><td>互动像摆设</td><td>每个互动都要服务学习判断，不能只是“点一下继续”。选项和补充输入分离。</td><td>LessonFlow.cards 使用 interaction_type、expected_signal、user_answer、feedback_rule；前端保存选择和输入两个字段。</td><td>切换选项不会覆盖输入框；完成后能回看自己的选择和产出。</td></tr>
+      <tr><td>学习页看不出节奏</td><td>用户知道当前处在 8 个环节的哪一步、为什么做这一步、下一步是什么。</td><td>LessonRuntime 保存 current_step、completed_steps、step_outputs；渲染器按 step_type 选择组件。</td><td>已学环节可点击回看；刷新后仍停留在当前环节。</td></tr>
+      <tr><td>生成过程像卡死</td><td>生成页展示“正在理解、搜索、设计、生成、质检、保存”，失败可重试。</td><td>LessonBuildRun 记录 node_status、started_at、finished_at、error_code；前端轮询 run status。</td><td>不会出现长时间只有一个 spinner；超时后给失败原因和重试入口。</td></tr>
+      <tr><td>结构图不可读</td><td>架构图、流程图、对比图用可读视觉组件呈现。</td><td>DiagramCard 使用 diagram_schema 生成 SVG/HTML，不再直接渲染 ASCII 图。</td><td>桌面和移动端无横向滚动；图中节点文字可读。</td></tr>
+      <tr><td>旧数据兼容风险</td><td>旧路径仍可打开，缺少新字段时降级展示。</td><td>LessonAdapter 为旧 explain/practice/produce 转换到最小 LessonFlow；schema_version 懒初始化。</td><td>线上旧实例不报错；缺少 cards 时仍能展示旧内容。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>功能需求清单</h2><p>这些是 V0.46 的可开发条目，优先级从 P0 到 P2。</p></div><span class="pill">PRD</span></div>
+    <div class="table-wrap"><table><thead><tr><th>优先级</th><th>模块</th><th>具体需求</th><th>验收方式</th></tr></thead><tbody>
+      <tr><td>P0</td><td>单节内容契约</td><td>定义 LessonSpec / LessonFlow / QualityReport。每节课固定包含“本节问题、学完能做、来源依据、关键讲解、互动判断、结构图/例子、练习、产出、收束”。</td><td>任意新生成课程都能落到同一结构；旧数据缺字段时可降级渲染。</td></tr>
+      <tr><td>P0</td><td>深度资料收集</td><td>根据学习主题判断是否需要联网；技术、行业、政策、产品、学术内容默认进入检索。来源可包含官方文档、权威网页、论文/书刊、视频/B站。</td><td>来源包至少包含 3 条有效来源或明确记录无法获取原因；学习页可展示引用链接。</td></tr>
+      <tr><td>P0</td><td>LessonBuildGraph</td><td>拆成 research、outline、lesson design、draft、critic、revise、persist 六步，每步有输入、输出、耗时、失败原因和停止条件。</td><td>前端生成页能显示每一步状态；后端 trace 可复盘。</td></tr>
+      <tr><td>P0</td><td>质量门</td><td>评估深度、来源覆盖、互动有效性、结构清晰度、可操作产出、页面可读性。低于阈值自动返工一次，仍失败则保存失败原因。</td><td>质量报告可查看；不会无限卡在“质量审查与保存”。</td></tr>
+      <tr><td>P0</td><td>学习页运行时</td><td>8 个环节支持前进、回看、继续；已学环节可点击查看，未学环节锁定但能看目录。</td><td>用户完成第 3 步后仍可回到第 1 步；刷新页面后状态不丢。</td></tr>
+      <tr><td>P1</td><td>交互题与输入</td><td>选择项和手动输入分离。点击选项只记录选择，不自动填入输入框；其他/补充输入可和选项并存。</td><td>多次切换选项能正确更新；输入框内容不被覆盖。</td></tr>
+      <tr><td>P1</td><td>结构图呈现</td><td>将架构图、流程图、对比图渲染成 SVG/HTML 图形化组件，不使用长 ASCII 图。</td><td>桌面和移动端无横向滚动；图中每个节点可读。</td></tr>
+      <tr><td>P1</td><td>带要求重生成</td><td>重新生成必须打开“调整要求”入口，用户可描述“更深入/更多案例/换成 B 站资料/更产品化”等需求。</td><td>重生成请求记录用户要求，保留旧版本并可回退。</td></tr>
+      <tr><td>P2</td><td>内容来源面板</td><td>来源按“本节直接依据 / 延伸阅读 / 视频参考 / 低置信备用”分类展示。</td><td>学习页能看到来源标题、类型、链接、为什么引用。</td></tr>
+      <tr><td>P2</td><td>内容产出沉淀</td><td>用户在练习中的答案、产出和自查结果同步进入资料页“我的产出”。</td><td>完成一节后，资料页能查看当节产出。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>开发准入补强</h2><p>基于需求评估体系，V0.46 进入开发前必须补齐这些工程化约束。</p></div><span class="pill gold">Readiness Gate</span></div>
+    <div class="table-wrap"><table><thead><tr><th>缺口</th><th>补强动作</th><th>产出物</th><th>验收标准</th></tr></thead><tbody>
+      <tr><td>缺少内容质量基准</td><td>建立 20-30 条 golden set，覆盖 AI 技术、英语、写作、营养、考试、职业转型等不同领域；每条包含学习目标、用户水平、期望深度和反例。</td><td>lesson_quality fixture / 评测说明</td><td>每次调整生成链路后都能跑同一批样本，避免“看起来变好但不可复现”。</td></tr>
+      <tr><td>QualityReport 阈值不够硬</td><td>为 depth、source_coverage、interactivity、clarity、operability、safety 设定最低阈值和返工条件。</td><td>质量评分 rubric</td><td>低于阈值自动返工一次；返工后仍不达标时保存失败原因和可重试入口。</td></tr>
+      <tr><td>接口边界不清</td><td>先定 build/status/read/runtime/regenerate 五类接口，再开发前端组件。</td><td>最小 API 契约</td><td>前端不直接猜文件状态；刷新、退出、重进都能从接口恢复。</td></tr>
+      <tr><td>旧数据兼容不确定</td><td>准备旧 explain/practice/produce 数据样例，用 LessonAdapter 转成最小 LessonFlow。</td><td>legacy lesson fixture</td><td>历史学习路径仍可打开，缺少新字段时降级展示而不是报错。</td></tr>
+      <tr><td>学习页状态没有闭环</td><td>明确 ready、generating、failed、running、completed、reviewing、regenerating 七种状态和按钮行为。</td><td>学习页状态矩阵</td><td>不会出现用户不知道“现在能不能学、是不是卡死、是否已保存”的状态。</td></tr>
+      <tr><td>来源策略容易泛化</td><td>把来源分成“本节直接依据、延伸阅读、视频参考、备用来源”，视频和 B 站链接允许作为参考内容但不替代事实来源。</td><td>SourcePack 分类规则</td><td>技术/行业/学术主题默认有外部来源；无来源时必须显示原因。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>最小接口草图</h2><p>V0.46 不要求一次性后端完美，但必须让前端、生成任务和恢复机制有清晰契约。</p></div><span class="pill">API Contract</span></div>
+    <div class="table-wrap"><table><thead><tr><th>接口</th><th>用途</th><th>必须返回 / 保存</th><th>失败处理</th></tr></thead><tbody>
+      <tr><td>POST /api/lessons/build</td><td>为某个 path unit 创建单节生成任务。</td><td>run_id、lesson_id、unit_id、status、estimated_steps、created_at。</td><td>已存在可复用内容时返回 reused=true，不重复生成和扣费。</td></tr>
+      <tr><td>GET /api/lessons/jobs/{run_id}</td><td>查询生成过程进度。</td><td>current_node、nodes[]、progress、elapsed_seconds、status、error_code、recoverable。</td><td>发现缓存已写入但任务仍 running 时自动 reconcile 为 succeeded。</td></tr>
+      <tr><td>GET /api/lessons/{lesson_id}</td><td>读取已生成的 LessonFlow。</td><td>LessonSpec、LessonFlow、ResearchPack、QualityReport、schema_version。</td><td>新字段缺失时走 LessonAdapter 降级。</td></tr>
+      <tr><td>POST /api/lessons/{lesson_id}/runtime</td><td>保存用户在学习页的选择、输入、完成步骤和产出。</td><td>current_step、completed_steps、selected_options、free_inputs、outputs、updated_at。</td><td>重复保存必须幂等，不覆盖用户手写内容。</td></tr>
+      <tr><td>POST /api/lessons/{lesson_id}/regenerate</td><td>用户带要求重生成。</td><td>revision_request、base_lesson_id、new_run_id、reason、keep_previous=true。</td><td>失败时保留旧版本可继续学习。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>技术方案拆解</h2><p>把单节内容生产线拆成可实现、可观察、可验收的组件。</p></div><span class="pill">Tech Plan</span></div>
+    <div class="table-wrap"><table><thead><tr><th>层级</th><th>组件</th><th>职责</th><th>关键字段 / 接口</th></tr></thead><tbody>
+      <tr><td>输入层</td><td>LearningIntent</td><td>承接对话摸底后的学习目标、用户水平、约束、偏好和本节主题。</td><td>goal、domain、level_signal、use_case、time_budget、constraints、preferred_sources。</td></tr>
+      <tr><td>研究层</td><td>ResearchPack</td><td>决定是否联网，收集并分类本节参考来源，给后续生成提供事实锚点。</td><td>queries、sources、source_type、authority_score、used_for、missing_reason。</td></tr>
+      <tr><td>课设层</td><td>LessonSpec</td><td>把资料和学习目标转成一节课的教学设计。</td><td>learning_question、outcomes、prerequisites、depth_level、misconceptions、practice_goals。</td></tr>
+      <tr><td>生成层</td><td>LessonBuildGraph</td><td>执行 research → design → draft → critic → revise → persist。</td><td>run_id、node_status、node_input、node_output、duration_ms、error_code、retry_count。</td></tr>
+      <tr><td>内容层</td><td>LessonFlow</td><td>保存 8 个学习环节及每个环节的卡片内容、互动题、产出任务和来源引用。</td><td>cards[]、step_type、prompt、options、answer_schema、source_refs、completion_rule。</td></tr>
+      <tr><td>质检层</td><td>QualityReport</td><td>判断内容是否足够深、准确、可学、可交互、可展示。</td><td>depth_score、source_coverage、interactivity_score、clarity_score、risk_flags、revision_plan。</td></tr>
+      <tr><td>运行层</td><td>LessonRuntime</td><td>管理用户学习状态、回看、输入保存、完成判定和资料沉淀。</td><td>current_step、completed_steps、selected_options、free_inputs、outputs、saved_at。</td></tr>
+      <tr><td>兼容层</td><td>LessonAdapter</td><td>把旧 explain/practice/produce 数据映射成最小可渲染结构，避免旧数据失效。</td><td>schema_version、legacy_fields、fallback_cards、migration_notes。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>生成与质检流程</h2><p>用户看到的是一节课，系统内部必须是一个可收敛的 Loop。</p></div><span class="pill">Flow</span></div>
+    <div class="table-wrap"><table><thead><tr><th>阶段</th><th>系统动作</th><th>用户侧呈现</th><th>失败处理</th></tr></thead><tbody>
+      <tr><td>理解目标</td><td>读取 LearningIntent、路径上下文和本节主题，确认本节要解决的问题。</td><td>生成页显示“正在理解学习目标”。</td><td>缺少目标时回退到路径主题和本周目标。</td></tr>
+      <tr><td>收集资料</td><td>按主题判断是否联网，生成查询，收集网页/文档/视频/B站等来源。</td><td>显示“正在整理参考来源”。</td><td>搜索失败时保留 missing_reason，使用本地 RAG 和通用知识降级。</td></tr>
+      <tr><td>设计教学链</td><td>生成 LessonSpec，确定 8 环节节奏、互动点、产出任务和来源引用位置。</td><td>显示“正在设计学习任务”。</td><td>Spec 不完整时重试一次；仍失败则保存失败原因。</td></tr>
+      <tr><td>生成内容</td><td>生成 LessonFlow，包括讲解、练习、结构图、例子和参考来源。</td><td>显示“正在生成讲解与练习”。</td><td>模型输出结构不合法时修复或重试。</td></tr>
+      <tr><td>质量审查</td><td>用 QualityReport 检查深度、准确性、来源、互动和页面可读性。</td><td>显示“正在做质量审查”。</td><td>低于阈值自动返工一次；超过预算则给重试入口。</td></tr>
+      <tr><td>保存与打开</td><td>持久化 LessonFlow、ResearchPack、QualityReport 和 Runtime 初始状态。</td><td>打开学习页，第一步可直接开始。</td><td>保存失败时不扣重复积分，保留 run_id 供恢复。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>单节学习体验规格</h2><p>V0.46 的前端验收不能只看内容生成成功，还要看学习节奏是否成立。</p></div><span class="pill">UX</span></div>
+    <div class="table-wrap"><table><thead><tr><th>环节</th><th>用户看到什么</th><th>系统要做什么</th><th>不能出现</th></tr></thead><tbody>
+      <tr><td>1 先想</td><td>一个能判断已有认知的问题，选项 + 补充输入。</td><td>激活先验知识，记录用户判断，不要求答对。</td><td>开放到用户不知道怎么答；选项自动灌入输入框。</td></tr>
+      <tr><td>2 看懂</td><td>结构化讲解、关键概念边界、来源依据。</td><td>把概念讲清楚，避免只给定义。</td><td>大段无结构文字；没有来源。</td></tr>
+      <tr><td>3 自己讲</td><td>让用户用自己的话复述或举例。</td><td>检查是否能解释，而不是只看完。</td><td>只有“继续”按钮，没有输出。</td></tr>
+      <tr><td>4 动手</td><td>小任务、案例拆解、流程搭建或判断题。</td><td>把知识转成可操作动作。</td><td>任务太泛，如“请实践一下”。</td></tr>
+      <tr><td>5-7 练习</td><td>由易到难的 3 个练习，最好有真实场景。</td><td>覆盖理解、迁移、应用三个层次。</td><td>题目只测记忆；选项模糊。</td></tr>
+      <tr><td>8 收束</td><td>本节总结、错点、下一步建议、参考来源。</td><td>形成可复习材料，并写入学习数据。</td><td>学完即结束，没有沉淀。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>非目标与边界</h2><p>避免 V0.46 越做越大。</p></div><span class="pill gray">Out of Scope</span></div>
+    <div class="callout"><b>本版本不做：</b>整条路径自动重规划、后台每日经营分析、跨周预生成策略、积分定价调整、真实视频内容解析。V0.46 只把“单节课能不能生成好、能不能学得顺”打穿；路径级闭环放到 V0.47。</div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>内部里程碑</h2><p>这些是开发阶段，不再单独作为产品版本。</p></div><span class="pill">Milestones</span></div>
+    <div class="table-wrap"><table><thead><tr><th>里程碑</th><th>目标</th><th>验收</th></tr></thead><tbody>
+      <tr><td>M1 数据契约与评测集</td><td>把好内容的输入、输出、来源和质量报告定成稳定结构。</td><td>旧数据兼容，多领域 fixture 可跑，来源包可记录网页/文档/视频。</td></tr>
+      <tr><td>M2 单节 LessonBuildGraph</td><td>让一节课经过研究、课设、出稿、质检、返工和保存。</td><td>低质量内容会返工，生成结果可恢复，可带要求重生成。</td></tr>
+      <tr><td>M3 学习页运行时</td><td>把内容渲染成清晰学习任务流。</td><td>已学可回看，选项和输入分离，结构图可读，桌面/移动端不拥挤。</td></tr>
+      <tr><td>M4 验收与兼容</td><td>完整端到端可发版。</td><td>用户能完成一节高质量学习内容；过程、来源、质量报告可追踪。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>发版验收</h2><p>这个版本必须让用户感知到学习内容质量升级。</p></div><span class="pill">DoD</span></div>
+    <div class="callout"><b>发版标准：</b>至少用 6 个不同领域学习目标完成端到端验收，系统能生成一节带来源、带互动、带产出任务、可回看、可重生成且通过质量门的学习内容；其中至少 2 个主题包含外部权威链接，至少 1 个主题包含视频/B站参考链接；旧路径仍可打开，不影响线上数据。</div>
+    <div class="table-wrap"><table><thead><tr><th>验收项</th><th>通过标准</th></tr></thead><tbody>
+      <tr><td>内容深度</td><td>用户能从页面上看出“本节解决什么问题、学完能做什么、为什么这样做”。</td></tr>
+      <tr><td>互动有效</td><td>先想、判断、复述、练习和产出都记录用户行为，不是纯点击继续。</td></tr>
+      <tr><td>来源可信</td><td>来源能打开，且标明用于事实依据、延伸阅读还是视频参考。</td></tr>
+      <tr><td>过程可见</td><td>生成超过 10 秒时用户能看到阶段进度；超时或失败有恢复入口。</td></tr>
+      <tr><td>兼容稳定</td><td>旧数据、新数据、重生成版本都能打开；不会重复扣积分或丢学习记录。</td></tr>
+    </tbody></table></div>
+  </section>
+  <div class="footer">V0.46 · 教学内容 Loop v1 · 已开发。</div>
+</main>
+</body>
+</html>

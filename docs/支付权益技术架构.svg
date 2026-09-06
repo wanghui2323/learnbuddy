@@ -1,0 +1,85 @@
+<svg viewBox="0 0 940 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="支付权益技术架构图">
+  <defs>
+    <marker id="arr-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-b-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-b-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-b-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .b-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .b-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .b-card { stroke: #d8d2c4; stroke-width: 1; }
+    .b-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+    .b-tag { font: 700 10.5px -apple-system, "PingFang SC", sans-serif; fill: #fff; }
+  </style>
+
+  <!-- 用户 -->
+  <circle cx="470" cy="46" r="22" fill="#2c6e6a" />
+  <text x="470" y="51" text-anchor="middle" class="b-tag">用户</text>
+
+  <!-- Auth API -->
+  <rect x="320" y="92" width="300" height="64" rx="12" fill="url(#g-b-1)" class="b-card" />
+  <text x="340" y="118" class="b-title">Auth API</text>
+  <text x="340" y="140" class="b-sub">统一登录与身份入口</text>
+
+  <line x1="470" y1="68" x2="470" y2="92" class="b-conn" marker-end="url(#arr-b)" />
+
+  <!-- Auth 分叉 -->
+  <path d="M470 156 C 470 184, 230 184, 230 208" class="b-conn" marker-end="url(#arr-b)" />
+  <path d="M470 156 C 470 184, 710 184, 710 208" class="b-conn" marker-end="url(#arr-b)" />
+
+  <rect x="120" y="210" width="220" height="60" rx="10" fill="#fff" class="b-card" />
+  <text x="140" y="232" class="b-title">Password Login</text>
+  <text x="140" y="252" class="b-sub">主账户密码登录</text>
+
+  <rect x="600" y="210" width="220" height="60" rx="10" fill="#fff" class="b-card" />
+  <text x="620" y="232" class="b-title">Phone Code Login</text>
+  <text x="620" y="252" class="b-sub">短信验证码登录</text>
+
+  <!-- 合并回 PhoneVerification / User -->
+  <path d="M230 270 C 230 300, 340 300, 340 326" class="b-conn" marker-end="url(#arr-b)" />
+  <path d="M710 270 C 710 300, 600 300, 600 326" class="b-conn" marker-end="url(#arr-b)" />
+
+  <rect x="320" y="328" width="300" height="64" rx="12" fill="url(#g-b-2)" class="b-card" />
+  <text x="340" y="354" class="b-title">User + PhoneVerification</text>
+  <text x="340" y="376" class="b-sub">主账户与验证码校验合并</text>
+
+  <line x1="470" y1="392" x2="470" y2="418" class="b-conn" marker-end="url(#arr-b)" />
+
+  <!-- Order / PaymentRecord -->
+  <rect x="320" y="420" width="300" height="64" rx="12" fill="url(#g-b-3)" class="b-card" />
+  <text x="340" y="446" class="b-title">Order / PaymentRecord</text>
+  <text x="340" y="468" class="b-sub">订单状态机 · 回调验签 · 幂等</text>
+
+  <line x1="470" y1="484" x2="470" y2="510" class="b-conn" marker-end="url(#arr-b)" />
+
+  <!-- Entitlement 分叉 -->
+  <rect x="320" y="512" width="300" height="64" rx="12" fill="url(#g-b-1)" class="b-card" />
+  <text x="340" y="538" class="b-title">Entitlement</text>
+  <text x="340" y="560" class="b-sub">订阅与积分权益统一发放</text>
+
+  <path d="M470 576 C 470 596, 230 596, 230 612" class="b-conn" marker-end="url(#arr-b)" />
+  <path d="M470 576 C 470 596, 710 596, 710 612" class="b-conn" marker-end="url(#arr-b)" />
+
+  <rect x="80" y="612" width="300" height="58" rx="10" fill="#fff" class="b-card" />
+  <text x="100" y="634" class="b-title">Subscription</text>
+  <text x="100" y="654" class="b-sub">订阅状态与有效期</text>
+
+  <rect x="560" y="612" width="300" height="58" rx="10" fill="#fff" class="b-card" />
+  <text x="580" y="634" class="b-title">PointsAccount + Ledger</text>
+  <text x="580" y="654" class="b-sub">付费积分 / 赠送积分可解释账本</text>
+
+  <text x="460" y="20" text-anchor="middle" class="b-title">账号 · 支付 · 权益 · 技术架构图</text>
+</svg>

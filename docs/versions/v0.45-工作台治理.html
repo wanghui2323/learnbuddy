@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V0.45 工作台治理 · 三件套</title>
+<link rel="stylesheet" href="./version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.45 工作台治理<small>需求方案 · 技术方案 · 开发范式</small></div>
+  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">已开发 · 文档治理版本</span>
+    <h1>建立长期版本管理中心</h1>
+    <p>把 LearnBuddy 的需求、技术方案、开发范式、验收和归档从散落文档中收束到项目工作台，并明确后续每期迭代都按版本号推进。</p>
+    <div class="meta"><span class="pill">状态：已开发</span><span class="pill gold">版本：V0.45</span><span class="pill gray">范围：文档与治理</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求方案</h2><p>解决“文档越来越多、入口混杂、版本语义不清”的问题。</p><ul><li>主入口只保留项目总览、版本管理、需求池、技术账、验收和归档。</li><li>版本标签统一为已开发、待开发、待确认、方案档案。</li><li>每个版本有单独三件套详情页。</li><li>文档中心只做目录，不再承载版本细节。</li></ul></article>
+    <article class="card panel"><h2>技术方案</h2><p>用静态 HTML 先建立可长期维护的治理骨架。</p><ul><li>主工作台：`LearnBuddy项目工作台.html`。</li><li>版本详情：`docs/versions/` 下每版本一个页面。</li><li>文档中心：只维护目录入口。</li><li>SPEC ADR：记录版本管理决策。</li></ul></article>
+    <article class="card panel"><h2>开发范式</h2><p>本版本的范式是“先治理，再开发”。</p><ul><li>改文档前先明确版本语义。</li><li>每个新增需求先进入需求池，再绑定版本号。</li><li>每个版本开工前必须有三件套。</li><li>不碰线上用户数据和运行实例。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>验收清单</h2><p>V0.45 的验收重点是可查、清晰、可维护。</p></div><span class="pill">DoD</span></div>
+    <div class="table-wrap"><table><thead><tr><th>检查项</th><th>验收口径</th></tr></thead><tbody>
+      <tr><td>版本入口</td><td>工作台可以按版本进入三件套详情页。</td></tr>
+      <tr><td>状态口径</td><td>所有版本统一使用已开发、待开发、待确认、方案档案。</td></tr>
+      <tr><td>文档中心</td><td>文档中心不混入具体版本内容，只做目录。</td></tr>
+      <tr><td>数据安全</td><td>不提交运行时 `data/instances/_index.json`。</td></tr>
+    </tbody></table></div>
+  </section>
+  <div class="footer">V0.45 · 已开发。</div>
+</main>
+</body>
+</html>

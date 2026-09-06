@@ -1,0 +1,143 @@
+<svg viewBox="0 0 940 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OpenClaw 接入架构图">
+  <defs>
+    <marker id="arr-oc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-oc-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-oc-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-oc-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-oc-4" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e3edf5" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-oc-5" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ece5f5" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <style>
+    .oc-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .oc-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .oc-card { stroke: #d8d2c4; stroke-width: 1; }
+    .oc-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+    .oc-conn-dashed { stroke: #235955; stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+    .oc-tag { font: 700 10.5px -apple-system, "PingFang SC", sans-serif; fill: #fff; }
+  </style>
+
+  <text x="40" y="32" class="oc-title">OpenClaw 接入架构（不 fork + 双层部署）</text>
+  <text x="40" y="50" class="oc-sub">左：LearnBuddy 主系统（始终是真相源）· 中：MCP / tools · 右：双层部署</text>
+
+  <!-- 左：主系统 -->
+  <rect x="40" y="70" width="240" height="540" rx="14" fill="url(#g-oc-2)" class="oc-card" />
+  <text x="160" y="96" text-anchor="middle" class="oc-title">LearnBuddy 主系统</text>
+  <text x="160" y="114" text-anchor="middle" class="oc-sub">学习真相源 + 商业化底座</text>
+
+  <rect x="60" y="138" width="200" height="60" rx="10" fill="#fff" class="oc-card" />
+  <text x="160" y="160" text-anchor="middle" class="oc-title">学习引擎</text>
+  <text x="160" y="180" text-anchor="middle" class="oc-sub">路径 / 学练 / 评估 / 记忆</text>
+
+  <rect x="60" y="218" width="200" height="60" rx="10" fill="#fff" class="oc-card" />
+  <text x="160" y="240" text-anchor="middle" class="oc-title">商业化底座</text>
+  <text x="160" y="260" text-anchor="middle" class="oc-sub">账号 / 支付 / 积分 / 权益</text>
+
+  <rect x="60" y="298" width="200" height="60" rx="10" fill="#fff" class="oc-card" />
+  <text x="160" y="320" text-anchor="middle" class="oc-title">数据真相源</text>
+  <text x="160" y="340" text-anchor="middle" class="oc-sub">SQLite / JSON / 实例</text>
+
+  <rect x="60" y="378" width="200" height="60" rx="10" fill="#fff" class="oc-card" />
+  <text x="160" y="400" text-anchor="middle" class="oc-title">Web / PWA / Push</text>
+  <text x="160" y="420" text-anchor="middle" class="oc-sub">用户触点</text>
+
+  <rect x="60" y="458" width="200" height="60" rx="10" fill="#fff" class="oc-card" />
+  <text x="160" y="480" text-anchor="middle" class="oc-title">中心化飞书机器人</text>
+  <text x="160" y="500" text-anchor="middle" class="oc-sub">大众层（不经 OpenClaw）</text>
+
+  <rect x="60" y="538" width="200" height="60" rx="10" fill="#fff" class="oc-card" />
+  <text x="160" y="560" text-anchor="middle" class="oc-title">MCP Server</text>
+  <text x="160" y="580" text-anchor="middle" class="oc-sub">stdio / JSON-RPC 2.0</text>
+
+  <!-- 中：公共地基 -->
+  <rect x="320" y="70" width="220" height="540" rx="14" fill="url(#g-oc-3)" class="oc-card" />
+  <text x="430" y="96" text-anchor="middle" class="oc-title">公共地基</text>
+  <text x="430" y="114" text-anchor="middle" class="oc-sub">一鱼三吃</text>
+
+  <rect x="340" y="138" width="180" height="80" rx="10" fill="#fff" class="oc-card" />
+  <text x="430" y="162" text-anchor="middle" class="oc-title">core/tools.py</text>
+  <text x="430" y="182" text-anchor="middle" class="oc-sub">统一工具注册</text>
+  <text x="430" y="200" text-anchor="middle" class="oc-sub">8 工具 + 描述 + schema</text>
+
+  <rect x="340" y="238" width="180" height="80" rx="10" fill="#fff" class="oc-card" />
+  <text x="430" y="262" text-anchor="middle" class="oc-title">iTutor Skill 包</text>
+  <text x="430" y="282" text-anchor="middle" class="oc-sub">skill.yaml</text>
+  <text x="430" y="300" text-anchor="middle" class="oc-sub">教练 prompt + 工具映射</text>
+
+  <rect x="340" y="338" width="180" height="80" rx="10" fill="#fff" class="oc-card" />
+  <text x="430" y="362" text-anchor="middle" class="oc-title">AgentGuard</text>
+  <text x="430" y="382" text-anchor="middle" class="oc-sub">注入防护</text>
+  <text x="430" y="400" text-anchor="middle" class="oc-sub">输入审计</text>
+
+  <rect x="340" y="438" width="180" height="80" rx="10" fill="#fff" class="oc-card" />
+  <text x="430" y="462" text-anchor="middle" class="oc-title">限频 / 审计</text>
+  <text x="430" y="482" text-anchor="middle" class="oc-sub">连接级限频</text>
+  <text x="430" y="500" text-anchor="middle" class="oc-sub">MCP 路径审计日志</text>
+
+  <!-- 右：双层 -->
+  <rect x="580" y="70" width="320" height="540" rx="14" fill="url(#g-oc-4)" class="oc-card" />
+  <text x="740" y="96" text-anchor="middle" class="oc-title">双层部署</text>
+  <text x="740" y="114" text-anchor="middle" class="oc-sub">大众层（默认）+ Pro 层（自托管）</text>
+
+  <!-- 大众层 -->
+  <rect x="600" y="138" width="280" height="160" rx="10" fill="#fff" class="oc-card" />
+  <text x="740" y="162" text-anchor="middle" class="oc-title">大众层 · 中心化飞书机器人</text>
+  <text x="740" y="180" text-anchor="middle" class="oc-sub">LearnBuddy 服务器直连飞书 WebSocket</text>
+  <text x="608" y="208" class="oc-sub">· 单应用 OAuth</text>
+  <text x="608" y="226" class="oc-sub">· 用户零部署</text>
+  <text x="608" y="244" class="oc-sub">· 卡片测验 / 推送 / 晚复盘</text>
+  <text x="608" y="262" class="oc-sub">· 路径 / 学情由 LearnBuddy 计算</text>
+  <text x="608" y="280" class="oc-sub">· 不经过 OpenClaw</text>
+
+  <!-- Pro 层 -->
+  <rect x="600" y="318" width="280" height="200" rx="10" fill="url(#g-oc-5)" class="oc-card" />
+  <text x="740" y="342" text-anchor="middle" class="oc-title">Pro 层 · 自托管 OpenClaw</text>
+  <text x="740" y="360" text-anchor="middle" class="oc-sub">opt-in · 数据自主 · agent 自由</text>
+
+  <rect x="618" y="378" width="244" height="40" rx="8" fill="#fff" class="oc-card" />
+  <text x="740" y="402" text-anchor="middle" class="oc-title">OpenClaw Runtime</text>
+
+  <rect x="618" y="426" width="244" height="40" rx="8" fill="#fff" class="oc-card" />
+  <text x="740" y="450" text-anchor="middle" class="oc-title">@larksuite/openclaw-lark</text>
+
+  <rect x="618" y="474" width="244" height="40" rx="8" fill="#fff" class="oc-card" />
+  <text x="740" y="498" text-anchor="middle" class="oc-title">飞书应用 · WebSocket 长连接</text>
+
+  <!-- 连接线 -->
+  <line x1="280" y1="170" x2="340" y2="170" class="oc-conn" marker-end="url(#arr-oc)" />
+  <line x1="280" y1="498" x2="340" y2="170" class="oc-conn" marker-end="url(#arr-oc)" />
+  <line x1="520" y1="170" x2="600" y2="210" class="oc-conn" marker-end="url(#arr-oc)" />
+  <line x1="520" y1="278" x2="600" y2="400" class="oc-conn" marker-end="url(#arr-oc)" />
+  <line x1="520" y1="378" x2="600" y2="478" class="oc-conn" marker-end="url(#arr-oc)" />
+  <line x1="520" y1="478" x2="600" y2="498" class="oc-conn" marker-end="url(#arr-oc)" />
+
+  <!-- 飞书图示 -->
+  <rect x="600" y="538" width="280" height="60" rx="10" fill="#fff" class="oc-card" />
+  <text x="740" y="562" text-anchor="middle" class="oc-title">飞书 IM</text>
+  <text x="740" y="582" text-anchor="middle" class="oc-sub">卡片 / 测验 / 推送 / 复盘</text>
+
+  <line x1="740" y1="518" x2="740" y2="538" class="oc-conn" marker-end="url(#arr-oc)" />
+  <line x1="740" y1="278" x2="740" y2="318" class="oc-conn-dashed" />
+  <line x1="740" y1="298" x2="740" y2="318" class="oc-conn" marker-end="url(#arr-oc)" />
+
+  <text x="40" y="652" class="oc-sub">说明：</text>
+  <text x="80" y="652" class="oc-sub">实线 = 当前已接 / 计划接；虚线 = 通过 skill 包映射。</text>
+  <text x="40" y="672" class="oc-sub">核心边界：</text>
+  <text x="80" y="672" class="oc-sub">OpenClaw 永远不直连 DB，不改账，不动学习真相源，只能走 MCP / 工具注册层。</text>
+</svg>

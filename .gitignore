@@ -1,0 +1,64 @@
+# === 密钥 / 环境（绝对不能进 git）===
+.env
+.env.*
+!.env.example
+**/secrets/
+*.key
+*.pem
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.installed.cfg
+*.egg
+build/
+dist/
+.eggs/
+
+# === 测试 / 工具缓存 ===
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# === IDE / 系统 ===
+.cursor/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# === 运行时数据（实例数据保留索引，不保留具体实例）===
+data/instances/*/
+!data/instances/_index.json
+data/.cache/
+*.log
+
+# === 数据库（用户/会话，含敏感信息，绝不进 git）===
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# === 验证/调试产物（截图等，不入库）===
+data/_shots/
+.playwright-cli/
+output/
+outputs/
+backups/
+learnbuddy-backups/
+*.tgz
+*.tar.gz
+
+# === 虚拟环境 ===
+.venv/
+venv/
+env/
+ENV/

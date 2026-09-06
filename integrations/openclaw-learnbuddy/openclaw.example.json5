@@ -1,0 +1,43 @@
+{
+  // 密钥从进程环境注入，不写入本文件：
+  // FEISHU_APP_ID / FEISHU_APP_SECRET
+  // LEARNBUDDY_BASE_URL / LEARNBUDDY_BRIDGE_TOKEN / LEARNBUDDY_FEISHU_ACCOUNT_ID
+  channels: {
+    feishu: {
+      enabled: true,
+      connectionMode: "websocket",
+      defaultAccount: "default",
+      accounts: {
+        default: {
+          appId: "${FEISHU_APP_ID}",
+          appSecret: "${FEISHU_APP_SECRET}",
+          domain: "feishu",
+        },
+      },
+      // 个人版默认先 pairing；确认 owner open_id 后可收紧为显式 allowlist。
+      // 不要使用 allowFrom: ["*"]。
+      dmPolicy: "pairing",
+      groupPolicy: "disabled",
+      dynamicAgentCreation: { enabled: false },
+      typingIndicator: false,
+      resolveSenderNames: false,
+    },
+  },
+  session: {
+    scope: "per-sender",
+    dmScope: "per-account-channel-peer",
+  },
+  mcp: {
+    servers: {
+      // 只声明稳定工具服务名；真实 URL 和每用户 bearer token 由插件 resolver 注入。
+      learnbuddy: {
+        url: "${LEARNBUDDY_BASE_URL}/api/mcp",
+        transport: "streamable-http",
+      },
+    },
+  },
+  tools: {
+    allow: ["learnbuddy", "learnbuddy_bind", "learnbuddy__*"],
+    deny: ["exec", "process", "write", "edit", "apply_patch", "browser", "computer", "filesystem"],
+  },
+}

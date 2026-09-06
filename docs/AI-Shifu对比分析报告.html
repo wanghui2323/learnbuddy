@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy × AI-Shifu · 对比分析报告</title>
+<style>
+  :root {
+    --bg: #f7f4ee;
+    --card: #ffffff;
+    --paper: #fbf8f2;
+    --paper-2: #efeae0;
+    --line: #e7e1d6;
+    --ink: #2b2926;
+    --ink-soft: #6b6760;
+    --ink-faint: #a39e94;
+    --teal: #2c6e6a;
+    --teal-dark: #235955;
+    --teal-soft: #e4efee;
+    --amber: #d98a3d;
+    --amber-soft: #fbeedd;
+    --amber-dark: #a56a28;
+    --blue: #3d6e9e;
+    --blue-soft: #e3edf5;
+    --green: #4a9d6e;
+    --green-soft: #e7f3ec;
+    --red: #c2603f;
+    --red-soft: #f7e4dc;
+    --purple: #7b5ea7;
+    --purple-soft: #ece5f5;
+    --shadow: 0 1px 2px rgba(43,41,38,.05), 0 10px 28px rgba(43,41,38,.06);
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 24px;
+    background: rgba(255,253,249,.92);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(10px);
+  }
+  .logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ttl { font-size: 15px; font-weight: 750; white-space: nowrap; }
+  .ttl small { margin-left: 6px; color: var(--ink-faint); font-size: 12px; font-weight: 500; }
+  .spacer { flex: 1; }
+  .nav {
+    padding: 7px 12px;
+    border-radius: 8px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 650;
+  }
+  .nav:hover, .nav.active { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 30px 24px 84px; }
+
+  .hero {
+    padding: 30px;
+    border-radius: 18px;
+    color: #fff;
+    background:
+      linear-gradient(135deg, rgba(44,110,106,.96), rgba(35,89,85,.98)),
+      radial-gradient(circle at 88% 20%, rgba(217,138,61,.5), transparent 28%);
+    box-shadow: 0 16px 36px rgba(44,110,106,.2);
+  }
+  .hero h1 { font-size: 25px; line-height: 1.35; letter-spacing: 0; }
+  .hero p { margin-top: 9px; max-width: 900px; font-size: 14.5px; opacity: .96; }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,.22);
+  }
+  .meta .m { padding: 10px 12px; border-radius: 11px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14); }
+  .meta .k { font-size: 11px; letter-spacing: .04em; opacity: .72; }
+  .meta .v { margin-top: 3px; font-size: 15px; font-weight: 750; }
+  .quick { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .quick a {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 9px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 650;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.16);
+  }
+  .quick a:hover { background: rgba(255,255,255,.24); }
+
+  .sec { margin-top: 36px; }
+  .sec-h { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+  .no {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--amber-soft);
+    color: var(--amber-dark);
+    font-size: 14px;
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+  .sec h2 { font-size: 20px; letter-spacing: 0; }
+  .desc { margin: 0 0 16px 40px; color: var(--ink-soft); font-size: 13.5px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+  }
+  .card h3 { font-size: 16px; margin-bottom: 8px; }
+  .card p { color: var(--ink-soft); font-size: 13px; }
+  .big-card {
+    min-height: 230px;
+    position: relative;
+    overflow: hidden;
+  }
+  .big-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: var(--teal);
+  }
+  .big-card.shifu::before { background: var(--purple); }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 750;
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+  }
+  .badge.purple { background: var(--purple-soft); color: var(--purple); }
+  .badge.amber { background: var(--amber-soft); color: var(--amber-dark); }
+  .badge.blue { background: var(--blue-soft); color: var(--blue); }
+  .badge.green { background: var(--green-soft); color: var(--green); }
+  .point-list { list-style: none; margin-top: 12px; }
+  .point-list li {
+    position: relative;
+    padding: 7px 0 7px 18px;
+    border-bottom: 1px dashed var(--line);
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .point-list li:last-child { border-bottom: none; }
+  .point-list li::before {
+    content: "";
+    position: absolute;
+    left: 1px;
+    top: 16px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+  .shifu .point-list li::before { background: var(--purple); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  th, td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  th {
+    color: var(--ink-soft);
+    background: #faf7f1;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  td b { color: var(--ink); }
+  .callout {
+    padding: 16px 18px;
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, var(--teal-soft), #fff);
+    border: 1px solid #c9dddd;
+    box-shadow: var(--shadow);
+  }
+  .callout h3 { font-size: 16px; color: var(--teal-dark); margin-bottom: 7px; }
+  .callout p { font-size: 13.5px; color: var(--ink-soft); }
+  .bar-list { display: grid; gap: 11px; margin-top: 10px; }
+  .bar-row { display: grid; grid-template-columns: 128px 1fr 42px; gap: 12px; align-items: center; }
+  .bar-row .label { font-size: 13px; color: var(--ink); font-weight: 650; }
+  .track { height: 10px; border-radius: 999px; background: var(--paper-2); overflow: hidden; }
+  .fill { height: 100%; border-radius: inherit; background: var(--teal); }
+  .fill.purple { background: var(--purple); }
+  .score { font-size: 12px; color: var(--ink-soft); text-align: right; font-weight: 700; }
+  .arch {
+    display: grid;
+    grid-template-columns: 1fr 72px 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .arch-col {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  .arch-mid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-faint);
+    font-size: 28px;
+    font-weight: 800;
+  }
+  .layer {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 11px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .layer h4 { font-size: 13px; margin-bottom: 4px; }
+  .layer p { font-size: 12px; color: var(--ink-soft); }
+  .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .phase {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    border-top: 4px solid var(--teal);
+  }
+  .phase:nth-child(2) { border-top-color: var(--amber); }
+  .phase:nth-child(3) { border-top-color: var(--blue); }
+  .phase:nth-child(4) { border-top-color: var(--green); }
+  .phase .pt { color: var(--ink-faint); font-size: 11px; font-weight: 750; letter-spacing: .04em; }
+  .phase h3 { margin-top: 4px; font-size: 15px; }
+  .phase ul { margin-top: 9px; list-style: none; }
+  .phase li { position: relative; padding: 4px 0 4px 15px; color: var(--ink-soft); font-size: 12.5px; }
+  .phase li::before { content: "·"; position: absolute; left: 2px; color: var(--teal); font-weight: 800; }
+  .source-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .src {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    text-decoration: none;
+    color: var(--ink);
+    box-shadow: var(--shadow);
+  }
+  .src b { display: block; font-size: 13px; }
+  .src span { display: block; margin-top: 3px; font-size: 12px; color: var(--ink-soft); word-break: break-all; }
+  .src:hover { border-color: var(--teal); }
+  .task-stack { display: grid; gap: 18px; margin-top: 16px; }
+  .task-detail {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .task-head {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 18px 20px;
+    background: linear-gradient(180deg, #fffdf9, var(--paper));
+    border-bottom: 1px solid var(--line);
+  }
+  .task-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 850;
+    font-size: 18px;
+  }
+  .task-head h3 { font-size: 18px; line-height: 1.35; }
+  .task-head p { margin-top: 4px; font-size: 13px; color: var(--ink-soft); }
+  .task-body { padding: 18px 20px 20px; }
+  .task-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .mini {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 13px 14px;
+    background: #fff;
+  }
+  .mini h4 {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    margin-bottom: 7px;
+  }
+  .mini p, .mini li { font-size: 12.5px; color: var(--ink-soft); }
+  .mini ul { list-style: none; display: grid; gap: 5px; }
+  .mini li { position: relative; padding-left: 14px; }
+  .mini li::before { content: "·"; position: absolute; left: 2px; color: var(--teal); font-weight: 850; }
+  .schema {
+    margin-top: 12px;
+    border-radius: 12px;
+    background: #2f332f;
+    color: #f6f0e7;
+    padding: 14px 16px;
+    overflow: auto;
+    font: 12px/1.65 Menlo, Consolas, monospace;
+  }
+  .decision-line {
+    margin-top: 12px;
+    border-radius: 12px;
+    border: 1px solid #c9dddd;
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 650;
+  }
+  .foot {
+    margin-top: 42px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-size: 12px;
+  }
+  @media (max-width: 920px) {
+    .meta, .grid-4, .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: 1fr; }
+    .task-grid { grid-template-columns: 1fr; }
+    .arch { grid-template-columns: 1fr; }
+    .arch-mid { transform: rotate(90deg); height: 36px; }
+  }
+  @media (max-width: 720px) {
+    .topbar { padding: 0 14px; }
+    .ttl small, .topbar .nav:not(.active) { display: none; }
+    .wrap { padding: 22px 14px 64px; }
+    .hero { padding: 22px; }
+    .hero h1 { font-size: 21px; }
+    .meta, .grid-2, .grid-4, .timeline, .source-grid { grid-template-columns: 1fr; }
+    .task-head { grid-template-columns: 44px 1fr; }
+    .task-head .badge { grid-column: 2; justify-self: start; }
+    .task-num { width: 40px; height: 40px; border-radius: 12px; font-size: 16px; }
+    .desc { margin-left: 0; }
+    .bar-row { grid-template-columns: 96px 1fr 38px; }
+    th, td { padding: 10px 11px; }
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">L</div>
+  <div class="ttl">AI-Shifu 对比分析<small>产品 · 技术 · 路线</small></div>
+  <div class="spacer"></div>
+  <a class="nav" href="./文档中心.html">文档中心</a>
+  <a class="nav" href="./架构总览.html">架构总览</a>
+  <a class="nav" href="./Harness技术体系对齐.html">Harness</a>
+  <a class="nav active" href="./AI-Shifu对比分析报告.html">对比报告</a>
+</div>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>LearnBuddy × AI-Shifu：个性化 AI 学习产品对比分析报告</h1>
+    <p>基于 AI-Shifu v2.2.4 release、README、ARCHITECTURE 与本地代码克隆分析，判断两者的定位差异、技术可借鉴点，以及 LearnBuddy 下一阶段应优先补强的课程运行时、深度搜索与内容质量闭环。</p>
+    <div class="meta">
+      <div class="m"><div class="k">分析对象</div><div class="v">AI-Shifu v2.2.4</div></div>
+      <div class="m"><div class="k">发布时间</div><div class="v">2026-06-22</div></div>
+      <div class="m"><div class="k">本地代码</div><div class="v">/private/tmp/ai-shifu-v2.2.4</div></div>
+      <div class="m"><div class="k">报告日期</div><div class="v">2026-06-25</div></div>
+    </div>
+    <div class="quick">
+      <a href="#position">定位判断</a>
+      <a href="#architecture">架构对比</a>
+      <a href="#learn">可学习点</a>
+      <a href="#roadmap">落地路线</a>
+      <a href="#next-three">下一步三任务</a>
+      <a href="#sources">资料来源</a>
+    </div>
+  </section>
+
+  <section class="sec" id="position">
+    <div class="sec-h"><div class="no">01</div><h2>核心定位判断</h2></div>
+    <div class="desc">两个产品都在做 AI 学习，但不是同一种起点。AI-Shifu 更偏“专家内容 AI 化”，LearnBuddy 更偏“个人目标自动变成学习系统”。</div>
+    <div class="grid-2">
+      <div class="card big-card">
+        <span class="badge">LearnBuddy 学习伙伴</span>
+        <h3 style="margin-top:12px;">用户目标驱动的个人学习系统</h3>
+        <p>用户用自然语言说想学什么，系统负责澄清目标、即时诊断、深度搜索、生成路径、安排每日任务，并根据学习过程持续调整。</p>
+        <ul class="point-list">
+          <li>起点是学习者本人，而不是创作者先准备课程。</li>
+          <li>核心资产是用户画像、基线评估、学习路径、每日学习记录与学情闭环。</li>
+          <li>适合不限领域的长周期个性化学习：语言、编程、写作、职业转型等。</li>
+          <li>当前短板是教学内容生成深度、课程运行时结构、概念理解与来源链路。</li>
+        </ul>
+      </div>
+      <div class="card big-card shifu">
+        <span class="badge purple">AI-Shifu</span>
+        <h3 style="margin-top:12px;">创作者/机构的 AI 私教课程交付平台</h3>
+        <p>创作者或培训团队提供专业知识、教学意图和课程框架，AI-Shifu 将其扩展成可个性化交付的学习体验。</p>
+        <ul class="point-list">
+          <li>起点是专家内容与教学意图，面向创作者、教师和企业培训团队。</li>
+          <li>核心资产是课程脚本、互动问答、发布流程、课堂/听课模式和运营后台。</li>
+          <li>技术上更重视课程 authoring、publish、runtime、provider adapter 和观测。</li>
+          <li>不宜被 LearnBuddy 全量照抄，否则会过早进入创作者平台复杂度。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><div class="no">02</div><h2>一句话结论</h2></div>
+    <div class="callout">
+      <h3>AI-Shifu 值得学“课程运行与交付工程”，LearnBuddy 应坚持“个人学习路径与动态诊断”。</h3>
+      <p>LearnBuddy 下一步不应该优先做课程商城或创作者运营，而应该先把内容生成从“prompt 写一篇课文”升级为“深度搜索 + 教学设计 + 互动运行时 + 质量评审 + 数据回流”的完整工作流。</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><div class="no">03</div><h2>产品能力对比</h2></div>
+    <div class="desc">从用户路径看，AI-Shifu 在“课程生产/交付”上更完整，LearnBuddy 在“个人诊断/计划/陪学”上有更强差异点。</div>
+    <table>
+      <thead>
+        <tr><th>维度</th><th>AI-Shifu</th><th>LearnBuddy</th><th>判断</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>目标用户</td><td>创作者、教师、培训机构、企业内部培训</td><td>普通学习者，未来可扩展教练/机构</td><td>不要过早把 LearnBuddy 做成创作者平台。</td></tr>
+        <tr><td>课程起点</td><td>专家输入教学意图、课程结构和知识材料</td><td>用户自然语言输入学习目标</td><td>LearnBuddy 要补强概念理解和目标澄清。</td></tr>
+        <tr><td>个性化方式</td><td>基于学习者 profile 适配解释、追问、评估</td><td>基于基线评估、路径规划、学习记录动态调整</td><td>LearnBuddy 的长期个性化潜力更大。</td></tr>
+        <tr><td>内容形态</td><td>脚本、互动问答、听课、课堂展示、发布链接</td><td>学习路径、周/日计划、互动学习页、资料沉淀</td><td>LearnBuddy 需要引入课程运行时。</td></tr>
+        <tr><td>后台能力</td><td>admin、billing、dashboard、creator analytics、operations</td><td>用户/积分/使用情况/分析页逐步建设</td><td>先做内容质量和学习分析后台，不急运营复杂度。</td></tr>
+        <tr><td>技术工程</td><td>Flask + Next.js + MySQL + provider adapters + Langfuse</td><td>FastAPI + SQLite + 原生 HTML + RAG/调度/积分</td><td>现阶段不必迁移栈，但要借鉴边界和运行时。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="architecture">
+    <div class="sec-h"><div class="no">04</div><h2>架构对比</h2></div>
+    <div class="desc">AI-Shifu 的代码结构对我们有启发：内容不是一次性文本，而是被拆成 service、provider、runtime、frontend renderer、trace 的多层系统。</div>
+    <div class="arch">
+      <div class="arch-col">
+        <span class="badge purple">AI-Shifu</span>
+        <div class="layer">
+          <h4>Backend</h4>
+          <p>Flask 服务，业务按 service 模块拆分：learn、shifu、billing、dashboard、profile、tts、metering 等。</p>
+        </div>
+        <div class="layer">
+          <h4>Learning Runtime</h4>
+          <p>learn 目录包含 ask provider adapter、context、state machine、lesson feedback、listen/player 等运行时逻辑。</p>
+        </div>
+        <div class="layer">
+          <h4>Frontend</h4>
+          <p>Next.js 前端，ChatUi、ContentBlock、InteractionBlock、ListenMode、CourseCatalog 等组件化较充分。</p>
+        </div>
+        <div class="layer">
+          <h4>Observability</h4>
+          <p>架构文档明确 request-id、Langfuse tracing、logs/traces/metrics 的最小验证闭环。</p>
+        </div>
+      </div>
+      <div class="arch-mid">↔</div>
+      <div class="arch-col">
+        <span class="badge">LearnBuddy</span>
+        <div class="layer">
+          <h4>Backend</h4>
+          <p>FastAPI + SQLite，多用户、积分、RAG、推荐、重规划、阶段闸门、SM-2 调度已具备。</p>
+        </div>
+        <div class="layer">
+          <h4>Learning Runtime</h4>
+          <p>当前 lesson/cards 已有雏形，但还没有统一 LessonFlow、元素状态机、局部重生成和来源质量链路。</p>
+        </div>
+        <div class="layer">
+          <h4>Frontend</h4>
+          <p>原生 HTML 快速迭代，适合 V0，但学习页和计划页需要被结构化数据驱动，而不是继续靠页面拼接。</p>
+        </div>
+        <div class="layer">
+          <h4>Observability</h4>
+          <p>已有 trace/usage 基础，但还缺内容质量评审、生成链路追踪、用户痛点每日分析的系统视图。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><div class="no">05</div><h2>代码级观察</h2></div>
+    <div class="desc">以下来自本地克隆目录的直接观察，不只是 README 层面的产品介绍。</div>
+    <div class="grid-3">
+      <div class="card">
+        <span class="badge purple">Provider Adapter</span>
+        <h3 style="margin-top:10px;">多后端接入方式清晰</h3>
+        <p>AI-Shifu 在 `ask_provider_adapters` 里抽象 LLM、Dify、Coze、Coze Workflow、Volc Knowledge。LearnBuddy 也应抽象 LLM、搜索、RAG、视频源和评估器。</p>
+      </div>
+      <div class="card">
+        <span class="badge purple">State Machine</span>
+        <h3 style="margin-top:10px;">流式内容有明确状态</h3>
+        <p>`type_state_machine.py` 用状态机处理 element、break、audio、done、error。我们也需要对学习卡片、用户回答、反馈、下一步进行显式状态管理。</p>
+      </div>
+      <div class="card">
+        <span class="badge purple">MarkdownFlow</span>
+        <h3 style="margin-top:10px;">内容是可运行结构</h3>
+        <p>AI-Shifu 的学习内容围绕 block、element、interaction、feedback 持久化。LearnBuddy 应建立 `LessonFlow`，支撑回看、重生成、分析和复盘。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="learn">
+    <div class="sec-h"><div class="no">06</div><h2>LearnBuddy 最值得学习的 8 个点</h2></div>
+    <div class="desc">这些不是照搬，而是转译成 LearnBuddy 当前最需要的系统能力。</div>
+    <table>
+      <thead>
+        <tr><th>优先级</th><th>可学习点</th><th>AI-Shifu 启发</th><th>LearnBuddy 转译方案</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge green">P0</span></td><td><b>课程运行时</b></td><td>MarkdownFlow / block / element / interaction</td><td>定义 `LessonFlow`，每一步都可保存、回看、评价、重生成。</td></tr>
+        <tr><td><span class="badge green">P0</span></td><td><b>Provider Adapter</b></td><td>LLM、Dify、Coze、Volc Knowledge 插拔</td><td>抽象 LLM/Search/RAG/Video/Evaluator provider，避免被单模型锁死。</td></tr>
+        <tr><td><span class="badge green">P0</span></td><td><b>内容质量链路</b></td><td>follow-up source status、debug copy、draft preview</td><td>后台展示来源、生成阶段、质量评分、重生成原因和失败状态。</td></tr>
+        <tr><td><span class="badge amber">P1</span></td><td><b>发布/预览/版本</b></td><td>creator draft、publish、preview、custom domain</td><td>先用于内部“生成档案版本化”，未来再开放给教练/机构。</td></tr>
+        <tr><td><span class="badge amber">P1</span></td><td><b>学习模式</b></td><td>learning mode tooltip、classroom presentation、listen mode</td><td>先做阅读/互动/练习三模式，听课与课堂展示后置。</td></tr>
+        <tr><td><span class="badge amber">P1</span></td><td><b>Profile onboarding</b></td><td>profile onboarding flow</td><td>合并到 LearnBuddy 学前诊断，形成可视化能力画像。</td></tr>
+        <tr><td><span class="badge blue">P2</span></td><td><b>运营后台</b></td><td>billing、dashboard、creator analytics、operations</td><td>先做用户学习痛点和内容质量分析，不急分销/订单复杂度。</td></tr>
+        <tr><td><span class="badge blue">P2</span></td><td><b>工程治理</b></td><td>架构边界检查、request-id、browser smoke</td><td>把 LearnBuddy 的生成链路、学习页和部署流程纳入自动化验证。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><div class="no">07</div><h2>能力雷达：谁强在哪里</h2></div>
+    <div class="desc">定性评分，目的是帮助决策，不是精确打分。LearnBuddy 的战略优势在“个人学习闭环”，短板集中在“内容运行时与生成质量”。</div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>LearnBuddy 当前能力画像</h3>
+        <div class="bar-list">
+          <div class="bar-row"><div class="label">个人路径</div><div class="track"><div class="fill" style="width:82%"></div></div><div class="score">4.1</div></div>
+          <div class="bar-row"><div class="label">诊断评估</div><div class="track"><div class="fill" style="width:76%"></div></div><div class="score">3.8</div></div>
+          <div class="bar-row"><div class="label">内容深度</div><div class="track"><div class="fill" style="width:42%"></div></div><div class="score">2.1</div></div>
+          <div class="bar-row"><div class="label">运行时结构</div><div class="track"><div class="fill" style="width:38%"></div></div><div class="score">1.9</div></div>
+          <div class="bar-row"><div class="label">学习闭环</div><div class="track"><div class="fill" style="width:70%"></div></div><div class="score">3.5</div></div>
+          <div class="bar-row"><div class="label">运营后台</div><div class="track"><div class="fill" style="width:58%"></div></div><div class="score">2.9</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>AI-Shifu 可参考能力画像</h3>
+        <div class="bar-list">
+          <div class="bar-row"><div class="label">个人路径</div><div class="track"><div class="fill purple" style="width:56%"></div></div><div class="score">2.8</div></div>
+          <div class="bar-row"><div class="label">诊断评估</div><div class="track"><div class="fill purple" style="width:66%"></div></div><div class="score">3.3</div></div>
+          <div class="bar-row"><div class="label">内容深度</div><div class="track"><div class="fill purple" style="width:72%"></div></div><div class="score">3.6</div></div>
+          <div class="bar-row"><div class="label">运行时结构</div><div class="track"><div class="fill purple" style="width:86%"></div></div><div class="score">4.3</div></div>
+          <div class="bar-row"><div class="label">学习闭环</div><div class="track"><div class="fill purple" style="width:68%"></div></div><div class="score">3.4</div></div>
+          <div class="bar-row"><div class="label">运营后台</div><div class="track"><div class="fill purple" style="width:84%"></div></div><div class="score">4.2</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="roadmap">
+    <div class="sec-h"><div class="no">08</div><h2>建议落地路线</h2></div>
+    <div class="desc">下一轮最重要的不是继续改 UI 文案，而是让内容生产、内容运行和数据回流变成可控系统。</div>
+    <div class="timeline">
+      <div class="phase">
+        <div class="pt">Phase 1 · 1-2 周</div>
+        <h3>LessonFlow 课程运行时</h3>
+        <ul>
+          <li>定义 lesson / step / element / interaction schema</li>
+          <li>支持已学环节回看与局部重生成</li>
+          <li>把来源、用户输入、反馈、完成状态落库</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="pt">Phase 2 · 2-3 周</div>
+        <h3>深度搜索与素材包</h3>
+        <ul>
+          <li>创建 source_pack：官方文档、论文、文章、视频、案例</li>
+          <li>概念不清时先搜索再澄清</li>
+          <li>没有来源的正式内容降低可信等级</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="pt">Phase 3 · 3-5 周</div>
+        <h3>多角色内容工作流</h3>
+        <ul>
+          <li>Research / Planner / Lesson Designer / Critic 分层</li>
+          <li>教学指标：深度、互动性、产出、迁移、复习</li>
+          <li>自动修复浅内容、错概念、缺来源问题</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="pt">Phase 4 · 5 周后</div>
+        <h3>分析后台与创作者雏形</h3>
+        <ul>
+          <li>内容质量 dashboard</li>
+          <li>用户痛点每日自动分析</li>
+          <li>内部课程版本、预览、发布，再考虑外部创作者</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><div class="no">09</div><h2>不建议照搬的部分</h2></div>
+    <div class="desc">AI-Shifu 是成熟方向参考，但 LearnBuddy 现在不能被它的复杂度带偏。</div>
+    <div class="grid-3">
+      <div class="card">
+        <span class="badge amber">暂不照搬</span>
+        <h3 style="margin-top:10px;">完整创作者平台</h3>
+        <p>课程商城、创作者分销、复杂发布运营先不要做。LearnBuddy 当前核心是个人学习质量，而不是内容市场。</p>
+      </div>
+      <div class="card">
+        <span class="badge amber">暂不迁移</span>
+        <h3 style="margin-top:10px;">前端技术栈重构</h3>
+        <p>当前原生 HTML 仍适合快速验证。需要先稳定 LessonFlow 数据结构，再决定是否迁移 Next.js。</p>
+      </div>
+      <div class="card">
+        <span class="badge amber">谨慎扩张</span>
+        <h3 style="margin-top:10px;">过多 provider</h3>
+        <p>先把接口抽象做好，优先接通 DeepSeek、Bocha、本地 RAG 和质量评审，其他平台后续按需求接。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="next-three">
+    <div class="sec-h"><div class="no">10</div><h2>下一步建议：三件最值得做的事</h2></div>
+    <div class="desc">这三件事会直接改善你最近反馈最多的问题：内容浅、概念误解、学习页不像真正的学习体验。</div>
+    <table>
+      <thead>
+        <tr><th>顺序</th><th>任务</th><th>为什么先做</th><th>验收标准</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><b>LessonFlow + 元素状态机</b></td><td>没有运行时结构，前端再怎么改也只是展示一段内容。</td><td>每个环节可回看、可重做、可局部重生成，学习记录按 element 保存。</td></tr>
+        <tr><td>2</td><td><b>深度搜索 source_pack</b></td><td>解决 harness 这类概念误判，以及“本节暂无外部来源”的可信问题。</td><td>每个正式学习主题至少有 3-8 条来源，来源分官方/论文/文章/视频/案例。</td></tr>
+        <tr><td>3</td><td><b>内容 Critic 质量闸门</b></td><td>防止模型生成浅内容、泛泛而谈、练习不贴合目标。</td><td>内容生成前后有评分：深度、准确性、互动性、来源完整度、可执行性。</td></tr>
+      </tbody>
+    </table>
+
+    <div class="task-stack">
+      <article class="task-detail">
+        <div class="task-head">
+          <div class="task-num">1</div>
+          <div>
+            <h3>LessonFlow + 元素状态机：把“内容”变成可运行的学习体验</h3>
+            <p>解决“学习页像一段说明文”“学过不能回看”“只能单向往后”“重生成不知道改哪里”的底层问题。</p>
+          </div>
+          <span class="badge green">P0 · 课程运行时</span>
+        </div>
+        <div class="task-body">
+          <div class="task-grid">
+            <div class="mini">
+              <h4>产品视角</h4>
+              <ul>
+                <li>用户进入一天学习时，看到的不是大段教材，而是一组有节奏的学习环节：先想、看懂、自己讲、练习、纠错、总结。</li>
+                <li>已完成环节可以随时回看，用户不会因为点了“继续”就失去前面内容。</li>
+                <li>每个环节都能被单独评价和重生成，例如“这个例子太浅”“练习换成工作场景”。</li>
+                <li>学习首页和计划页不再靠静态卡片表达进度，而是从真实 element 状态推导：未开始、进行中、已完成、需复习。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>技术视角</h4>
+              <ul>
+                <li>新增 `lesson_flows` / `lesson_elements` / `lesson_attempts` 数据结构，旧 lesson JSON 通过 adapter 兼容读取。</li>
+                <li>服务端生成统一 `LessonFlow`，前端只负责按 element type 渲染，不再临时解析大段文本。</li>
+                <li>引入元素状态机：draft → ready → active → answered → reviewed → done / needs_revision。</li>
+                <li>支持局部重生成：只重写一个 element 或一组 elements，不破坏整天学习记录。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>前端呈现</h4>
+              <ul>
+                <li>顶部显示当天目标和 6-8 个学习环节，不再让用户迷路。</li>
+                <li>主体区域一次只聚焦一个环节，侧边保留“本节要点 / 自查清单 / 来源”。</li>
+                <li>完成后可以回到任意环节查看，不强制线性单向。</li>
+                <li>已完成内容在资料页沉淀为“我的产出 / 错题 / 要点卡”。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>验收标准</h4>
+              <ul>
+                <li>任意一天学习都能看到 6-8 个结构化环节。</li>
+                <li>完成第 3 环节后，仍可点击第 1/2 环节回看。</li>
+                <li>用户可对单个环节提出要求并重生成，不影响其他环节。</li>
+                <li>学习记录按 element 保存，学情页能统计每类环节表现。</li>
+              </ul>
+            </div>
+          </div>
+          <pre class="schema">LessonFlow {
+  id, instance_id, week_no, day_no, title, objective,
+  elements: [
+    { id, type: "source|think|explain|example|practice|produce|check|reflect",
+      title, prompt, content, expected_output, status,
+      sources: [], attempts: [], feedback: [], quality_score }
+  ],
+  current_element_id, completion, generated_from, version
+}</pre>
+          <div class="decision-line">产品判断：这是下一轮最优先的底座。没有 LessonFlow，学习页视觉再优化也只是“更漂亮地展示一段浅内容”。</div>
+        </div>
+      </article>
+
+      <article class="task-detail">
+        <div class="task-head">
+          <div class="task-num">2</div>
+          <div>
+            <h3>深度搜索 source_pack：让系统先理解世界，再生成学习内容</h3>
+            <p>解决“harness 这种概念反复误解”“内容没有参考资料”“生成大纲不够前沿和真实”的问题。</p>
+          </div>
+          <span class="badge amber">P0 · 搜索与资料层</span>
+        </div>
+        <div class="task-body">
+          <div class="task-grid">
+            <div class="mini">
+              <h4>产品视角</h4>
+              <ul>
+                <li>用户提出陌生或多义概念时，系统不急着问模板问题，而是先搜索候选含义，再用最可能的解释来确认。</li>
+                <li>每个学习路径生成前，都有一份“资料依据”：官方文档、权威文章、论文、视频、案例、项目。</li>
+                <li>每一节课能展示“本节依据”，用户知道内容从哪里来，也能点出去深挖。</li>
+                <li>如果资料不足，系统要明确标注“资料不足 / 需要补充”，而不是假装知道。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>技术视角</h4>
+              <ul>
+                <li>把当前搜索能力升级成 `ResearchWorkflow`：query planning → web search → source ranking → extraction → dedupe → summary。</li>
+                <li>为每个 source 打标签：official / paper / docs / video / case / blog / community，并计算可信度。</li>
+                <li>对多义词做 semantic candidates，例如 harness 可候选为 DevOps 平台、AI eval harness、agent/tool harness。</li>
+                <li>将 `source_pack` 绑定到 instance、week、day、element，供生成、展示和后台分析复用。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>交互设计</h4>
+              <ul>
+                <li>对话首轮可展示“我查到更可能是 X / Y / Z，你是指哪一种？”</li>
+                <li>学习页展示 2-5 条最关键来源，不把资料堆满页面。</li>
+                <li>计划页展示每周参考资料类型，让用户感知计划不是凭空生成。</li>
+                <li>后台展示搜索命中、来源质量、失败原因和用户纠正记录。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>验收标准</h4>
+              <ul>
+                <li>对 harness、OpenClaw、MCP、FSRS 等概念能先搜索再澄清。</li>
+                <li>新生成路径至少沉淀 8-20 条可追踪来源。</li>
+                <li>每个正式学习日内容至少关联 3 条来源或明确说明资料不足。</li>
+                <li>来源能在学习页、资料页、后台三个地方被查看。</li>
+              </ul>
+            </div>
+          </div>
+          <pre class="schema">SourcePack {
+  id, instance_id, topic, query_plan,
+  sources: [
+    { title, url, source_type, authority_score, freshness_score,
+      relevance_score, excerpt, claims, used_by_elements }
+  ],
+  ambiguity: { term, candidates, selected_meaning, confidence },
+  created_at, provider, trace_id
+}</pre>
+          <div class="decision-line">产品判断：source_pack 不只是“加几个链接”，而是 LearnBuddy 内容可信度、概念理解和后续学情分析的共同地基。</div>
+        </div>
+      </article>
+
+      <article class="task-detail">
+        <div class="task-head">
+          <div class="task-num">3</div>
+          <div>
+            <h3>内容 Critic 质量闸门：把“生成了”变成“生成得足够好”</h3>
+            <p>解决“模型给了内容但太浅”“练习不贴合目标”“讲解没有教学设计”“生成结果无法稳定验收”的问题。</p>
+          </div>
+          <span class="badge blue">P0 · 质量保障</span>
+        </div>
+        <div class="task-body">
+          <div class="task-grid">
+            <div class="mini">
+              <h4>产品视角</h4>
+              <ul>
+                <li>用户不应该看到第一版粗糙内容，系统内部要先自检、打分、修复。</li>
+                <li>重生成不只是“重新抽一次”，而是能理解用户要求：更实战、更基础、更多例子、换行业场景。</li>
+                <li>后台能看到低质量内容集中在哪些领域、哪些模型、哪些 prompt 版本。</li>
+                <li>学习后的反馈会反哺生成：用户觉得“太浅/太难/不准”要变成下一次生成的约束。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>技术视角</h4>
+              <ul>
+                <li>新增 `ContentCritic`：对每个 LessonFlow 和 element 做多维评分。</li>
+                <li>评分维度建议包括：准确性、深度、来源完整度、互动性、可执行性、个性化、节奏感。</li>
+                <li>低于阈值自动 repair：补例子、补来源、加练习、降难度、重写解释。</li>
+                <li>记录 prompt_version、model、source_pack_id、critic_score、repair_count，方便后续 AB 和追踪。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>教学指标</h4>
+              <ul>
+                <li>每节必须有“学完能做什么”的可观察产出。</li>
+                <li>每个重要知识点必须有一个解释、一个真实例子、一个练习、一个自查问题。</li>
+                <li>对技能型主题要有任务链，对知识型主题要有概念链，对考试型主题要有题型链。</li>
+                <li>不允许只有概念讲解，没有用户行动。</li>
+              </ul>
+            </div>
+            <div class="mini">
+              <h4>验收标准</h4>
+              <ul>
+                <li>生成内容有质量分和失败原因，不再只有成功/失败。</li>
+                <li>低于阈值的 element 自动修复，最多尝试 2 次。</li>
+                <li>用户反馈“太浅/不准/不适合”后，下一版能体现该约束。</li>
+                <li>后台可以按路径查看内容质量趋势和问题类型。</li>
+              </ul>
+            </div>
+          </div>
+          <pre class="schema">CriticResult {
+  target_type: "lesson_flow|element",
+  target_id, scores: {
+    accuracy, depth, source_coverage, interactivity,
+    personalization, actionability, rhythm
+  },
+  issues: [{ type, severity, evidence, repair_instruction }],
+  pass, repair_count, prompt_version, model, trace_id
+}</pre>
+          <div class="decision-line">产品判断：Critic 是 LearnBuddy 从 demo 走向可持续内容质量的关键。它不是“多调一次模型”，而是内容生产线里的质检与返工机制。</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="sources">
+    <div class="sec-h"><div class="no">11</div><h2>资料来源</h2></div>
+    <div class="desc">本报告同时参考公开资料和本地克隆代码；GitHub 页面信息可能随版本更新，报告基准为 v2.2.4。</div>
+    <div class="source-grid">
+      <a class="src" href="https://github.com/ai-shifu/ai-shifu" target="_blank" rel="noreferrer">
+        <b>AI-Shifu GitHub Repository</b>
+        <span>https://github.com/ai-shifu/ai-shifu</span>
+      </a>
+      <a class="src" href="https://github.com/ai-shifu/ai-shifu/releases/tag/v2.2.4" target="_blank" rel="noreferrer">
+        <b>AI-Shifu v2.2.4 Release</b>
+        <span>https://github.com/ai-shifu/ai-shifu/releases/tag/v2.2.4</span>
+      </a>
+      <a class="src" href="https://github.com/ai-shifu/ai-shifu/blob/v2.2.4/README.md" target="_blank" rel="noreferrer">
+        <b>README</b>
+        <span>https://github.com/ai-shifu/ai-shifu/blob/v2.2.4/README.md</span>
+      </a>
+      <a class="src" href="https://github.com/ai-shifu/ai-shifu/blob/v2.2.4/ARCHITECTURE.md" target="_blank" rel="noreferrer">
+        <b>ARCHITECTURE</b>
+        <span>https://github.com/ai-shifu/ai-shifu/blob/v2.2.4/ARCHITECTURE.md</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="foot">
+    本报告为 LearnBuddy 内部产品/技术决策参考，不代表 AI-Shifu 官方说明。建议后续将 “LessonFlow 课程运行时 + 深度搜索 source_pack + 内容质量 Critic” 写入 SPEC ADR，并拆成下一轮可验收任务。
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 登录</title>
+<style>
+  :root {
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd;
+    --paper: #f7f4ee; --paper-2: #efeae0; --card: #ffffff;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --line: #e7e1d6; --red: #c2603f; --red-soft: #f8e8e1;
+    --radius: 16px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 14px 40px rgba(43,41,38,.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans", "Microsoft YaHei", sans-serif;
+    background: radial-gradient(120% 120% at 50% 0%, #fbf9f4 0%, var(--paper) 55%);
+    color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .box { width: 100%; max-width: 408px; }
+  .brand { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 22px; }
+  .brand .logo { width: 44px; height: 44px; border-radius: 13px; background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff; font-weight: 700; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(44,110,106,.28); }
+  .brand .name { font-weight: 700; font-size: 20px; }
+  .brand .sub { font-size: 12.5px; color: var(--ink-faint); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px 28px; box-shadow: var(--shadow); }
+  h1 { font-size: 21px; letter-spacing: -.3px; }
+  .lead { color: var(--ink-soft); font-size: 13.5px; margin-top: 5px; margin-bottom: 20px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); margin: 14px 0 6px; }
+  input { width: 100%; font: inherit; font-size: 15px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px;
+    background: #fdfcf9; transition: border-color .15s, box-shadow .15s; }
+  input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
+  .row-name { display: none; }
+  .btn { width: 100%; font: inherit; cursor: pointer; border: none; border-radius: 12px; font-weight: 700; font-size: 15px;
+    padding: 13px; margin-top: 22px; background: var(--teal); color: #fff; transition: background .15s; }
+  .btn:hover { background: var(--teal-dark); }
+  .btn:focus-visible, .toggle a:focus-visible, .runtime-link:focus-visible { outline: 3px solid rgba(44,110,106,.24); outline-offset: 2px; }
+  .btn:disabled { opacity: .6; cursor: default; }
+  .err { background: var(--red-soft); color: var(--red); border-radius: 10px; padding: 10px 13px; font-size: 13px; margin-top: 16px; display: none; }
+  .toggle { text-align: center; margin-top: 18px; font-size: 13.5px; color: var(--ink-soft); }
+  .toggle a { color: var(--teal-dark); font-weight: 600; cursor: pointer; text-decoration: none; }
+  .toggle a:hover { text-decoration: underline; }
+  .runtime-card { min-height: 44px; margin-bottom: 16px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 11px; background: var(--paper); color: var(--ink-soft); font-size: 12.5px; display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+  .runtime-card::before { content: ''; width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--ink-faint); }
+  .runtime-card.cloud::before { background: var(--amber); }
+  .runtime-card.personal::before { background: var(--teal); }
+  .runtime-card.fallback { border-style: dashed; color: var(--ink-faint); }
+  .runtime-links { display: flex; gap: 8px; margin-top: 14px; }
+  .runtime-links[hidden] { display: none; }
+  .runtime-link { flex: 1; min-height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 7px 10px; border: 1px solid var(--line); border-radius: 9px; color: var(--teal-dark); font-size: 12.5px; font-weight: 700; text-decoration: none; }
+  .runtime-link:hover:not([aria-disabled="true"]) { border-color: var(--teal); background: var(--teal-soft); }
+  .runtime-link[aria-disabled="true"] { color: var(--ink-faint); cursor: not-allowed; }
+  .foot { text-align: center; margin-top: 18px; font-size: 12px; color: var(--ink-faint); }
+  @media (max-width: 480px) { body { padding: 16px; } .card { padding: 24px 20px; } .runtime-links { flex-direction: column; } }
+</style>
+<script src="/common.js?v=0.54"></script>
+</head>
+<body>
+<div class="box">
+  <div class="brand">
+    <div class="logo">L</div>
+    <div>
+      <div class="name">LearnBuddy</div>
+      <div class="sub">你的个性化 AI 学习伙伴</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h1 id="title">登录</h1>
+    <p class="lead" id="lead">登录后进入你的学习空间。</p>
+    <div class="runtime-card" id="runtimeCard" role="status" aria-live="polite">正在识别运行模式…</div>
+
+    <form id="form" autocomplete="on">
+      <div class="row-name" id="rowName">
+        <label for="name">昵称（可选）</label>
+        <input id="name" type="text" autocomplete="nickname" placeholder="怎么称呼你" />
+      </div>
+      <label for="email">邮箱</label>
+      <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+      <label for="password">密码</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="至少 6 位" required minlength="6" />
+
+      <div class="err" id="err"></div>
+      <button class="btn" id="submit" type="submit">登录</button>
+    </form>
+
+    <div class="toggle" id="toggle" aria-live="polite">正在确认可用入口…</div>
+    <div class="runtime-links" id="runtimeLinks" hidden>
+      <a class="runtime-link" id="runtimeGithubLink">GitHub 源码</a>
+      <a class="runtime-link" id="runtimeDeployLink">部署自己的 LearnBuddy</a>
+    </div>
+  </div>
+  <div class="foot" id="runtimeFoot">密码以加盐哈希存储，不明文保存。</div>
+</div>
+
+<script>
+let mode = 'login'; // 'login' | 'register'
+let runtimeRegistration = 'enabled';
+let runtimeEdition = 'legacy';
+let runtimeSetupRequired = false;
+const $ = id => document.getElementById(id);
+
+function setMode(m) {
+  const canSetup = runtimeRegistration === 'setup_only' && runtimeSetupRequired;
+  if (m === 'register' && runtimeRegistration !== 'enabled' && !canSetup) m = 'login';
+  mode = m;
+  const isReg = m === 'register';
+  const isOwnerSetup = isReg && runtimeRegistration === 'setup_only';
+  $('title').textContent = isOwnerSetup ? '初始化我的 LearnBuddy' : (isReg ? '注册' : '登录');
+  $('lead').textContent = isOwnerSetup
+    ? '创建这台私人部署的唯一所有者账号。'
+    : (isReg ? '创建账号，开启你的第一条学习路径。' : '登录后进入你的学习空间。');
+  $('submit').textContent = isOwnerSetup ? '完成初始化并进入' : (isReg ? '注册并进入' : '登录');
+  $('rowName').style.display = isReg ? 'block' : 'none';
+  $('password').setAttribute('autocomplete', isReg ? 'new-password' : 'current-password');
+  if (runtimeRegistration === 'enabled') {
+    $('toggle').innerHTML = isReg
+      ? '已有账号？<a id="toggleLink" tabindex="0">去登录</a>'
+      : '还没有账号？<a id="toggleLink" tabindex="0">注册一个</a>';
+    $('toggleLink').onclick = () => setMode(isReg ? 'login' : 'register');
+    $('toggleLink').onkeydown = event => {
+      if (event.key === 'Enter' || event.key === ' ') setMode(isReg ? 'login' : 'register');
+    };
+  } else if (isOwnerSetup) {
+    $('toggle').textContent = '初始化完成后将关闭公开注册，只保留所有者登录。';
+  } else {
+    $('toggle').textContent = runtimeEdition === 'personal'
+      ? '这是私人部署，仅已配置的所有者可以登录。'
+      : '当前服务暂未开放新账号注册。';
+  }
+  $('err').style.display = 'none';
+}
+
+function configureRuntimeLink(element, url, unavailableTitle) {
+  if (url) {
+    element.href = url;
+    element.target = '_blank';
+    element.rel = 'noopener noreferrer';
+    element.removeAttribute('aria-disabled');
+    element.removeAttribute('title');
+  } else {
+    element.removeAttribute('href');
+    element.setAttribute('aria-disabled', 'true');
+    element.title = unavailableTitle;
+  }
+}
+
+function applyLoginRuntime(runtime) {
+  runtimeRegistration = runtime.registration;
+  runtimeEdition = runtime.edition;
+  runtimeSetupRequired = runtime.setup_required;
+  const card = $('runtimeCard');
+  const links = $('runtimeLinks');
+  card.className = 'runtime-card';
+  links.hidden = true;
+  if (runtime.edition === 'cloud') {
+    card.classList.add('cloud');
+    card.textContent = '在线体验版 · 免费额度有限，长期使用请私有部署';
+    $('runtimeFoot').textContent = '体验账号相互隔离；密码以加盐哈希存储，不明文保存。';
+    configureRuntimeLink($('runtimeGithubLink'), runtime.links.github, '部署方尚未配置源码地址');
+    configureRuntimeLink($('runtimeDeployLink'), runtime.links.deploy, '部署方尚未配置私有部署说明');
+    links.hidden = false;
+    setMode('login');
+  } else if (runtime.edition === 'personal') {
+    card.classList.add('personal');
+    card.textContent = runtime.llm_configured === false
+      ? '我的 LearnBuddy · 数据归我 · 模型尚未在本地配置'
+      : '我的 LearnBuddy · 数据归我 · 模型密钥由我管理（BYOK）';
+    document.querySelector('.brand .sub').textContent = '你的私人 AI 学习伙伴';
+    $('runtimeFoot').textContent = '学习数据保存在你的部署中；模型与飞书凭据由你管理。';
+    setMode(runtimeRegistration === 'setup_only' && runtimeSetupRequired ? 'register' : 'login');
+  } else {
+    card.classList.add('fallback');
+    card.textContent = '运行模式暂未读取，已按当前服务配置继续。';
+    setMode('login');
+  }
+}
+
+function showErr(msg) { const e = $('err'); e.textContent = msg; e.style.display = 'block'; }
+
+$('form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  $('err').style.display = 'none';
+  const email = $('email').value.trim();
+  const password = $('password').value;
+  const name = $('name').value.trim();
+  if (!email || password.length < 6) { showErr('请填写邮箱，密码至少 6 位'); return; }
+
+  $('submit').disabled = true;
+  const path = mode === 'register' ? '/api/auth/register' : '/api/auth/login';
+  try {
+    const res = await fetch(path, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { showErr(data.detail || '操作失败，请重试'); $('submit').disabled = false; return; }
+    location.href = '/space';
+  } catch (e) {
+    showErr('网络错误：' + e.message); $('submit').disabled = false;
+  }
+});
+
+if (window.LearnBuddyRuntime) {
+  window.LearnBuddyRuntime.load().then(applyLoginRuntime).catch(() => setMode('login'));
+} else {
+  setMode('login');
+}
+</script>
+</body>
+</html>

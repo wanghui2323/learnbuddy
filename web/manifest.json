@@ -1,0 +1,14 @@
+{
+  "name": "LearnBuddy 学习伙伴",
+  "short_name": "LearnBuddy",
+  "description": "你的个性化 AI 学习伙伴——每天提醒你该学什么",
+  "start_url": "/space",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f4ee",
+  "theme_color": "#2c6e6a",
+  "icons": [
+    { "src": "/assets/cover-language.png", "sizes": "any", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

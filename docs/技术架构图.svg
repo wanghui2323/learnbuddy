@@ -1,0 +1,97 @@
+<svg viewBox="0 0 920 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="技术架构图">
+  <defs>
+    <marker id="arr-tech" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-tech-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-tech-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-tech-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-tech-4" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e3edf5" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .t-title { font: 700 14px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .t-sub { font: 400 11.5px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .t-tag { font: 700 10.5px -apple-system, "PingFang SC", sans-serif; fill: #fff; }
+    .t-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+    .t-card { stroke: #d8d2c4; stroke-width: 1; }
+  </style>
+
+  <!-- L1 用户触点层 -->
+  <rect x="60" y="40" width="800" height="92" rx="14" fill="url(#g-tech-1)" class="t-card" />
+  <text x="80" y="68" class="t-title">用户触点层</text>
+  <text x="80" y="88" class="t-sub">所有用户直接接触到的前端入口</text>
+  <text x="80" y="110" class="t-sub">Web / PWA · 学习空间 · 学练 · 学情 · 推送订阅 · IM 入口</text>
+
+  <!-- L2 接入与编排层 -->
+  <rect x="60" y="178" width="800" height="92" rx="14" fill="url(#g-tech-2)" class="t-card" />
+  <text x="80" y="206" class="t-title">接入与编排层</text>
+  <text x="80" y="226" class="t-sub">FastAPI server.py：路由 · 鉴权 · SSE · lesson · recommend · replan · push · admin</text>
+
+  <!-- L3 核心学习引擎层 -->
+  <rect x="60" y="316" width="800" height="116" rx="14" fill="url(#g-tech-3)" class="t-card" />
+  <text x="80" y="344" class="t-title">核心学习引擎层</text>
+  <text x="80" y="364" class="t-sub">系统真正的学习内核：生成、内容、记忆、掌握度、调度</text>
+  <text x="80" y="386" class="t-sub">engine · generator · content · concepts · rag</text>
+  <text x="80" y="406" class="t-sub">memory · mastery · recommend · replan · phases · scheduler</text>
+
+  <!-- L4 三列并列：数据 / LLM / 扩展 -->
+  <g class="t-card">
+    <rect x="60" y="478" width="246" height="92" rx="14" fill="url(#g-tech-4)" />
+    <text x="80" y="506" class="t-title">数据真相源层</text>
+    <text x="80" y="526" class="t-sub">主系统学习数据</text>
+    <text x="80" y="548" class="t-sub">SQLite · JSON · 路径产物</text>
+  </g>
+  <g class="t-card">
+    <rect x="337" y="478" width="246" height="92" rx="14" fill="url(#g-tech-4)" />
+    <text x="357" y="506" class="t-title">LLM / 检索层</text>
+    <text x="357" y="526" class="t-sub">生成与检索能力</text>
+    <text x="357" y="548" class="t-sub">DeepSeek · RAG · prompt</text>
+  </g>
+  <g class="t-card">
+    <rect x="614" y="478" width="246" height="92" rx="14" fill="url(#g-tech-4)" />
+    <text x="634" y="506" class="t-title">扩展接入层</text>
+    <text x="634" y="526" class="t-sub">高阶运行时与代理</text>
+    <text x="634" y="548" class="t-sub">tools · MCP · OpenClaw</text>
+  </g>
+
+  <!-- L5 升级模式承载 -->
+  <rect x="60" y="616" width="800" height="76" rx="14" fill="#efeae0" class="t-card" />
+  <text x="80" y="644" class="t-title">升级模式承载层</text>
+  <text x="80" y="666" class="t-sub">个人助理模式 · 主动提醒 · 跨端联动 · IM 对话入口 · 长期记忆</text>
+
+  <!-- 主干箭头 -->
+  <line x1="460" y1="132" x2="460" y2="178" class="t-conn" marker-end="url(#arr-tech)" />
+  <line x1="460" y1="270" x2="460" y2="316" class="t-conn" marker-end="url(#arr-tech)" />
+  <line x1="460" y1="432" x2="460" y2="478" class="t-conn" marker-end="url(#arr-tech)" />
+  <line x1="460" y1="570" x2="460" y2="616" class="t-conn" marker-end="url(#arr-tech)" />
+
+  <!-- 引擎层 → 三列分叉 -->
+  <path d="M460 432 C 460 460, 183 460, 183 478" class="t-conn" marker-end="url(#arr-tech)" />
+  <path d="M460 432 C 460 460, 460 460, 460 478" class="t-conn" marker-end="url(#arr-tech)" />
+  <path d="M460 432 C 460 460, 737 460, 737 478" class="t-conn" marker-end="url(#arr-tech)" />
+
+  <!-- 层序号 -->
+  <circle cx="40" cy="86" r="14" fill="#2c6e6a" />
+  <text x="40" y="90" text-anchor="middle" class="t-tag">L1</text>
+  <circle cx="40" cy="224" r="14" fill="#4a9d6e" />
+  <text x="40" y="228" text-anchor="middle" class="t-tag">L2</text>
+  <circle cx="40" cy="374" r="14" fill="#d98a3d" />
+  <text x="40" y="378" text-anchor="middle" class="t-tag">L3</text>
+  <circle cx="40" cy="524" r="14" fill="#3d6e9e" />
+  <text x="40" y="528" text-anchor="middle" class="t-tag">L4</text>
+  <circle cx="40" cy="654" r="14" fill="#7b5ea7" />
+  <text x="40" y="658" text-anchor="middle" class="t-tag">L5</text>
+</svg>

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 项目工作台</title>
+<link rel="icon" href="data:," />
+<style>
+  :root{
+    --bg:#f6f2eb;
+    --paper:#fffdfa;
+    --ink:#282623;
+    --muted:#746f68;
+    --line:#e2d9cc;
+    --teal:#27776f;
+    --teal-dark:#1f5f59;
+    --teal-soft:#e4f1ee;
+    --gold:#d88a31;
+    --gold-soft:#fff1dc;
+    --red:#b75a4b;
+    --green:#4f9f73;
+    --shadow:0 14px 34px rgba(50,42,31,.08);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.7;
+  }
+  a{color:inherit}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    min-height:76px;
+    padding:0 42px;
+    background:rgba(255,253,250,.94);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(12px);
+  }
+  .logo{
+    width:42px;height:42px;
+    display:grid;place-items:center;
+    border-radius:12px;
+    background:var(--teal-dark);
+    color:white;
+    font-weight:900;
+  }
+  .brand{font-size:20px;font-weight:900;white-space:nowrap}
+  .brand small{display:block;color:var(--muted);font-size:12px;font-weight:700}
+  .nav{margin-left:auto;display:flex;gap:6px;overflow:visible;align-items:center}
+  .nav a,.nav summary{
+    flex:0 0 auto;
+    padding:10px 13px;
+    border-radius:13px;
+    text-decoration:none;
+    color:#625c55;
+    font-weight:800;
+  }
+  .nav a.active,.nav a:hover,.nav summary:hover,.nav-menu[open] summary{background:var(--teal-soft);color:var(--teal-dark)}
+  .nav-menu{position:relative;flex:0 0 auto}
+  .nav-menu summary{list-style:none;cursor:pointer;user-select:none}
+  .nav-menu summary::-webkit-details-marker{display:none}
+  .nav-menu summary::after{content:"⌄";margin-left:6px;font-size:12px;color:var(--muted)}
+  .nav-menu[open] summary::after{content:"⌃";color:var(--teal-dark)}
+  .nav-menu-panel{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    z-index:60;
+    min-width:300px;
+    padding:8px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:var(--paper);
+    box-shadow:0 18px 44px rgba(50,42,31,.14);
+  }
+  .nav .nav-menu-panel a{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 11px;
+    border-radius:12px;
+    white-space:nowrap;
+    font-size:13px;
+  }
+  .nav .nav-menu-panel a small{color:var(--muted);font-weight:800}
+  .wrap{max-width:1240px;margin:0 auto;padding:34px 28px 70px}
+  .hero{
+    border-radius:28px;
+    padding:38px;
+    color:white;
+    background:
+      radial-gradient(circle at 88% 18%, rgba(216,138,49,.22), transparent 28%),
+      linear-gradient(135deg,#1f5f59 0%,#2d7f76 58%,#385c48 100%);
+    box-shadow:var(--shadow);
+  }
+  .kicker{
+    display:inline-flex;
+    padding:6px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.14);
+    color:#e5fffb;
+    font-size:13px;
+    font-weight:850;
+  }
+  .hero h1{max-width:900px;margin:18px 0 10px;font-size:42px;line-height:1.18;letter-spacing:0}
+  .hero p{max-width:920px;margin:0;color:rgba(255,255,255,.82);font-size:17px}
+  .hero-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:28px}
+  .metric{padding:16px;border-radius:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
+  .metric .k{color:rgba(255,255,255,.72);font-size:13px;font-weight:750}
+  .metric .v{margin-top:3px;font-size:20px;font-weight:950}
+  .sec{margin-top:34px}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:14px}
+  h2{margin:0;font-size:28px;letter-spacing:0}
+  .desc{color:var(--muted);font-size:15px}
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:5px 11px;
+    border-radius:999px;
+    background:var(--teal-soft);
+    color:var(--teal-dark);
+    font-size:13px;
+    font-weight:850;
+  }
+  .pill.gold{background:var(--gold-soft);color:#8b551e}
+  .pill.gray{background:#eee9df;color:#69625a}
+  .pill.red{background:#fae8e5;color:#9e493d}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+  .panel{padding:22px}
+  .start-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}
+  .current-card{padding:24px}
+  .current-card h2{font-size:24px}
+  .current-card p{margin:10px 0 0;color:var(--muted)}
+  .status-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
+  .status-cell{padding:12px;border-radius:14px;background:#f7fbf9;border:1px solid #cae2dc}
+  .status-cell .label{color:var(--muted);font-size:12px;font-weight:850}
+  .status-cell .value{margin-top:2px;color:var(--teal-dark);font-size:16px;font-weight:950}
+  .quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .quick-card{padding:16px}
+  .quick-card b{display:block;margin:8px 0 4px;font-size:16px}
+  .quick-card span{display:block;color:var(--muted);font-size:13px}
+  .quick-card a{display:inline-flex;margin-top:12px;color:var(--teal-dark);font-weight:850;text-decoration:none}
+  .version-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .version-card{position:relative;min-height:224px;padding:20px;overflow:hidden}
+  .version-card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:#d3c8b8}
+  .version-card.current::before{background:var(--teal)}
+  .version-card.next::before{background:var(--gold)}
+  .version-card h3{margin:12px 0 8px;font-size:20px}
+  .version-card p{margin:0;color:var(--muted);font-size:14px}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .version-foot{display:flex;justify-content:space-between;gap:12px;margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);color:var(--muted);font-size:13px}
+  .version-detail-stack{display:grid;gap:14px}
+  .version-detail{min-width:0;padding:24px;scroll-margin-top:104px}
+  .version-detail h3{margin:12px 0 8px;font-size:22px}
+  .version-detail p{margin:0;color:var(--muted)}
+  .version-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+  .scope-box{padding:15px;border-radius:15px;background:#fbfaf6;border:1px solid var(--line)}
+  .scope-box b{display:block;margin-bottom:6px;color:var(--teal-dark)}
+  .scope-box ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px}
+  .scope-box li{margin:4px 0}
+  .doc-pack{
+    margin-top:18px;
+    padding:18px;
+    border-radius:17px;
+    background:#f8fbfa;
+    border:1px solid #cae2dc;
+  }
+  .doc-pack h4{margin:0 0 10px;font-size:17px;color:var(--teal-dark)}
+  .doc-pack p{margin:0 0 12px;color:var(--muted);font-size:14px}
+  .doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .doc-card{
+    display:block;
+    padding:14px;
+    border-radius:14px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    text-decoration:none;
+  }
+  .doc-card b{display:block;color:var(--ink);font-size:15px}
+  .doc-card span{display:block;margin-top:4px;color:var(--muted);font-size:13px}
+  .doc-card:hover{border-color:#8cbdb6;box-shadow:0 10px 26px rgba(39,119,111,.08)}
+  .table-wrap{overflow:auto;border-radius:16px;border:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;background:var(--paper);min-width:820px}
+  th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:#f2ece1;color:#4d4740;font-size:13px}
+  td{font-size:14px}
+  tr:last-child td{border-bottom:0}
+  .ledger-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .ledger{padding:18px}
+  .ledger .num{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:var(--teal-soft);color:var(--teal-dark);font-weight:900}
+  .ledger h3{margin:10px 0 6px;font-size:17px}
+  .ledger p{margin:0;color:var(--muted);font-size:14px}
+  .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+  .list{margin:8px 0 0;padding-left:18px}
+  .list li{margin:6px 0}
+  .decision-list{display:grid;gap:10px}
+  .decision{padding:14px 16px;border-radius:15px;background:#f7fbf9;border:1px solid #cae2dc}
+  .decision b{color:var(--teal-dark)}
+  .archive-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .archive{padding:18px}
+  .archive h3{margin:8px 0 8px}
+  .archive p{margin:0;color:var(--muted);font-size:14px}
+  .archive a{display:inline-flex;margin-top:12px;padding:8px 12px;border-radius:12px;background:var(--teal-soft);color:var(--teal-dark);font-weight:850;text-decoration:none;font-size:13px}
+  .footer{margin-top:36px;padding:20px;color:var(--muted);text-align:center;font-size:13px}
+  @media(max-width:980px){
+    .topbar{padding:12px 18px;align-items:flex-start;flex-wrap:wrap}
+    .nav{width:100%;margin-left:0;overflow:visible;flex-wrap:wrap}
+    .nav-menu{width:100%}
+    .nav-menu summary{display:inline-flex}
+    .nav-menu-panel{position:static;width:100%;margin-top:6px}
+    .wrap{padding:22px 16px 48px}
+    .hero{padding:26px}
+    .hero h1{font-size:30px}
+    .hero-grid,.start-grid,.quick-grid,.status-row,.version-grid,.version-detail-grid,.doc-grid,.ledger-grid,.two-col,.archive-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">LearnBuddy 项目工作台<small>需求 · 技术 · 版本 · 进度</small></div>
+  <nav class="nav" aria-label="页面导航">
+    <a class="active" href="#overview">总览</a>
+    <a href="#continuation">连续优化</a>
+    <details class="nav-menu">
+      <summary>版本管理</summary>
+      <div class="nav-menu-panel">
+        <a href="#version-v053"><span>V0.53 真实能力诊断</span><small>工程回归通过</small></a>
+        <a href="#version-v052"><span>V0.52 运行可靠性</span><small>已部署</small></a>
+        <a href="#version-v050"><span>V0.50 可信运行态</span><small>已验收</small></a>
+        <a href="./versions/v0.49.1-自学可执行层.html"><span>V0.49.1 自学可执行层</span><small>已验收</small></a>
+        <a href="./versions/v0.49-教学内容密度补丁.html"><span>V0.49 内容密度与展开层</span><small>已验收</small></a>
+        <a href="./versions/v0.48-教学内容流水线.html"><span>V0.48 内容生成流水线</span><small>已提交</small></a>
+        <a href="./versions/v0.47-路径级Loop-v1.html"><span>V0.47 路径级 Loop v1</span><small>已开发</small></a>
+        <a href="./versions/v0.46-教学内容Loop-v1.html"><span>V0.46 教学内容 Loop v1</span><small>已开发</small></a>
+        <a href="./versions/v0.45-工作台治理.html"><span>V0.45 工作台治理</span><small>已开发</small></a>
+        <a href="./versions/v0.44-内容Loop方案档案.html"><span>V0.44 内容 Loop</span><small>方案档案</small></a>
+      </div>
+    </details>
+    <a href="#backlog">需求池</a>
+    <a href="./设计规范.html">设计规范</a>
+    <a href="#tech">技术账</a>
+    <a href="#acceptance">验收</a>
+    <a href="./需求评估体系.html">评估体系</a>
+    <a href="#archive">归档</a>
+    <a href="./文档中心.html">文档中心</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">长期真相源 · 每期迭代一个版本号</span>
+    <h1>用版本号管理 LearnBuddy 的需求、技术方案和迭代进度</h1>
+    <p>这个页面是长期项目驾驶舱。以后每次重要迭代先登记版本号，再维护需求范围、技术方案、验收口径、实现状态和归档链接。专项材料不再混进主工作台，只通过版本卡引用。</p>
+    <div class="hero-grid">
+      <div class="metric"><div class="k">线上版本</div><div class="v">V0.52</div></div>
+      <div class="metric"><div class="k">下一版本</div><div class="v">V0.53</div></div>
+      <div class="metric"><div class="k">当前阶段</div><div class="v">需求已冻结</div></div>
+      <div class="metric"><div class="k">数据底线</div><div class="v">不破坏线上用户</div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="overview">
+    <div class="sec-head">
+      <div>
+        <h2>怎么用这个工作台</h2>
+        <div class="desc">打开后先看总览；要找需求、技术、版本、验收，分别进入对应区域。</div>
+      </div>
+      <span class="pill">Start Here</span>
+    </div>
+    <div class="start-grid">
+      <article class="card current-card">
+        <span class="pill gold">待发布</span>
+        <h2>V0.53 · 真实能力诊断本地开发与工程回归完成</h2>
+        <p>“场景题 + 双坐标自评”已升级为有客观判分、AI 协作过程、评分证据和置信度的真实诊断；线上仍为 V0.52，开放题双人人工复核与生产发布尚未执行。</p>
+        <div class="status-row">
+          <div class="status-cell"><div class="label">状态</div><div class="value">工程回归通过</div></div>
+          <div class="status-cell"><div class="label">任务</div><div class="value">10 项</div></div>
+          <div class="status-cell"><div class="label">完成</div><div class="value">9/10</div></div>
+          <div class="status-cell"><div class="label">验收证据</div><div class="value">398 tests + 18 真测</div></div>
+        </div>
+      </article>
+      <div class="quick-grid">
+        <div class="card quick-card"><span class="pill">新增需求</span><b>先进需求池</b><span>用户反馈、截图、想法先归类，再决定进入哪个版本。</span><a href="#backlog">查看需求池</a></div>
+        <div class="card quick-card"><span class="pill gold">准备开发</span><b>先定版本号</b><span>版本卡写清范围、产物、验收和风险，再开始实现。</span><a href="#versions">查看版本管理</a></div>
+        <div class="card quick-card"><span class="pill">查技术</span><b>看技术账</b><span>架构、数据契约、接口、兼容策略和风险统一沉淀。</span><a href="#tech">查看技术账</a></div>
+        <div class="card quick-card"><span class="pill gray">收口验收</span><b>看验收区</b><span>每个版本必须有明确验证，不靠“感觉好了”。</span><a href="#acceptance">查看验收</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="iteration-v053">
+    <div class="sec-head">
+      <div>
+        <h2>V0.53 · 真实能力诊断任务树</h2>
+        <div class="desc">对象、出题判分、双阶段运行、证据报告、路径消费与 Eval 已完成本地验收；Release Loop 已建立，只剩双人人工评分、生产备份、部署和线上回归。</div>
+      </div>
+      <span class="pill gold">9/10 · 待发布</span>
+    </div>
+    <div class="version-detail-grid">
+      <div class="scope-box"><b>本期解决</b><ul><li>原始答案没有进入客观判分</li><li>独立能力、AI 协作和主观信心混在一起</li><li>路径决策无法追溯到评分证据</li><li>低置信评分仍可能被包装成确定结论</li></ul></div>
+      <div class="scope-box"><b>本期不做</b><ul><li>不重写深度教学内容，留给 V0.54</li><li>不引入自由多 Agent / OpenClaw</li><li>不上 IRT/CAT 大题库和在线监考</li><li>不删除旧自评基线，只做诚实标记与兼容</li></ul></div>
+      <div class="scope-box"><b>发布硬门</b><ul><li>客观题标准样本判分 100%</li><li>开放题人工档位一致率 ≥80%</li><li>每个路径补强决策有 evidence_id</li><li>P0 流程刷新/重试/跨账号达到 6/6</li><li>30 条跨领域 Eval Case + 双端回归</li></ul></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>任务</th><th>对象与负责模块</th><th>依赖</th><th>状态</th><th>退出门</th></tr></thead>
+        <tbody>
+          <tr><td><b>V053-REQ 需求与合同冻结</b></td><td>ADR-055 / 工作台</td><td>无</td><td>已完成</td><td>目标、非目标、六维能力、对象、状态、API、兼容和验收口径可查。</td></tr>
+          <tr><td><b>V053-01 数据模型与迁移</b></td><td>AssessmentAttempt / ItemSnapshot / Response / ScoreEvidence / AbilityProfile · <code>db.py</code> / schemas</td><td>REQ</td><td>已完成</td><td>同一 assessment_id 全链路持久；旧画像标为 self_report_v1，不伪造 observed score。</td></tr>
+          <tr><td><b>V053-02 Blueprint 与候选题校验</b></td><td>AssessmentBlueprint · <code>evaluator.py</code> / prompts</td><td>01</td><td>已完成</td><td>6–10 题双阶段覆盖；不合格候选自动使用内置可信题组。</td></tr>
+          <tr><td><b>V053-03 客观与 Rubric 判分</b></td><td>ScoreEvidence · <code>assessment_scoring.py</code></td><td>01–02</td><td>已完成</td><td>客观题确定性判分；开放题版本化结构评分；失败只产低置信证据。</td></tr>
+          <tr><td><b>V053-04 独立 + AI 协作双阶段</b></td><td>AssessmentRuntime / AssistTrace · server / baseline UI</td><td>01–03</td><td>已完成</td><td>逐题保存、刷新恢复、阶段守卫和站内协作 trace 已通过真实浏览器验证。</td></tr>
+          <tr><td><b>V053-05 自适应追加题与状态恢复</b></td><td>Attempt state machine · baseline service / jobs</td><td>03–04</td><td>已完成</td><td>低置信/lucky_correct 追加验证；重启中断转可重试失败。</td></tr>
+          <tr><td><b>V053-06 证据化结果页</b></td><td>AbilityProfile / Evidence Report · <code>index.html</code> / <code>instance.html</code></td><td>03–05</td><td>已完成</td><td>六维画像、题目级依据、路径影响、异议与重评均可见。</td></tr>
+          <tr><td><b>V053-07 路径消费与历史兼容</b></td><td>ProfileBinding / DecisionEvidence · generator / analytics</td><td>03、06</td><td>已完成</td><td>正式路径只消费 completed observed 画像；补强规则引用 evidence_id；旧画像明确标识。</td></tr>
+          <tr><td><b>V053-08 Eval Set 与离线评测器</b></td><td>30 cases / eval runner · tests / scripts</td><td>02–07</td><td>已完成</td><td>六领域各 5 条；高信误答、理由错、AI 代做、歧义和评分分歧可重复跑。</td></tr>
+          <tr><td><b>V053-09 Trace、隐私与管理聚合</b></td><td>Assessment Trace / admin quality</td><td>03–08</td><td>已完成</td><td>版本/模型/延迟可追踪；协作与证据进入导出删除；后台只看匿名聚合。</td></tr>
+          <tr><td><b>V053-10 全链路验收与发布</b></td><td>Release Loop / pytest / DeepSeek / browser / deploy</td><td>01–09</td><td>Release Loop 已建立，待双人评分与发布</td><td><code>release_loop.py status</code> 当前准确阻断在 18 条开放题双人评分（尚缺 36 个评分单元）；人工门通过后才会依次运行全量 pytest、干净提交检查、生产在线备份、Git commit 部署和线上完整性回归，任一关失败均停止。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="decision"><b>依赖原则：</b>V0.53 未通过发布硬门前，不启动 V0.54 深度教学实现；否则课程仍会消费不可信画像。</div>
+  </section>
+
+  <section class="sec" id="continuation">
+    <div class="sec-head">
+      <div>
+        <h2>V0.50.1–V0.52 连续优化任务</h2>
+        <div class="desc">按依赖顺序推进四个版本；每项都必须完成代码、自动化、真实交互验证和状态归档，不能只提交方案。</div>
+      </div>
+      <span class="pill gold">全部验收</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>版本 / 任务</th><th>对象与负责模块</th><th>状态</th><th>验收门</th></tr></thead>
+        <tbody>
+          <tr><td><b>V0501-01 用户知识检索</b></td><td>知识片段 · <code>rag.py</code></td><td>已验收</td><td>可跨本人路径检索，保留 source_id/instance_id，不跨用户。</td></tr>
+          <tr><td><b>V0501-02 Grounded outline</b></td><td>master/W1 · <code>generator.py</code> / <code>path_deepbuild.py</code></td><td>已验收</td><td>研究输入改变周主题和产出，W1/图谱消费同一 master。</td></tr>
+          <tr><td><b>V0501-03 Repair gate</b></td><td>OutlineBuild · <code>path_deepbuild.py</code></td><td>已验收</td><td>最多 2 次修复；仍不通过则回滚目录和索引。</td></tr>
+          <tr><td><b>V0502-01 基线事实表</b></td><td>BaselineAssessment · <code>db.py</code> / <code>evaluator.py</code></td><td>已验收</td><td>题目、回答、独立/AI 坐标按 assessment_id 持久化并隔离用户。</td></tr>
+          <tr><td><b>V0502-02 基线产品流</b></td><td>入学摸底 · <code>server.py</code> / <code>index.html</code></td><td>已验收</td><td>创建、提交、恢复、实例绑定和异常路径闭环。</td></tr>
+          <tr><td><b>V0502-03 生成与学情消费</b></td><td>BaselineProfile · generator / analytics</td><td>已验收</td><td>master 和学情读取同一结构化基线。</td></tr>
+          <tr><td><b>V051-01 W2–Wn lazy build</b></td><td>WeekPlan · generator / path_loop</td><td>已验收</td><td>完成周 + 自检通过后原子生成下一周，刷新保持。</td></tr>
+          <tr><td><b>V051-02 自检入口与闸门</b></td><td>WeeklySelfCheck · instance / self-check</td><td>已验收</td><td>正确 week 入口；未通过不越周，通过才解锁。</td></tr>
+          <tr><td><b>V051-03 replan 生命周期</b></td><td>ReplanProposal · replan / server / instance</td><td>已验收</td><td>检测只读；确认后应用；拒绝/撤销不丢状态。</td></tr>
+          <tr><td><b>V052-01 会话归属与恢复</b></td><td>ConversationSession · conversations / server</td><td>已验收</td><td>按 user+session 恢复 Agent 上下文和末轮结构化选项；跨用户复用被隔离。</td></tr>
+          <tr><td><b>V052-02 持久后台任务</b></td><td>BackgroundJob · db / server</td><td>已验收</td><td>路径/学练状态跨重启可查；僵尸 running 转显式可重试错误。</td></tr>
+          <tr><td><b>V052-03 安全与数据生命周期</b></td><td>Account/Data · auth / server</td><td>已验收</td><td>生产 Secure Cookie、SQLite 限流、导出、密码确认删除、保留期清理通过正反测试。</td></tr>
+          <tr><td><b>FINAL-01 全链路验收</b></td><td>tests / browser / 工作台</td><td>已验收</td><td>349 tests；桌面/390px；刷新、跨账号、两类任务重启、30/31 限流和删除负例通过。</td></tr>
+          <tr><td><b>RELEASE-01 火山 ECS 发布</b></td><td>backup / deploy / systemd / Nginx</td><td>已验收</td><td>备份完整性 ok；用户 6、实例 7 均保持；新表迁移、Secure Cookie、HTTPS 与服务日志通过。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="versions">
+    <div class="sec-head">
+      <div>
+        <h2>版本管理中心</h2>
+        <div class="desc">界面标签优先表达开发状态：任务已建、已提交、已开发、已验收、方案档案。设计系统不占版本号，作为通用规范固定入口维护；当前 V0.50.1–V0.52 连续任务已全部验收。</div>
+      </div>
+      <span class="pill">Version Registry</span>
+    </div>
+    <div class="version-grid">
+      <article class="card version-card current">
+        <div class="meta-row"><span class="pill gold">待发布</span><span class="pill">V0.53</span></div>
+        <h3>真实能力诊断与可追溯画像</h3>
+        <p>把当前自评型双坐标基线升级为独立任务、AI 协作任务、客观/Rubric 判分、低置信复核和证据化路径消费。</p>
+        <div class="version-foot"><span>状态：本地开发与工程回归完成，待人工复核与发布</span><span><a href="#version-v053">看任务包</a></span></div>
+      </article>
+      <article class="card version-card current">
+        <div class="meta-row"><span class="pill gold">已部署</span><span class="pill">V0.52</span></div>
+        <h3>运行可靠性与生产底线</h3>
+        <p>让对话、长任务和账号数据不再依赖单进程侥幸：可恢复、可隔离、可导出、可删除，并有明确安全阈值。</p>
+        <div class="version-foot"><span>状态：开发、验收与生产发布完成</span><span><a href="#version-v052">看任务包</a></span></div>
+      </article>
+      <article class="card version-card current">
+        <div class="meta-row"><span class="pill gold">已验收</span><span class="pill">V0.50</span></div>
+        <h3>可信运行态与内容升级闭环</h3>
+        <p>统一完成进度真相源，为 lesson cache 加版本与质量升级，并收口 LLM Markdown 安全和路径导航可达性。</p>
+        <div class="version-foot"><span>状态：5 项任务全部验收</span><span><a href="#version-v050">看任务包</a></span></div>
+      </article>
+      <article class="card version-card">
+        <div class="meta-row"><span class="pill">已开发</span><span class="pill gold">V0.45</span></div>
+        <h3>项目工作台与版本管理中心</h3>
+        <p>把长期工作台从教学内容 Loop 专项里拆出来，建立按版本号管理需求、技术方案和迭代进度的主入口。</p>
+        <div class="version-foot"><span>状态：已开发</span><span><a href="./versions/v0.45-工作台治理.html">看三件套</a></span></div>
+      </article>
+      <article class="card version-card">
+        <div class="meta-row"><span class="pill gray">方案档案</span><span class="pill gray">V0.44</span></div>
+        <h3>教学内容 Loop Engine 方案版</h3>
+        <p>把 AI-Shifu 调研、Loop 工程文章和内容质量问题收敛为专项方案；它不是已上线开发版本。</p>
+        <div class="version-foot"><span>状态：档案</span><span><a href="./versions/v0.44-内容Loop方案档案.html">看三件套</a></span></div>
+      </article>
+      <article class="card version-card">
+        <div class="meta-row"><span class="pill">已开发</span><span class="pill gold">V0.46</span></div>
+        <h3>教学内容 Loop v1</h3>
+        <p>已落地单节内容契约、结构化 8 环节、学习页运行时和旧缓存兼容，作为内容质量升级的第一版基础。</p>
+        <div class="version-foot"><span>状态：已开发</span><span><a href="./versions/v0.46-教学内容Loop-v1.html">看三件套</a></span></div>
+      </article>
+      <article class="card version-card">
+        <div class="meta-row"><span class="pill">已开发</span><span class="pill gold">V0.47</span></div>
+        <h3>路径级 Loop v1</h3>
+        <p>已落地路径状态账本、PathEvent、当前学习位置统一、下一天预生成和任务恢复；后台质量分析与自适应重规划进入后续版本。</p>
+        <div class="version-foot"><span>状态：已开发</span><span><a href="./versions/v0.47-路径级Loop-v1.html">看三件套</a></span></div>
+      </article>
+      <article class="card version-card">
+        <div class="meta-row"><span class="pill gold">已提交</span><span class="pill">V0.48</span></div>
+        <h3>教学内容生成流水线</h3>
+        <p>已把单节内容生成拆成课设、写课、锐度评审和定向修订，并加入来源质量过滤与正文抓取；上线前需真 LLM 对比验证。</p>
+        <div class="version-foot"><span>状态：已提交</span><span><a href="./versions/v0.48-教学内容流水线.html">看三件套</a></span></div>
+      </article>
+      <article class="card version-card current">
+        <div class="meta-row"><span class="pill gold">已验收</span><span class="pill">V0.49.1</span></div>
+        <h3>自学可执行层</h3>
+        <p>把 V0.49 的密度合同继续推进到学习者视角：课程要有模板、参考答案、高阶练习和自然个性化，真实样本必须证明一个人能独立学完。</p>
+        <div class="version-foot"><span>状态：真实 LLM 验收通过</span><span><a href="./versions/v0.49.1-自学可执行层.html">看三件套</a></span></div>
+      </article>
+      <article class="card version-card">
+        <div class="meta-row"><span class="pill gold">已验收</span><span class="pill">V0.49</span></div>
+        <h3>教学内容密度与展开层</h3>
+        <p>补上核心教学密度硬门槛，并用 <code>expansions[]</code> 承载机制、边界、反例、来源证据和进阶补充，避免把深度全部堆进首屏。</p>
+        <div class="version-foot"><span>状态：线上 LLM golden case 已通过</span><span><a href="./versions/v0.49-教学内容密度补丁.html">看三件套</a></span></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="version-details">
+    <div class="sec-head">
+      <div>
+        <h2>版本三件套入口</h2>
+        <div class="desc">工作台只保留版本摘要和入口；每个版本都有独立页面详细说明“需求方案 / 技术方案 / 开发范式”。</div>
+      </div>
+      <span class="pill">Version Requirements</span>
+    </div>
+    <div class="version-detail-stack">
+      <article class="card version-detail" id="version-v053">
+        <div class="meta-row"><span class="pill gold">V0.53</span><span class="pill">工程回归通过</span><span class="pill gray">待人工复核与发布</span></div>
+        <h3>真实能力诊断与可追溯能力画像</h3>
+        <p>V0.50.2 解决了评估对象持久化，但没有解决“答案是否正确、AI 是否真的帮助、用户能否验收”的测量问题。V0.53 以 ScoreEvidence 为中心重构基线，需求收集只约束路径，不再参与能力判分。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>对象合同</b><ul><li>AssessmentBlueprint + version</li><li>AssessmentAttempt + stage/status</li><li>不可变 ItemSnapshot</li><li>Response + AssistTrace</li><li>ScoreEvidence + AbilityProfile</li></ul></div>
+          <div class="scope-box"><b>六维画像</b><ul><li>独立底座</li><li>独立迁移</li><li>AI 协作</li><li>验收纠错</li><li>自我校准</li><li>学习策略</li></ul></div>
+          <div class="scope-box"><b>状态合同</b><ul><li>created → independent</li><li>ai_collaboration → grading</li><li>completed 正常出口</li><li>needs_review / failed 可恢复</li><li>superseded 保留历史</li></ul></div>
+        </div>
+        <div class="decision"><b>完整需求：</b><code>SPEC.md ADR-055</code> 是对象、评分、API、兼容和验收的唯一详细真相源；本页只负责任务状态和开发入口。</div>
+        <div class="decision"><b>验收证据：</b>30 条 Eval Case、18 条真实开放题 DeepSeek 冻结评分、398 tests、日语 N3 端到端样本、1440×900 / 390×844 与刷新恢复已通过；Release Loop 已准确阻断在 36 个双人人工评分单元，生产备份、部署和线上回归未执行。</div>
+      </article>
+
+      <article class="card version-detail" id="version-v052">
+        <div class="meta-row"><span class="pill gold">V0.52</span><span class="pill">已部署</span><span class="pill gray">可靠性与安全</span></div>
+        <h3>运行可靠性与生产底线</h3>
+        <p>把对话、路径生成、学练生成和账号数据从“当前进程还活着就能用”提升为有归属、有事实表、有恢复状态和有用户出口的闭环。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>本期做</b><ul><li>user+session 会话归属与上下文/选项恢复</li><li>路径和学练 BackgroundJob 持久化</li><li>生产 Secure Cookie 与关键 API 限流</li><li>账号 JSON 导出、密码确认删除、保留期清理</li><li>桌面/移动、刷新、跨账号、重启与删除负例</li></ul></div>
+          <div class="scope-box"><b>明确边界</b><ul><li>本期仍是单机 SQLite</li><li>不伪装成多机分布式队列</li><li>运行时真实生图仍按用户决策暂缓</li><li>FSRS、真实日历和生产备份演练进入新版本评审</li></ul></div>
+          <div class="scope-box"><b>验收证据</b><ul><li>349 tests 全绿</li><li>末轮 CHOICES 刷新后继续可点</li><li>两账号 session_id 不复用</li><li>两类 running 重启后显式 error/can_retry</li><li>第 31 次聊天请求返回 429</li><li>密码删除后账号、会话、路径均消失</li><li>生产备份、迁移、HTTPS 和数据计数通过</li></ul></div>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v050">
+        <div class="meta-row"><span class="pill gold">V0.50</span><span class="pill">已验收</span><span class="pill gray">可信度补丁</span></div>
+        <h3>可信运行态与内容升级闭环</h3>
+        <p>本期不是继续堆新能力，而是让用户已经能触达的进度、缓存内容和学习页交互都能说明自己的真实状态，并通过自动化与浏览器验收。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>本期做</b><ul><li>path_loop 统一空间与路径进度</li><li>lesson cache 版本和旧内容升级</li><li>统一净化 LLM Markdown</li><li>导航键盘语义与 44px 触点</li><li>全量测试与双端回归</li></ul></div>
+          <div class="scope-box"><b>本期不做</b><ul><li>不重构路径大纲生成器</li><li>不接结构化 BaselineEvaluator</li><li>不实现 W2-Wn 自动构建</li><li>不展开生产基础设施改造</li></ul></div>
+          <div class="scope-box"><b>验收</b><ul><li>未开始路径两页均为 W1/D1</li><li>旧缓存不能伪装成新版</li><li>危险 Markdown 不可执行</li><li>导航可用键盘操作</li><li>pytest 与桌面/移动回归通过</li></ul></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>任务</th><th>负责模块</th><th>状态</th><th>完成标准</th></tr></thead>
+            <tbody>
+              <tr><td><b>V050-01 进度真相源</b></td><td><code>server.py</code> / <code>space.html</code></td><td>已验收</td><td>4 条现有路径在空间页与路径页均按完成事实显示 W1/D1。</td></tr>
+              <tr><td><b>V050-02 缓存版本升级</b></td><td><code>server.py</code> / lesson runtime</td><td>已验收</td><td>当前版本且质量通过才可复用；旧内容后台升级，原子写失败保留原文件。</td></tr>
+              <tr><td><b>V050-03 Markdown 安全</b></td><td><code>common.js</code> / <code>instance.html</code></td><td>已验收</td><td>统一 allowlist 净化，过滤危险标签、事件属性和 URL 协议，并加资源版本号。</td></tr>
+              <tr><td><b>V050-04 导航可达性</b></td><td><code>instance.html</code></td><td>已验收</td><td>4 个 tab button 均为 44px；Enter 和 Space 浏览器实测通过。</td></tr>
+              <tr><td><b>V050-05 回归与归档</b></td><td><code>tests/</code> / 工作台 / SPEC</td><td>已验收</td><td>304 tests；1440×900 / 390×844 无横向溢出，控制台无错误。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v045">
+        <div class="meta-row"><span class="pill">V0.45</span><span class="pill gold">已开发</span><span class="pill gray">治理版本</span></div>
+        <h3>项目工作台与版本管理中心</h3>
+        <p>本期目标不是开发线上功能，而是把长期需求、技术方案、进度和归档统一到一个可维护入口。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>本期做</b><ul><li>新增主工作台</li><li>建立版本入口</li><li>旧 Loop 页降级为专项档案</li></ul></div>
+          <div class="scope-box"><b>本期不做</b><ul><li>不改产品代码</li><li>不迁移用户数据</li><li>不把候选方案写成已开发版本</li></ul></div>
+          <div class="scope-box"><b>验收</b><ul><li>按版本号可查</li><li>文档中心入口清晰</li><li>链接与页面展示正常</li></ul></div>
+        </div>
+        <div class="doc-pack">
+          <h4>独立三件套页面</h4>
+          <p>V0.45 是工作台治理版本，三件套重点是“长期怎么维护”，不是线上功能开发。</p>
+          <div class="doc-grid">
+            <a class="doc-card" href="./versions/v0.45-工作台治理.html"><b>打开 V0.45 三件套</b><span>需求方案、技术方案、开发范式、验收清单集中在独立页面。</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v046">
+        <div class="meta-row"><span class="pill gold">V0.46</span><span class="pill">已开发</span><span class="pill gray">内容版本</span></div>
+        <h3>教学内容 Loop v1</h3>
+        <p>这是一个完整可发版功能版本，不再拆成多个产品版本。它内部包含数据契约、单节 LessonBuildGraph 和学习页运行时三个工程里程碑。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>用户可感知功能</b><ul><li>内容有来源和生成过程</li><li>单节课经过课设、质检和返工</li><li>学习页能互动、回看和重生成</li></ul></div>
+          <div class="scope-box"><b>内部里程碑</b><ul><li>M1 数据契约与评测集</li><li>M2 单节 LessonBuildGraph</li><li>M3 学习页运行时</li><li>M4 验收与兼容</li></ul></div>
+          <div class="scope-box"><b>已交付</b><ul><li>LessonFlow v0.46 契约</li><li>lesson_runtime 独立落盘</li><li>旧缓存兼容读取</li></ul></div>
+        </div>
+        <div class="doc-pack">
+          <h4>独立三件套页面</h4>
+          <p>这个页面已同步 V0.46 的开发完成记录、实际提交、兼容策略和后续边界；内部工程阶段不再作为独立产品版本。</p>
+          <div class="doc-grid">
+            <a class="doc-card" href="./versions/v0.46-教学内容Loop-v1.html"><b>打开 V0.46 三件套</b><span>展开教学内容 Loop v1 的完整可发版方案。</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v047">
+        <div class="meta-row"><span class="pill gold">V0.47</span><span class="pill">已开发</span></div>
+        <h3>路径级 Loop v1</h3>
+        <p>这是已完成的路径运行态版本：先把当前学习位置、完成事件、下一天预生成和任务恢复做准，保证路径不会因为日期错位或任务卡住而失控。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>已交付</b><ul><li>PathLoopState 状态账本</li><li>完成当天触发下一天准备</li><li>路径页状态轮询与恢复</li></ul></div>
+          <div class="scope-box"><b>兼容策略</b><ul><li>旧 lesson_completions 推导进度</li><li>不迁移用户主数据</li><li>缺状态时懒初始化</li></ul></div>
+          <div class="scope-box"><b>后续拆出</b><ul><li>自动重写路径</li><li>后台每日质量分析</li><li>跨周批量预生成</li></ul></div>
+        </div>
+        <div class="doc-pack">
+          <h4>独立三件套页面</h4>
+          <p>V0.47 v1 已完成并验证，后续自适应重规划和后台质量分析不混入本版，单独进入下一轮需求确认。</p>
+          <div class="doc-grid">
+            <a class="doc-card" href="./versions/v0.47-路径级Loop-v1.html"><b>打开 V0.47 三件套</b><span>查看路径级 Loop v1 的完成记录、技术边界和后续拆分。</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v048">
+        <div class="meta-row"><span class="pill gold">V0.48</span><span class="pill">已提交</span><span class="pill gray">待真测</span></div>
+        <h3>教学内容生成流水线</h3>
+        <p>本版修的是内容质量根因：不再让一个模型一次性写完整 lesson，而是先做课设，再围绕主线写课，再用 critic 评估“是否具体、有洞见、讲透边界、来源诚实”。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>已交付</b><ul><li>课设 reasoner → 写课 chat → critic reasoner → 定向修订</li><li>grounding 来源过滤和正文抓取</li><li>旧单段 prompt 兜底与 env 降级开关</li></ul></div>
+          <div class="scope-box"><b>仍需验证</b><ul><li>真 LLM 重新生成同一节课</li><li>对比 `_critic.scores` 与内容锐度</li><li>确认无好来源时不喂 SEO 噪声</li></ul></div>
+          <div class="scope-box"><b>部署边界</b><ul><li>部署前先做人工阅读对比</li><li>成本会增加到 3-4 次调用</li><li>可用 env 一键回退/关闭 reasoner</li></ul></div>
+        </div>
+        <div class="doc-pack">
+          <h4>独立三件套页面</h4>
+          <p>V0.48 是内容质量根因修复版本，重点记录从巨型 prompt 到受控流水线的架构变化、开关、验证口径和上线前检查。</p>
+          <div class="doc-grid">
+            <a class="doc-card" href="./versions/v0.48-教学内容流水线.html"><b>打开 V0.48 三件套</b><span>查看教学内容生成流水线的需求、技术方案和验收口径。</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v0491">
+        <div class="meta-row"><span class="pill gold">V0.49.1</span><span class="pill">已验收</span><span class="pill gray">体验补丁</span></div>
+        <h3>自学可执行层</h3>
+        <p>V0.49 已经把核心教学密度、展开层、学习时长合同和 bounded quality loop 跑通；V0.49.1 已补上“学习者能不能独立完成”的体验质量：模板、参考答案、高阶练习、自然个性化和真实学习验收。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>本期做</b><ul><li>禁止课堂话术和原始学员标签堆叠</li><li>60 分钟以上课程必须有模板化产出</li><li>补参考答案/样例产物和高阶练习</li><li>critic 增加自学可执行性维度</li><li>真实线上 LLM 样本 + 人工阅读验收</li></ul></div>
+          <div class="scope-box"><b>本期不做</b><ul><li>不重做 V0.49 生成架构</li><li>不改路径级重规划</li><li>不做大规模前端视觉重构</li><li>不让生成时间无限增加</li></ul></div>
+          <div class="scope-box"><b>验收</b><ul><li>有模板、参考答案、rubric 和高阶练习</li><li>学习者无需老师解释即可执行 60-90 分钟</li><li>后台硬预算默认 300 秒内可收口或恢复</li><li>连续无提升则回到方案层，不堆 prompt</li></ul></div>
+        </div>
+        <div class="doc-pack">
+          <h4>独立三件套页面</h4>
+          <p>V0.49.1 是一个有边界的开发 loop：首轮真测暴露失败，第二轮加确定性自学合同兜底，第三轮通过真实线上 LLM 与人工阅读验收。</p>
+          <div class="doc-grid">
+            <a class="doc-card" href="./versions/v0.49.1-自学可执行层.html"><b>打开 V0.49.1 三件套</b><span>查看自学可执行层的目标、已落地任务包、真实 LLM 验收记录和停止结论。</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v049">
+        <div class="meta-row"><span class="pill gold">V0.49</span><span class="pill">已接入</span><span class="pill gray">已验收</span></div>
+        <h3>教学内容密度、展开层与学习时长合同</h3>
+        <p>本版承认 V0.48 只解决了“生成流程拆开”，还没有把“每张核心卡必须讲透”和“内容必须匹配用户每日学习时长”变成硬约束。V0.49 不只补密度门槛，还新增卡内展开层、学习时长合同和 bounded quality loop，让内容可以自动打磨到没有明显可迭代项再停。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>已合入范围</b><ul><li>质量门新增 teaching_chars / dense_teaching_cards / expansion_blocks / expansion_kinds</li><li>写作 prompt 要求 3 张深讲卡</li><li>新增并渲染 expansions[] 展开层</li><li>新增 estimated_minutes / activity_plan / rubric 时长合同</li><li>新增最多 3 轮 quality loop 并保留 best</li></ul></div>
+          <div class="scope-box"><b>验证重点</b><ul><li>结构完整但内容薄必须不通过</li><li>1–2 小时用户不能拿到 20–40 分钟微课</li><li>展开层必须有真实信息增量</li><li>worked example 不能只是标签清单</li></ul></div>
+          <div class="scope-box"><b>上线边界</b><ul><li>旧 lesson schema 兼容</li><li>缺 expansions/activity_plan 时照常展示</li><li>默认最多 3 轮，最高 5 轮</li><li>部署前先人工读一节重生成内容</li></ul></div>
+        </div>
+        <div class="doc-pack">
+          <h4>独立三件套页面</h4>
+          <p>V0.49 是 V0.48 的质量补丁，不重做生成架构，但把核心教学密度、可展开信息层、学习时长合同和 bounded quality loop 一起纳入合同。</p>
+          <div class="doc-grid">
+            <a class="doc-card" href="./versions/v0.49-教学内容密度补丁.html"><b>打开 V0.49 三件套</b><span>查看内容密度门槛、critic 硬失败、加深返工链路、expansions 展开层和学习时长合同。</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card version-detail" id="version-v044">
+        <div class="meta-row"><span class="pill gray">V0.44</span><span class="pill gray">方案档案</span></div>
+        <h3>教学内容 Loop Engine 方案版</h3>
+        <p>这是方案打磨和外部调研归档，不代表已经完成开发。后续真正开发收束为 V0.46 教学内容 Loop v1。</p>
+        <div class="version-detail-grid">
+          <div class="scope-box"><b>内容</b><ul><li>AI-Shifu 对比</li><li>Loop 工程文章吸收</li><li>内容质量问题整理</li></ul></div>
+          <div class="scope-box"><b>作用</b><ul><li>作为需求和技术背景</li><li>支撑后续版本拆解</li><li>避免方案散落</li></ul></div>
+          <div class="scope-box"><b>入口</b><ul><li><a href="./教学内容Loop开发工作台.html">打开 V0.44 专项档案</a></li></ul></div>
+        </div>
+        <div class="doc-pack">
+          <h4>独立三件套页面</h4>
+          <p>V0.44 是前期母版，不是“全都开发完了”的版本；它为 V0.46 和后续 V0.47 提供背景和拆解依据。</p>
+          <div class="doc-grid">
+            <a class="doc-card" href="./versions/v0.44-内容Loop方案档案.html"><b>打开 V0.44 三件套</b><span>作为方案档案页，同时链接原教学内容 Loop 专项工作台。</span></a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="current">
+    <div class="sec-head">
+      <div>
+        <h2>当前版本 · V0.52</h2>
+        <div class="desc">V0.50.1–V0.52 连续优化已全部完成：路径、基线、周闭环、会话、长任务和账号数据底线形成可回归闭环。</div>
+      </div>
+      <span class="pill gold">当前推进</span>
+    </div>
+    <div class="two-col">
+      <article class="card panel">
+        <h3>V0.52 完成范围</h3>
+        <ul class="list">
+          <li>V0.50.1：研究包和用户知识真实改变 master/W1，并用 repair gate 阻止低质大纲落盘。</li>
+          <li>V0.50.2：入学题目、原始回答与独立/AI 双坐标进入结构化事实表。</li>
+          <li>V0.51：W2–Wn lazy build、自检解锁与可确认/撤销的 replan 完成。</li>
+          <li>V0.52：会话和长任务跨重启恢复，跨账号隔离，安全 Cookie 与限流落地。</li>
+          <li>账号数据可导出、可密码确认删除，过期运行日志可按保留期清理。</li>
+          <li>当前连续任务树没有未完成 P0/P1；新增需求先登记新版本。</li>
+        </ul>
+      </article>
+      <aside class="card panel">
+        <h3>本轮开发记录</h3>
+        <div class="decision-list">
+          <div class="decision"><b>V0.46：</b><code>74180b6</code>，落地教学内容 Loop v1 契约与运行态。</div>
+          <div class="decision"><b>V0.47：</b><code>807323b</code>，落地路径级 Loop v1 状态与预生成。</div>
+          <div class="decision"><b>V0.48：</b><code>7a8ca34</code>，落地教学内容生成受控流水线与 grounding 过滤。</div>
+          <div class="decision"><b>V0.49：</b>密度门槛、可展开信息层、学习时长合同与质量迭代 loop 已接入；线上 golden case 已通过。</div>
+          <div class="decision"><b>V0.49.1：</b>已落地自学语言规范、模板/参考答案/高阶练习质量门、critic 三个新维度和确定性长课自学合同兜底。</div>
+          <div class="decision"><b>V0.49.1 验证状态：</b><code>scripts/verify_lesson_quality_loop.py</code> 第三轮真实跑通：183.82s / quality 100 / activity 100min / critic 最低分 88 / stop_reason=critic_pass。</div>
+          <div class="decision"><b>V0.50：</b>五项任务全部验收；304 tests 通过，桌面与 390px 移动端无横向溢出，Enter/Space 导航与 W1/D1 进度一致性通过实测。</div>
+          <div class="decision"><b>V0.50.1–V0.51：</b>Grounded PathBuild、结构化双坐标基线、W2–Wn/自检/replan 已按 311 / 318 / 328 tests 分版验收。</div>
+          <div class="decision"><b>V0.52：</b>349 tests 全绿；桌面/390px、结构化选项刷新恢复、跨账号会话轮换、路径/学练任务重启、30/31 限流、密码删除与零控制台错误通过。</div>
+          <div class="decision"><b>V0.52 生产发布：</b>2026-07-11 已部署到 <code>https://learnbuddy.top</code>；备份目录 <code>/opt/itutor-backups/20260711-082658</code>，数据库完整性 ok，用户 6、实例 7 均保持，三张新表迁移完成。</div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="sec" id="backlog">
+    <div class="sec-head">
+      <div>
+        <h2>需求池</h2>
+        <div class="desc">需求先进入池子，再决定进入哪个版本。这里保留高层级，不写成散乱任务清单。</div>
+      </div>
+      <span class="pill">Demand Ledger</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>需求主题</th><th>用户痛点</th><th>建议进入版本</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td><b>真实能力诊断</b></td><td>当前线上基线仍是旧自评；V0.53 本地已完成客观判分与证据画像。</td><td><a href="#version-v053">V0.53 真实能力诊断</a></td><td>工程回归通过，待人工复核与发布</td></tr>
+          <tr><td><b>可信运行态</b></td><td>空间页和路径页显示相互矛盾，旧 lesson 仍可能被当成新版可信内容。</td><td><a href="#version-v050">V0.50 可信运行态</a></td><td>已验收，304 tests + 双端回归</td></tr>
+          <tr><td><b>自学可执行层</b></td><td>90 分钟课程已经更厚，但仍缺模板、参考答案、高阶练习和自然个性化，用户不一定能独立学完。</td><td><a href="./versions/v0.49.1-自学可执行层.html">V0.49.1 自学可执行层</a></td><td>已验收，真 LLM 通过</td></tr>
+          <tr><td><b>教学内容质量</b></td><td>内容浅、来源弱、互动节奏不清晰，难以真正学会。</td><td><a href="./versions/v0.49-教学内容密度补丁.html">V0.49 教学内容密度与展开层</a></td><td>golden case 已通过</td></tr>
+          <tr><td><b>学习页交互</b></td><td>用户不知道每一步在学什么，已学内容回看和重生成不足。</td><td><a href="./versions/v0.46-教学内容Loop-v1.html">V0.46 教学内容 Loop v1</a></td><td>已开发 v1</td></tr>
+          <tr><td><b>路径级自动预生成</b></td><td>每天内容不应都等用户点击触发，长任务需要状态和恢复。</td><td><a href="./versions/v0.47-路径级Loop-v1.html">V0.47 路径级 Loop v1</a></td><td>已开发 v1</td></tr>
+          <tr><td><b>内容 golden case 回归</b></td><td>需要证明新流水线真的比旧 prompt 更具体、更有洞见。</td><td>V0.49 验证后续</td><td>线上 LLM 已通过 1 个 90 分钟样本</td></tr>
+          <tr><td><b>通用设计规范</b></td><td>每次页面迭代都需要统一信息层级、组件语言、图片资产和 AI 状态表达。</td><td><a href="./设计规范.html">跨版本规范</a></td><td>长期生效</td></tr>
+          <tr><td><b>后台质量分析</b></td><td>需要用 trace、反馈和学习数据发现用户痛点。</td><td>后续版本待确认</td><td>待开发</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="tech">
+    <div class="sec-head">
+      <div>
+        <h2>技术账</h2>
+        <div class="desc">技术方案只放当前需要长期维护的骨架，详细材料通过归档链接查看。</div>
+      </div>
+      <span class="pill">Tech Ledger</span>
+    </div>
+    <div class="ledger-grid">
+      <div class="card ledger"><div class="num">1</div><h3>评估真相源</h3><p>V0.53 以 AssessmentAttempt → ScoreEvidence → AbilityProfile 为唯一能力事实链；自评只用于校准。</p></div>
+      <div class="card ledger"><div class="num">2</div><h3>内容流水线</h3><p>design_lesson → write_lesson → critic_lesson → revise_lesson；受控 workflow，不做自由多智能体。</p></div>
+      <div class="card ledger"><div class="num">3</div><h3>来源接地</h3><p>先按 authority/relevance 过滤，再抓正文；无高质量来源时 context 留空，不喂 SEO 噪声。</p></div>
+      <div class="card ledger"><div class="num">4</div><h3>长任务与兼容</h3><p>生成/评分任务必须有 job/status、硬超时、恢复和可重试；旧画像、旧 lesson 不伪装成新版结果。</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="acceptance">
+    <div class="sec-head">
+      <div>
+        <h2>版本验收规则</h2>
+        <div class="desc">以后每个版本都要按这套口径收口。</div>
+      </div>
+      <span class="pill">Definition of Done</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>验收项</th><th>要求</th><th>V0.53 开发准入口径</th></tr></thead>
+        <tbody>
+          <tr><td><b>范围清晰</b></td><td>知道本期做什么、不做什么。</td><td>只做真实诊断与证据化路径输入；深度教学、延迟复测和真 Agent 不进入 V0.53。</td></tr>
+          <tr><td><b>对象唯一</b></td><td>每个可变对象有 ID、所有者和真相源。</td><td>ADR-055 已冻结 6 个对象；assessment_id/profile_version/evidence_id 跨页面连续。</td></tr>
+          <tr><td><b>评分可信</b></td><td>分数有标准、证据、版本与不确定性。</td><td>自评分不进入 observed score；客观题确定性判分；开放题 Rubric；低置信不静默平均。</td></tr>
+          <tr><td><b>闭环可验</b></td><td>P0 流程覆盖持久、恢复、守卫和负例。</td><td>创建、增量答题、双阶段、评分、结果、异议、重评、路径绑定均要求 6/6。</td></tr>
+          <tr><td><b>数据安全</b></td><td>不覆盖线上用户数据和运行实例。</td><td>旧画像标为 self_report_v1 并保持可读；AI trace 进入导出/删除；发布仍先备份生产数据。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="archive">
+    <div class="sec-head">
+      <div>
+        <h2>归档与专题</h2>
+        <div class="desc">前期材料作为专题背景保留，不再和主工作台混杂。</div>
+      </div>
+      <span class="pill gray">Archive</span>
+    </div>
+    <div class="archive-grid">
+      <article class="card archive"><span class="pill">V0.44</span><h3>教学内容 Loop</h3><p>内容生成 Loop Engine 专项方案。</p><a href="./教学内容Loop开发工作台.html">打开档案</a></article>
+      <article class="card archive"><span class="pill">竞品</span><h3>AI-Shifu 对比</h3><p>课程运行时和内容交付工程参考。</p><a href="./AI-Shifu对比分析报告.html">打开报告</a></article>
+      <article class="card archive"><span class="pill">总览</span><h3>文档中心</h3><p>所有 HTML 文档入口。</p><a href="./文档中心.html">打开文档中心</a></article>
+      <article class="card archive"><span class="pill">ADR</span><h3>SPEC</h3><p>重大决策和版本日志。</p><a href="../SPEC.md">打开 SPEC</a></article>
+    </div>
+  </section>
+
+  <div class="footer">LearnBuddy 项目工作台 · 以后每期迭代先登记版本号，再推进需求、技术方案和验收。</div>
+</main>
+</body>
+</html>

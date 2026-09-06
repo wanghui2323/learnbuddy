@@ -1,0 +1,37 @@
+[
+  {"id":"language-1","domain":"语言","kind":"objective_correct","answer":"标准答案","confidence":3,"expected_score":100,"expected_flags":[]},
+  {"id":"language-2","domain":"语言","kind":"high_conf_wrong","answer":"错误答案","confidence":5,"expected_score":0,"expected_flags":["incorrect"]},
+  {"id":"language-3","domain":"语言","kind":"right_reason_wrong","answer":"结果对但理由错误","confidence":5,"rubric_reply":{"observed_score":60,"confidence":0.62,"reason":"结果命中但理由矛盾","rubric_scores":{"accuracy":80,"reasoning":20},"flags":["lucky_correct"]},"expected_score":60,"expected_flags":["lucky_correct","needs_review"]},
+  {"id":"language-4","domain":"语言","kind":"ai_proxy","answer":"直接复制 AI 输出","confidence":5,"rubric_reply":{"observed_score":35,"confidence":0.9,"reason":"没有拆解、修订和验收证据","rubric_scores":{"accuracy":70,"reasoning":0},"flags":["ai_proxy"]},"expected_score":35,"expected_flags":["ai_proxy"]},
+  {"id":"language-5","domain":"语言","kind":"ambiguous_disagreement","answer":"材料不足无法唯一判断","confidence":2,"rubric_reply":{"observed_score":50,"confidence":0.5,"reason":"题目材料不足且评测分歧","rubric_scores":{"accuracy":50,"reasoning":50},"flags":["needs_review","evaluator_disagreement"]},"expected_score":50,"expected_flags":["needs_review","evaluator_disagreement"]},
+
+  {"id":"programming-1","domain":"编程","kind":"objective_correct","answer":"标准答案","confidence":3,"expected_score":100,"expected_flags":[]},
+  {"id":"programming-2","domain":"编程","kind":"high_conf_wrong","answer":"错误答案","confidence":5,"expected_score":0,"expected_flags":["incorrect"]},
+  {"id":"programming-3","domain":"编程","kind":"right_reason_wrong","answer":"结果对但理由错误","confidence":5,"rubric_reply":{"observed_score":60,"confidence":0.62,"reason":"结果命中但理由矛盾","rubric_scores":{"accuracy":80,"reasoning":20},"flags":["lucky_correct"]},"expected_score":60,"expected_flags":["lucky_correct","needs_review"]},
+  {"id":"programming-4","domain":"编程","kind":"ai_proxy","answer":"直接复制 AI 输出","confidence":5,"rubric_reply":{"observed_score":35,"confidence":0.9,"reason":"没有拆解、修订和验收证据","rubric_scores":{"accuracy":70,"reasoning":0},"flags":["ai_proxy"]},"expected_score":35,"expected_flags":["ai_proxy"]},
+  {"id":"programming-5","domain":"编程","kind":"ambiguous_disagreement","answer":"材料不足无法唯一判断","confidence":2,"rubric_reply":{"observed_score":50,"confidence":0.5,"reason":"题目材料不足且评测分歧","rubric_scores":{"accuracy":50,"reasoning":50},"flags":["needs_review","evaluator_disagreement"]},"expected_score":50,"expected_flags":["needs_review","evaluator_disagreement"]},
+
+  {"id":"writing-1","domain":"写作","kind":"objective_correct","answer":"标准答案","confidence":3,"expected_score":100,"expected_flags":[]},
+  {"id":"writing-2","domain":"写作","kind":"high_conf_wrong","answer":"错误答案","confidence":5,"expected_score":0,"expected_flags":["incorrect"]},
+  {"id":"writing-3","domain":"写作","kind":"right_reason_wrong","answer":"结果对但理由错误","confidence":5,"rubric_reply":{"observed_score":60,"confidence":0.62,"reason":"结果命中但理由矛盾","rubric_scores":{"accuracy":80,"reasoning":20},"flags":["lucky_correct"]},"expected_score":60,"expected_flags":["lucky_correct","needs_review"]},
+  {"id":"writing-4","domain":"写作","kind":"ai_proxy","answer":"直接复制 AI 输出","confidence":5,"rubric_reply":{"observed_score":35,"confidence":0.9,"reason":"没有拆解、修订和验收证据","rubric_scores":{"accuracy":70,"reasoning":0},"flags":["ai_proxy"]},"expected_score":35,"expected_flags":["ai_proxy"]},
+  {"id":"writing-5","domain":"写作","kind":"ambiguous_disagreement","answer":"材料不足无法唯一判断","confidence":2,"rubric_reply":{"observed_score":50,"confidence":0.5,"reason":"题目材料不足且评测分歧","rubric_scores":{"accuracy":50,"reasoning":50},"flags":["needs_review","evaluator_disagreement"]},"expected_score":50,"expected_flags":["needs_review","evaluator_disagreement"]},
+
+  {"id":"exam-1","domain":"考试","kind":"objective_correct","answer":"标准答案","confidence":3,"expected_score":100,"expected_flags":[]},
+  {"id":"exam-2","domain":"考试","kind":"high_conf_wrong","answer":"错误答案","confidence":5,"expected_score":0,"expected_flags":["incorrect"]},
+  {"id":"exam-3","domain":"考试","kind":"right_reason_wrong","answer":"结果对但理由错误","confidence":5,"rubric_reply":{"observed_score":60,"confidence":0.62,"reason":"结果命中但理由矛盾","rubric_scores":{"accuracy":80,"reasoning":20},"flags":["lucky_correct"]},"expected_score":60,"expected_flags":["lucky_correct","needs_review"]},
+  {"id":"exam-4","domain":"考试","kind":"ai_proxy","answer":"直接复制 AI 输出","confidence":5,"rubric_reply":{"observed_score":35,"confidence":0.9,"reason":"没有拆解、修订和验收证据","rubric_scores":{"accuracy":70,"reasoning":0},"flags":["ai_proxy"]},"expected_score":35,"expected_flags":["ai_proxy"]},
+  {"id":"exam-5","domain":"考试","kind":"ambiguous_disagreement","answer":"材料不足无法唯一判断","confidence":2,"rubric_reply":{"observed_score":50,"confidence":0.5,"reason":"题目材料不足且评测分歧","rubric_scores":{"accuracy":50,"reasoning":50},"flags":["needs_review","evaluator_disagreement"]},"expected_score":50,"expected_flags":["needs_review","evaluator_disagreement"]},
+
+  {"id":"career-1","domain":"职业技能","kind":"objective_correct","answer":"标准答案","confidence":3,"expected_score":100,"expected_flags":[]},
+  {"id":"career-2","domain":"职业技能","kind":"high_conf_wrong","answer":"错误答案","confidence":5,"expected_score":0,"expected_flags":["incorrect"]},
+  {"id":"career-3","domain":"职业技能","kind":"right_reason_wrong","answer":"结果对但理由错误","confidence":5,"rubric_reply":{"observed_score":60,"confidence":0.62,"reason":"结果命中但理由矛盾","rubric_scores":{"accuracy":80,"reasoning":20},"flags":["lucky_correct"]},"expected_score":60,"expected_flags":["lucky_correct","needs_review"]},
+  {"id":"career-4","domain":"职业技能","kind":"ai_proxy","answer":"直接复制 AI 输出","confidence":5,"rubric_reply":{"observed_score":35,"confidence":0.9,"reason":"没有拆解、修订和验收证据","rubric_scores":{"accuracy":70,"reasoning":0},"flags":["ai_proxy"]},"expected_score":35,"expected_flags":["ai_proxy"]},
+  {"id":"career-5","domain":"职业技能","kind":"ambiguous_disagreement","answer":"材料不足无法唯一判断","confidence":2,"rubric_reply":{"observed_score":50,"confidence":0.5,"reason":"题目材料不足且评测分歧","rubric_scores":{"accuracy":50,"reasoning":50},"flags":["needs_review","evaluator_disagreement"]},"expected_score":50,"expected_flags":["needs_review","evaluator_disagreement"]},
+
+  {"id":"general-1","domain":"通识","kind":"objective_correct","answer":"标准答案","confidence":3,"expected_score":100,"expected_flags":[]},
+  {"id":"general-2","domain":"通识","kind":"high_conf_wrong","answer":"错误答案","confidence":5,"expected_score":0,"expected_flags":["incorrect"]},
+  {"id":"general-3","domain":"通识","kind":"right_reason_wrong","answer":"结果对但理由错误","confidence":5,"rubric_reply":{"observed_score":60,"confidence":0.62,"reason":"结果命中但理由矛盾","rubric_scores":{"accuracy":80,"reasoning":20},"flags":["lucky_correct"]},"expected_score":60,"expected_flags":["lucky_correct","needs_review"]},
+  {"id":"general-4","domain":"通识","kind":"ai_proxy","answer":"直接复制 AI 输出","confidence":5,"rubric_reply":{"observed_score":35,"confidence":0.9,"reason":"没有拆解、修订和验收证据","rubric_scores":{"accuracy":70,"reasoning":0},"flags":["ai_proxy"]},"expected_score":35,"expected_flags":["ai_proxy"]},
+  {"id":"general-5","domain":"通识","kind":"ambiguous_disagreement","answer":"材料不足无法唯一判断","confidence":2,"rubric_reply":{"observed_score":50,"confidence":0.5,"reason":"题目材料不足且评测分歧","rubric_scores":{"accuracy":50,"reasoning":50},"flags":["needs_review","evaluator_disagreement"]},"expected_score":50,"expected_flags":["needs_review","evaluator_disagreement"]}
+]

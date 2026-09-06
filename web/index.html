@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 学习伙伴</title>
+<style>
+  :root {
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd;
+    --paper: #f7f4ee; --paper-2: #efeae0; --card: #ffffff;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --line: #e7e1d6; --red: #c2603f; --red-soft: #f8e8e1; --green: #4a9d6e;
+    --radius: 16px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 10px 30px rgba(43,41,38,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans", "Microsoft YaHei", sans-serif;
+    background: var(--paper); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased;
+    height: 100vh; display: flex; flex-direction: column;
+  }
+  header {
+    background: #fffdf9; border-bottom: 1px solid var(--line); padding: 14px 22px;
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  }
+  header .logo {
+    width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0; text-decoration: none;
+    background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff; font-weight: 700; font-size: 19px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(44,110,106,.25);
+  }
+  header .title { font-weight: 700; font-size: 16px; }
+  header .tagline { font-size: 12px; color: var(--ink-faint); }
+  header .spacer { flex: 1; }
+  header .seen { font-size: 13px; color: var(--ink-soft); text-decoration: none; padding: 7px 14px; border: 1px solid var(--line); border-radius: 9px; }
+  header .seen:hover { background: var(--paper-2); }
+  header .seen:focus-visible, .runtime-link:focus-visible, .chip:focus-visible, .send:focus-visible { outline: 3px solid rgba(44,110,106,.24); outline-offset: 2px; }
+  .edition-badge { min-width: 72px; min-height: 28px; display: inline-flex; align-items: center; justify-content: center; padding: 4px 10px; border-radius: 999px; background: var(--paper-2); color: var(--ink-soft); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+  .edition-badge.cloud { background: var(--amber-soft); color: #8a5a1f; }
+  .edition-badge.personal { background: var(--teal-soft); color: var(--teal-dark); }
+
+  .scroll { flex: 1; overflow-y: auto; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 26px 20px 12px; }
+
+  /* empty / hero state */
+  .hero { text-align: center; padding: 8vh 10px 0; }
+  .hero .badge { display: inline-block; font-size: 12.5px; color: var(--teal-dark); background: var(--teal-soft); padding: 4px 13px; border-radius: 20px; font-weight: 600; }
+  .hero h1 { font-size: 30px; letter-spacing: -.5px; margin: 18px 0 10px; }
+  .hero p { color: var(--ink-soft); font-size: 15px; max-width: 460px; margin: 0 auto; }
+  .runtime-context { max-width: 620px; min-height: 48px; margin: 18px auto 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,253,249,.78); display: flex; align-items: center; justify-content: center; gap: 10px 14px; flex-wrap: wrap; color: var(--ink-soft); font-size: 12.5px; }
+  .runtime-context[hidden] { display: none; }
+  .runtime-context.fallback { border-style: dashed; color: var(--ink-faint); }
+  .runtime-copy { display: inline-flex; align-items: center; gap: 7px; }
+  .runtime-copy::before { content: ''; width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--ink-faint); }
+  .runtime-context.cloud .runtime-copy::before { background: var(--amber); }
+  .runtime-context.personal .runtime-copy::before { background: var(--green); }
+  .runtime-links { display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center; }
+  .runtime-links[hidden] { display: none; }
+  .runtime-link { min-height: 32px; display: inline-flex; align-items: center; justify-content: center; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--teal-dark); font-weight: 700; text-decoration: none; }
+  .runtime-link:hover:not([aria-disabled="true"]) { border-color: var(--teal); background: var(--teal-soft); }
+  .runtime-link[aria-disabled="true"] { color: var(--ink-faint); cursor: not-allowed; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+  .chip { padding: 10px 18px; border: 1.5px solid var(--line); border-radius: 24px; background: var(--card); cursor: pointer; font: inherit; font-size: 14px; transition: all .15s; }
+  .chip:hover { border-color: var(--teal); background: var(--teal-soft); color: var(--teal-dark); }
+
+  /* messages */
+  .msg { display: flex; gap: 12px; margin-bottom: 18px; align-items: flex-start; }
+  .msg .ava { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+  .msg.assistant .ava { background: var(--teal); color: #fff; }
+  .msg.user { flex-direction: row-reverse; }
+  .msg.user .ava { background: var(--paper-2); color: var(--ink-soft); }
+  .bubble { padding: 13px 17px; border-radius: 14px; font-size: 15px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; max-width: 78%; }
+  .msg.assistant .bubble { background: var(--card); border: 1px solid var(--line); border-top-left-radius: 4px; box-shadow: var(--shadow); }
+  .msg.user .bubble { background: var(--teal); color: #fff; border-top-right-radius: 4px; }
+  .bubble.streaming::after { content: "▋"; color: var(--teal); animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* markdown rendering inside assistant bubbles */
+  .bubble.md { white-space: normal; }
+  .msg.assistant .bubble.md { max-width: 92%; }
+  .bubble.md > *:first-child { margin-top: 0; }
+  .bubble.md > *:last-child { margin-bottom: 0; }
+  .bubble.md p { margin: 0 0 8px; }
+  .bubble.md h1, .bubble.md h2, .bubble.md h3, .bubble.md h4 { margin: 12px 0 6px; line-height: 1.32; font-weight: 700; }
+  .bubble.md h1 { font-size: 18px; }
+  .bubble.md h2 { font-size: 16.5px; }
+  .bubble.md h3 { font-size: 15.5px; }
+  .bubble.md h4 { font-size: 14.5px; color: var(--ink-soft); }
+  .bubble.md ul, .bubble.md ol { margin: 6px 0 9px; padding-left: 21px; }
+  .bubble.md li { margin: 3px 0; }
+  .bubble.md hr { border: none; border-top: 1px solid var(--line); margin: 13px 0; }
+  .bubble.md strong { font-weight: 700; }
+  .bubble.md a { color: var(--teal-dark); text-decoration: underline; }
+  .bubble.md code { background: var(--paper-2); padding: 1px 6px; border-radius: 5px; font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .bubble.md pre { background: var(--paper-2); padding: 11px 13px; border-radius: 10px; overflow-x: auto; margin: 8px 0; }
+  .bubble.md pre code { background: none; padding: 0; font-size: 12.5px; }
+  .bubble.md table { border-collapse: collapse; width: 100%; margin: 9px 0; font-size: 13.5px; }
+  .bubble.md th, .bubble.md td { border: 1px solid var(--line); padding: 8px 11px; text-align: left; vertical-align: top; }
+  .bubble.md thead th { background: var(--teal-soft); color: var(--teal-dark); font-weight: 700; white-space: nowrap; }
+  .bubble.md tbody tr:nth-child(even) { background: var(--paper); }
+
+  /* quiz cards */
+  .quiz { margin: 0 0 18px 46px; display: flex; flex-direction: column; gap: 12px; }
+  .quiz .q { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .quiz .q .dim { font-size: 11.5px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: .4px; }
+  .quiz .q .qp { font-size: 15px; font-weight: 600; margin: 5px 0 12px; white-space: pre-wrap; }
+  .quiz .opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz .opt { text-align: left; padding: 11px 15px; border: 1.5px solid var(--line); border-radius: 11px; background: var(--card); cursor: pointer; font: inherit; font-size: 14px; transition: all .12s; }
+  .quiz .opt:hover { border-color: var(--teal); background: var(--teal-soft); }
+  .quiz .opt.sel { border-color: var(--teal); background: var(--teal-soft); color: var(--teal-dark); font-weight: 600; }
+  .quiz .opt.sel::before { content: "✓ "; }
+  .quiz .opt.other { border-style: dashed; color: var(--teal-dark); }
+  .quiz .other-input { display: none; width: 100%; min-height: 68px; resize: vertical; border: 1.5px solid var(--line); border-radius: 11px; padding: 10px 13px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.55; }
+  .quiz .other-input.show { display: block; }
+  .quiz .other-input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(42,123,116,.1); }
+  .quiz .direct-answer { display: block; width: 100%; min-height: 86px; resize: vertical; border: 1.5px solid var(--line); border-radius: 11px; padding: 10px 13px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.55; }
+  .quiz .phase-head { background: var(--teal-soft); border: 1px solid rgba(42,123,116,.2); border-radius: 14px; padding: 14px 16px; }
+  .quiz .phase-kicker { color: var(--teal-dark); font-size: 12px; font-weight: 800; letter-spacing: .3px; }
+  .quiz .phase-title { margin-top: 4px; font-size: 16px; font-weight: 750; }
+  .quiz .phase-copy { margin-top: 5px; color: var(--ink-soft); font-size: 13px; line-height: 1.55; }
+  .quiz .progress-track { height: 5px; margin-top: 11px; border-radius: 9px; background: rgba(42,123,116,.12); overflow: hidden; }
+  .quiz .progress-bar { height: 100%; border-radius: inherit; background: var(--teal); }
+  .quiz .confidence-row { display: grid; grid-template-columns: minmax(190px, 1fr) auto; align-items: end; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line-soft); }
+  .quiz .confidence-row label { display: flex; flex-direction: column; gap: 6px; color: var(--ink-soft); font-size: 12px; font-weight: 650; }
+  .quiz .confidence-row select { min-height: 42px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); padding: 0 10px; font: inherit; }
+  .quiz .save-state { min-width: 58px; padding-bottom: 11px; color: var(--ink-faint); font-size: 12px; text-align: right; }
+  .quiz .assist-box { margin-top: 12px; padding: 12px; border-radius: 11px; background: var(--paper-2); }
+  .quiz .assist-label { font-size: 12px; color: var(--teal-dark); font-weight: 750; }
+  .quiz .assist-copy { margin: 4px 0 9px; color: var(--ink-soft); font-size: 12px; line-height: 1.5; }
+  .quiz .assist-compose { display: flex; gap: 8px; }
+  .quiz .assist-compose textarea { flex: 1; min-height: 58px; resize: vertical; border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; font: inherit; }
+  .quiz .assist-compose button { align-self: stretch; border: 0; border-radius: 9px; padding: 0 13px; background: var(--ink); color: #fff; font: inherit; font-weight: 650; cursor: pointer; }
+  .quiz .assist-reply { display: none; margin-top: 9px; padding: 10px; border-left: 3px solid var(--teal); background: var(--card); white-space: pre-wrap; font-size: 13px; line-height: 1.6; }
+  .quiz .assist-reply.show { display: block; }
+  .quiz .verification { margin-top: 10px; }
+  .quiz .verification label { display: block; margin-bottom: 5px; color: var(--ink-soft); font-size: 12px; font-weight: 650; }
+  .quiz .verification textarea { width: 100%; min-height: 66px; resize: vertical; border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; font: inherit; }
+  .quiz .evidence-result { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 17px 18px; box-shadow: var(--shadow); }
+  .quiz .evidence-result h3 { margin: 0 0 6px; font-size: 17px; }
+  .quiz .score-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .quiz .score-pill { padding: 7px 10px; border-radius: 9px; background: var(--paper-2); font-size: 12px; }
+  .quiz .evidence-line { margin-top: 8px; color: var(--ink-soft); font-size: 12px; line-height: 1.55; }
+  .quiz .evidence-details { margin-top: 13px; border-top: 1px solid var(--line-soft); padding-top: 11px; }
+  .quiz .evidence-details summary { color: var(--teal-dark); font-size: 13px; font-weight: 700; cursor: pointer; }
+  .quiz .evidence-item { margin-top: 9px; padding: 9px 10px; border-radius: 9px; background: var(--paper-2); font-size: 12px; line-height: 1.55; }
+  .quiz .dispute-box { display: none; margin-top: 10px; gap: 8px; }
+  .quiz .dispute-box.show { display: flex; }
+  .quiz .dispute-box textarea { flex: 1; min-height: 58px; resize: vertical; border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; font: inherit; }
+  .quiz .secondary-action { margin-top: 11px; border: 1px solid var(--line); border-radius: 9px; padding: 8px 11px; background: var(--card); color: var(--ink-soft); font: inherit; cursor: pointer; }
+  .quiz.loading { color: var(--ink-soft); font-size: 13px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  .quiz .submit-row { display: flex; align-items: center; gap: 12px; }
+  .quiz .submit { background: var(--teal); color: #fff; border: none; border-radius: 11px; padding: 11px 22px; font: inherit; font-weight: 600; cursor: pointer; }
+  .quiz .submit:disabled { opacity: .4; cursor: not-allowed; }
+  .quiz .submit-hint { font-size: 13px; color: var(--ink-soft); }
+  .quiz.done { opacity: .6; pointer-events: none; }
+  @media (max-width: 600px) {
+    .quiz { margin-left: 0; }
+    .quiz .confidence-row { grid-template-columns: 1fr; }
+    .quiz .save-state { padding: 0; text-align: left; }
+    .quiz .assist-compose { flex-direction: column; }
+    .quiz .assist-compose button { min-height: 42px; }
+  }
+
+  /* choices (quick pick anywhere in the conversation) */
+  .choices { margin: 0 0 18px 46px; display: flex; flex-direction: column; gap: 10px; }
+  .choices .choice-question { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.55; max-width: min(720px, 100%); }
+  .choices .chip-row { display: flex; flex-wrap: wrap; gap: 9px; }
+  .choices .ch { padding: 10px 17px; border: 1.5px solid var(--line); border-radius: 22px; background: var(--card); cursor: pointer; font: inherit; font-size: 14px; transition: all .12s; box-shadow: var(--shadow); }
+  .choices .ch:hover { border-color: var(--teal); background: var(--teal-soft); }
+  .choices .ch.sel { border-color: var(--teal); background: var(--teal-soft); color: var(--teal-dark); font-weight: 600; }
+  .choices .ch.sel::before { content: "✓ "; }
+  .choices .confirm { align-self: flex-start; background: var(--teal); color: #fff; border: none; border-radius: 11px; padding: 9px 20px; font: inherit; font-weight: 600; cursor: pointer; }
+  .choices .confirm:disabled { opacity: .4; cursor: not-allowed; }
+  .choices .custom-hint { font-size: 12.5px; color: var(--ink-faint); }
+  .choices .custom-answer { display: flex; gap: 8px; align-items: stretch; max-width: min(720px, 100%); }
+  .choices .custom-answer textarea { flex: 1; min-height: 46px; max-height: 120px; resize: vertical; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 13px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.55; }
+  .choices .custom-answer textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(42,123,116,.1); }
+  .choices .custom-answer button { border: none; border-radius: 12px; padding: 0 16px; background: var(--teal); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+  .choices .custom-answer button:disabled { opacity: .4; cursor: not-allowed; }
+  .choices.done { opacity: .6; pointer-events: none; }
+
+  .status { text-align: center; font-size: 13px; color: var(--ink-soft); padding: 4px 0 10px; min-height: 22px; }
+  .status.error { color: var(--red); }
+  .status.success { color: var(--green); font-weight: 600; }
+
+  /* generating overlay */
+  .gen-overlay { position: fixed; inset: 0; background: rgba(247,244,238,.94); display: none; align-items: center; justify-content: center; z-index: 50; }
+  .gen-overlay.on { display: flex; }
+  .gen-box { text-align: center; width: min(520px, calc(100vw - 40px)); max-width: 520px; }
+  .gen-box .big { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .gen-box p { color: var(--ink-soft); font-size: 14px; margin: 0 0 18px; line-height: 1.7; }
+  .gen-progress { height: 9px; border-radius: 999px; overflow: hidden; background: var(--line-soft); margin: 0 0 10px; }
+  .gen-progress span { display: block; width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--teal), var(--green)); transition: width .35s ease; }
+  .gen-live { min-height: 20px; margin-bottom: 16px; color: var(--teal-dark); font-size: 13px; font-weight: 600; }
+  .genchk { display: flex; align-items: center; gap: 11px; padding: 11px 15px; border-radius: 11px; background: var(--card); border: 1px solid var(--line); margin-bottom: 9px; font-size: 14px; text-align: left; opacity: .45; transition: all .3s; }
+  .genchk.on { opacity: 1; background: var(--teal-soft); border-color: var(--teal); }
+  .genchk.done { opacity: .82; }
+  .genchk .gck { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+  .genchk.on .gck { background: var(--green); border-color: var(--green); color: #fff; }
+  .genchk.done .gck { background: var(--green); border-color: var(--green); color: #fff; }
+  .gen-step-text { display: flex; flex-direction: column; gap: 3px; }
+  .gen-step-text strong { font-size: 14px; color: var(--ink); }
+  .gen-step-text span { font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
+  .spin { width: 16px; height: 16px; border: 2.5px solid var(--teal-soft); border-top-color: var(--teal); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* input */
+  .input-bar { flex-shrink: 0; border-top: 1px solid var(--line); background: #fffdf9; padding: 14px 20px 16px; }
+  .input-inner { max-width: 760px; margin: 0 auto; }
+  .input-row { display: flex; gap: 10px; align-items: flex-end; background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 8px 8px 8px 16px; transition: border-color .15s; }
+  .input-row:focus-within { border-color: var(--teal); }
+  textarea { flex: 1; border: none; outline: none; resize: none; font: inherit; font-size: 15px; background: transparent; line-height: 1.5; max-height: 180px; padding: 6px 0; color: var(--ink); }
+  .send { width: 40px; height: 40px; border: none; border-radius: 11px; background: var(--teal); color: #fff; font-size: 19px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
+  .send:hover:not(:disabled) { background: var(--teal-dark); }
+  .send:disabled { opacity: .4; cursor: not-allowed; }
+  .tips { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 9px; }
+  @media (max-width: 600px) {
+    header { padding: 10px 12px; gap: 8px; }
+    header .tagline { display: none; }
+    .edition-badge { min-width: 0; padding-inline: 8px; }
+    header .seen { padding: 7px 9px; font-size: 12px; }
+    .wrap { padding-inline: 14px; }
+    .hero { padding-top: 5vh; }
+    .hero h1 { font-size: 26px; }
+    .runtime-context { align-items: stretch; }
+    .runtime-copy { justify-content: center; }
+    .runtime-links { width: 100%; }
+    .runtime-link { flex: 1 1 120px; }
+  }
+</style>
+<script src="/common.js?v=0.54"></script>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/space" title="返回学习空间">L</a>
+  <div>
+    <div class="title">LearnBuddy</div>
+    <div class="tagline">你的个性化 AI 学习伙伴</div>
+  </div>
+  <div class="spacer"></div>
+  <span class="edition-badge" id="editionBadge" aria-live="polite">识别版本中</span>
+  <a class="seen" href="/space">📚 学习空间</a>
+</header>
+
+<div class="scroll" id="scroll">
+  <div class="wrap" id="wrap">
+    <div class="hero" id="hero">
+      <span class="badge" id="runtimeHeroBadge">DeepSeek 驱动 · 真实对话生成</span>
+      <h1>你想学什么？</h1>
+      <p>说出你的目标，LearnBuddy 会和你对话、现场摸底，最后生成一条能执行、会调整的专属学习路径。不限领域。</p>
+      <div class="runtime-context" id="runtimeContext" aria-live="polite">
+        <span class="runtime-copy" id="runtimeCopy">正在识别运行模式…</span>
+        <span class="runtime-links" id="runtimeLinks" hidden>
+          <a class="runtime-link" id="runtimeGithubLink">GitHub 源码</a>
+          <a class="runtime-link" id="runtimeDeployLink">部署自己的 LearnBuddy</a>
+        </span>
+      </div>
+      <div class="chips" id="chips">
+        <button class="chip">3 个月考过日语 N3</button>
+        <button class="chip">从零学 Python 数据分析</button>
+        <button class="chip">营养学入门，看懂膳食搭配</button>
+        <button class="chip">8 周提升中文写作</button>
+      </div>
+    </div>
+    <div id="messages"></div>
+  </div>
+</div>
+
+<div class="status" id="status"></div>
+
+<div class="input-bar">
+  <div class="input-inner">
+    <div class="input-row">
+      <textarea id="input" rows="1" placeholder="说说你想学什么、想成为什么样的人？（Enter 发送 / Shift+Enter 换行）"></textarea>
+      <button class="send" id="send" title="发送（Enter）">↑</button>
+    </div>
+    <div class="tips">LearnBuddy · 不限领域：英语 / 日语 / 编程 / 营养 / 写作 / 考研 …</div>
+  </div>
+</div>
+
+<!-- 生成中遮罩 -->
+<div class="gen-overlay" id="gen-overlay">
+  <div class="gen-box">
+    <div class="big" id="gen-title">正在深度构建你的学习路径…</div>
+    <p id="gen-message">LearnBuddy 会先做资料检索、能力拆解和质量审查，再生成可执行计划</p>
+    <div class="gen-progress"><span id="gen-bar"></span></div>
+    <div class="gen-live" id="gen-live">正在准备生成任务…</div>
+    <div id="gen-steps">
+      <div class="genchk" data-i="0"><div class="gck"></div><div class="gen-step-text"><strong>整理对话</strong><span>构建目标与基线画像</span></div></div>
+      <div class="genchk" data-i="1"><div class="gck"></div><div class="gen-step-text"><strong>检索来源</strong><span>形成路径研究包</span></div></div>
+      <div class="genchk" data-i="2"><div class="gck"></div><div class="gen-step-text"><strong>拆能力图谱</strong><span>推演周计划和日计划</span></div></div>
+      <div class="genchk" data-i="3"><div class="gck"></div><div class="gen-step-text"><strong>质量审查</strong><span>写学习手册和契约</span></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SESSION_KEY = 'itutor_session_id';
+const SESSION_OWNER_KEY = 'learnbuddy:session_owner';
+const GENERATE_JOB_KEY = 'learnbuddy:active_generate_job';
+function getSession() {
+  let id = localStorage.getItem(SESSION_KEY);
+  if (!id) { id = 'sess-' + (crypto.randomUUID ? crypto.randomUUID() : Date.now()); localStorage.setItem(SESSION_KEY, id); }
+  return id;
+}
+let sessionId = getSession();
+let currentGenerateJobId = sessionStorage.getItem(GENERATE_JOB_KEY) || '';
+let generatePollTimer = null;
+let generateLocalTimer = null;
+let generateLocalStartedAt = 0;
+let generateLocalProgress = null;
+
+const scrollEl = document.getElementById('scroll');
+const messagesEl = document.getElementById('messages');
+const heroEl = document.getElementById('hero');
+const inputEl = document.getElementById('input');
+const sendBtn = document.getElementById('send');
+const statusEl = document.getElementById('status');
+const overlay = document.getElementById('gen-overlay');
+const genTitle = document.getElementById('gen-title');
+const genMessage = document.getElementById('gen-message');
+const genBar = document.getElementById('gen-bar');
+const genLive = document.getElementById('gen-live');
+const genSteps = document.getElementById('gen-steps');
+let isStreaming = false;
+let heroDismissed = false;
+
+function configureRuntimeLink(element, url, unavailableTitle) {
+  if (!element) return;
+  if (url) {
+    element.href = url;
+    element.target = '_blank';
+    element.rel = 'noopener noreferrer';
+    element.removeAttribute('aria-disabled');
+    element.removeAttribute('title');
+    return;
+  }
+  element.removeAttribute('href');
+  element.removeAttribute('target');
+  element.setAttribute('aria-disabled', 'true');
+  element.title = unavailableTitle;
+}
+
+async function loadIndexQuota() {
+  const copy = document.getElementById('runtimeCopy');
+  try {
+    const response = await fetch('/api/usage?lite=1', { cache: 'no-store' });
+    if (response.status === 401) {
+      copy.textContent = '在线体验 · 登录后查看剩余额度';
+      return;
+    }
+    if (!response.ok) throw new Error('quota unavailable');
+    const data = await response.json();
+    const credits = data.credits || (data.quota && data.quota.credits) || {};
+    const balance = Number(credits.balance);
+    copy.textContent = Number.isFinite(balance)
+      ? `在线体验 · 剩余 ${Math.max(0, balance).toLocaleString('zh-CN')} 积分`
+      : '在线体验 · 免费额度有限';
+  } catch (error) {
+    copy.textContent = '在线体验 · 额度暂时无法读取，不影响继续学习';
+  }
+}
+
+function applyIndexRuntime(runtime) {
+  if (!runtime) return;
+  const editionBadge = document.getElementById('editionBadge');
+  const heroBadge = document.getElementById('runtimeHeroBadge');
+  const context = document.getElementById('runtimeContext');
+  const copy = document.getElementById('runtimeCopy');
+  const links = document.getElementById('runtimeLinks');
+  editionBadge.className = 'edition-badge';
+  context.className = 'runtime-context';
+  links.hidden = true;
+  if (runtime.edition === 'cloud') {
+    editionBadge.textContent = '在线体验';
+    editionBadge.classList.add('cloud');
+    heroBadge.textContent = '在线体验 · 平台模型额度';
+    context.classList.add('cloud');
+    copy.textContent = '在线体验 · 正在读取剩余额度…';
+    configureRuntimeLink(document.getElementById('runtimeGithubLink'), runtime.links.github, '部署方尚未配置源码地址');
+    configureRuntimeLink(document.getElementById('runtimeDeployLink'), runtime.links.deploy, '部署方尚未配置私有部署说明');
+    links.hidden = false;
+    loadIndexQuota();
+  } else if (runtime.edition === 'personal') {
+    editionBadge.textContent = '我的 LearnBuddy';
+    editionBadge.classList.add('personal');
+    heroBadge.textContent = '私人部署 · 你的模型与数据';
+    context.classList.add('personal');
+    copy.textContent = runtime.llm_configured === true
+      ? '数据归你管理 · 自有模型已配置（BYOK）'
+      : (runtime.llm_configured === false
+        ? '数据归你管理 · 请先在本地 .env 配置模型（BYOK）'
+        : '数据归你管理 · 模型密钥由你配置（BYOK）');
+  } else {
+    editionBadge.textContent = '兼容模式';
+    context.classList.add('fallback');
+    copy.textContent = '运行模式暂未读取，已按当前服务配置继续。';
+  }
+}
+
+const runtimeReady = window.LearnBuddyRuntime
+  ? window.LearnBuddyRuntime.load().then(applyIndexRuntime)
+  : Promise.resolve();
+
+function dismissHero() { if (!heroDismissed) { heroEl.style.display = 'none'; heroDismissed = true; } }
+function scrollToBottom() { scrollEl.scrollTop = scrollEl.scrollHeight; }
+function scrollPanelIntoView(el) {
+  requestAnimationFrame(() => {
+    const rootRect = scrollEl.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = scrollEl.scrollTop + elRect.top - rootRect.top - 14;
+    scrollEl.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  });
+}
+function setStatus(t, type='') { statusEl.textContent = t; statusEl.className = 'status' + (type ? ' '+type : ''); }
+function setStreaming(s) { isStreaming = s; sendBtn.disabled = s; inputEl.disabled = s; }
+
+function appendMessage(role, content='') {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  const ava = document.createElement('div');
+  ava.className = 'ava';
+  ava.textContent = role === 'user' ? '你' : 'L';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = content;
+  wrap.appendChild(ava); wrap.appendChild(bubble);
+  messagesEl.appendChild(wrap);
+  scrollToBottom();
+  return bubble;
+}
+
+function looksLikeGenerateConfirmation(message) {
+  return /(确认生成|开始生成|可以生成|生成吧|就这套|就这个|ok\s*生成|OK\s*生成)/i.test(String(message || ''));
+}
+
+function showGeneratePreparingOverlay() {
+  showGenerateOverlay({
+    title: '正在准备学习路径生成…',
+    message: '正在把你的目标、摸底结果、时间预算和偏好整理成可执行参数；进入正式构建后会继续展示资料检索和计划生成进度。',
+    steps: [
+      { label: '整理生成参数', detail: '确认领域、目标产出、基线、强度和时间预算。' },
+      { label: '准备资料接地', detail: '为后续搜索、来源校验和大纲构建准备上下文。' },
+      { label: '等待进入构建', detail: '拿到结构化参数后会开始生成完整学习路径。' },
+    ],
+  });
+  startGenerateLocalTimer({
+    index: 0,
+    label: '整理生成参数',
+    detail: '正在把对话内容转换成可执行路径参数。',
+  });
+}
+
+function hideGenerateOverlay() {
+  stopGenerateLocalTimer();
+  overlay.classList.remove('on');
+}
+
+function rememberGenerateJob(jobId) {
+  if (!jobId) return;
+  currentGenerateJobId = jobId;
+  sessionStorage.setItem(GENERATE_JOB_KEY, jobId);
+}
+
+function clearGenerateJob() {
+  currentGenerateJobId = '';
+  sessionStorage.removeItem(GENERATE_JOB_KEY);
+  stopGenerateLocalTimer();
+  if (generatePollTimer) {
+    clearTimeout(generatePollTimer);
+    generatePollTimer = null;
+  }
+}
+
+function scheduleGeneratePoll(jobId, delay = 1800) {
+  if (!jobId || jobId !== currentGenerateJobId) return;
+  if (generatePollTimer) clearTimeout(generatePollTimer);
+  generatePollTimer = setTimeout(() => pollGenerateJob(jobId), delay);
+}
+
+async function pollGenerateJob(jobId) {
+  if (!jobId) return;
+  rememberGenerateJob(jobId);
+  try {
+    const res = await fetch(`/api/generate/status?job_id=${encodeURIComponent(jobId)}`, { cache: 'no-store' });
+    if (res.status === 401) { location.href = '/login'; return; }
+    if (res.status === 404) { clearGenerateJob(); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + (await res.text()));
+    const data = await res.json();
+    if (!overlay.classList.contains('on')) {
+      showGenerateOverlay({
+        ...data,
+        title: '正在恢复学习路径生成…',
+        message: '刚才的生成任务仍在后台运行，LearnBuddy 会继续检查结果。',
+      });
+    }
+    updateGenerateProgress(data);
+    if (data.status === 'ready' && data.redirect_url) {
+      finishGenerateOverlay(data.redirect_url);
+      return;
+    }
+    if (data.status === 'error') {
+      setStatus('❌ ' + (data.error || data.message || '学习路径生成失败，请稍后重试。'), 'error');
+      clearGenerateJob();
+      return;
+    }
+    scheduleGeneratePoll(jobId, 2400);
+  } catch (e) {
+    console.error(e);
+    setStatus('生成连接中断，正在继续检查后台结果…');
+    scheduleGeneratePoll(jobId, 3200);
+  }
+}
+
+function resumeGenerateJob() {
+  const jobId = sessionStorage.getItem(GENERATE_JOB_KEY);
+  if (!jobId) return;
+  dismissHero();
+  showGenerateOverlay({
+    title: '正在恢复学习路径生成…',
+    message: '检测到刚才还有一个学习路径生成任务，正在读取最新状态。',
+  });
+  pollGenerateJob(jobId);
+}
+
+async function loadOpening() {
+  try {
+    const res = await fetch('/api/opening');
+    if (res.status === 401) { location.href = '/login'; return; }
+    const data = await res.json();
+    const ownerId = String(data.user?.id || '');
+    const storedOwnerId = localStorage.getItem(SESSION_OWNER_KEY) || '';
+    if (storedOwnerId && ownerId && storedOwnerId !== ownerId) {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(GENERATE_JOB_KEY);
+      sessionId = getSession();
+      currentGenerateJobId = '';
+    }
+    if (ownerId) localStorage.setItem(SESSION_OWNER_KEY, ownerId);
+    // 暖场语放进 hero 不打扰；首条助手消息等用户开口后再出
+    window._opening = data.greeting;
+    await restoreConversation();
+  } catch (e) { window._opening = null; }
+}
+
+async function restoreConversation() {
+  const res = await fetch(`/api/conversation/session?session_id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' });
+  if (res.status === 409) {
+    localStorage.removeItem(SESSION_KEY);
+    sessionId = getSession();
+    return restoreConversation();
+  }
+  if (!res.ok) throw new Error('恢复对话失败：HTTP ' + res.status);
+  const data = await res.json();
+  const messages = Array.isArray(data.messages) ? data.messages : [];
+  if (!messages.length || messagesEl.children.length) return;
+  dismissHero();
+  messages.forEach((message, index) => {
+    if (message.role !== 'user' && message.role !== 'assistant') return;
+    if (message.role === 'user') {
+      appendMessage('user', message.content);
+      return;
+    }
+    const bubble = appendMessage('assistant', '');
+    const visible = cleanVisible(message.content);
+    bubble.innerHTML = renderMarkdown(visible);
+    bubble.classList.add('md');
+    const choices = index === messages.length - 1 ? parseChoices(message.content) : null;
+    if (choices) {
+      if (!visible.trim()) {
+        bubble.classList.remove('md');
+        bubble.textContent = choices.question || '请选择：';
+      }
+      renderChoices(choices, bubble);
+    }
+  });
+  setStatus('已恢复上次对话');
+}
+
+async function sendMessage(message, displayText) {
+  if (isStreaming || !message.trim()) return;
+  dismissHero();
+  setStreaming(true);
+  setStatus('学习伙伴思考中…');
+  appendMessage('user', displayText || message);
+  const bubble = appendMessage('assistant', '');
+  bubble.classList.add('streaming');
+  const optimisticGenerate = looksLikeGenerateConfirmation(message);
+  if (optimisticGenerate) showGeneratePreparingOverlay();
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, message }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + (await res.text()));
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '', full = '';
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split('\n\n');
+      buffer = events.pop() || '';
+      for (const evt of events) {
+        const h = parseEvent(evt);
+        if (h.token) {
+          full += h.token;
+          // 流式期间显示纯文本（快），剥掉结构化标记/残留围栏
+          bubble.textContent = cleanVisible(full);
+          scrollToBottom();
+        } else if (h.generate) {
+          bubble.classList.remove('streaming');
+          if (!bubble.textContent.trim()) bubble.textContent = '很好，我现在为你生成完整的学习路径…';
+          finishGenerateOverlay(h.generate.redirect_url);
+          return;
+        } else if (h.generateStart) {
+          bubble.classList.remove('streaming');
+          if (!bubble.textContent.trim()) bubble.textContent = '很好，我现在为你生成完整的学习路径…';
+          showGenerateOverlay(h.generateStart);
+        } else if (h.generateProgress) {
+          updateGenerateProgress(h.generateProgress);
+        } else if (h.error) {
+          bubble.classList.remove('streaming');
+          if (currentGenerateJobId) {
+            pollGenerateJob(currentGenerateJobId);
+          } else if (optimisticGenerate) {
+            hideGenerateOverlay();
+          }
+          setStatus('❌ ' + h.error, 'error');
+          setStreaming(false);
+          return;
+        }
+      }
+    }
+    bubble.classList.remove('streaming');
+    if (currentGenerateJobId) {
+      setStatus('连接已结束，正在继续检查后台生成结果…');
+      pollGenerateJob(currentGenerateJobId);
+      return;
+    }
+    setStatus('');
+    // 流结束：先渲染 Markdown 正文，再检测点选式 QUIZ / CHOICES
+    const visible = cleanVisible(full);
+    const quiz = parseQuiz(full);
+    const choices = quiz ? null : parseChoices(full);
+
+    if (visible.trim()) {
+      bubble.classList.add('md');
+      bubble.innerHTML = renderMarkdown(visible);
+    }
+    if (quiz) {
+      if (optimisticGenerate) hideGenerateOverlay();
+      if (!visible.trim()) { bubble.classList.remove('md'); bubble.textContent = quiz.intro || '我出几道题摸一下你的底，点选就行：'; }
+      renderQuiz(quiz, bubble);
+    } else if (choices) {
+      if (optimisticGenerate) hideGenerateOverlay();
+      if (!visible.trim()) { bubble.classList.remove('md'); bubble.textContent = choices.question || '请选择：'; }
+      renderChoices(choices, bubble);
+    } else if (optimisticGenerate) {
+      hideGenerateOverlay();
+    }
+  } catch (e) {
+    console.error(e);
+    bubble.classList.remove('streaming');
+    if (currentGenerateJobId) {
+      setStatus('连接中断，正在继续检查后台生成结果…');
+      pollGenerateJob(currentGenerateJobId);
+    } else {
+      if (looksLikeGenerateConfirmation(message)) hideGenerateOverlay();
+      setStatus('❌ 网络异常：' + e.message, 'error');
+    }
+  } finally {
+    setStreaming(false);
+  }
+}
+
+const QUIZ_RE = /<<<QUIZ>>>\s*```(?:json)?\s*([\s\S]+?)```\s*(?:<<<END>>>)?/;
+function parseQuiz(text) {
+  const m = text.match(QUIZ_RE);
+  if (!m) return null;
+  try {
+    const data = JSON.parse(m[1].trim());
+    if (!Array.isArray(data.questions)) return null;
+    if (!data.questions.length && !String(data.domain || '').trim()) return null;
+    return data;
+  } catch { return null; }
+}
+
+async function createBaselineAssessment(quiz) {
+  const res = await fetch('/api/baseline/assessments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      session_id: sessionId,
+      domain: String(quiz.domain || '').trim() || '当前已确认的学习目标',
+      baseline_hint: String(quiz.baseline_hint || '').trim(),
+      num_questions: Math.max(6, Math.min(10, Number((quiz.questions || []).length) || 6)),
+      mode: 'quick',
+    }),
+  });
+  if (!res.ok) throw new Error(await res.text() || ('HTTP ' + res.status));
+  return res.json();
+}
+
+function assessmentToQuiz(assessment, intro='') {
+  return {
+    ...assessment,
+    domain: assessment.domain,
+    intro: intro || '这不是自评分问卷：你会先独立完成一组任务，再进入 AI 协作阶段，系统按作答证据形成能力画像。',
+    questions: (assessment.current_questions || assessment.questions || []).map((q) => ({
+      id: q.id,
+      dimension: q.expected_dimension,
+      prompt: q.question,
+      type: q.type,
+      options: q.options || [],
+      capability: q.capability || '',
+    })),
+  };
+}
+
+async function renderQuiz(quiz, afterBubble) {
+  const loading = document.createElement('div');
+  loading.className = 'quiz loading';
+  loading.textContent = '正在生成并保存你的专属摸底题…';
+  const msgWrap = afterBubble.closest('.msg');
+  msgWrap.parentNode.insertBefore(loading, msgWrap.nextSibling);
+  scrollPanelIntoView(loading);
+  try {
+    const assessment = await createBaselineAssessment(quiz);
+    loading.remove();
+    renderQuizPanel(
+      assessmentToQuiz(assessment, quiz.intro),
+      afterBubble,
+      assessment.id,
+    );
+  } catch (error) {
+    console.error(error);
+    loading.textContent = '⚠️ 结构化摸底暂时未能保存。你仍可继续作答，提交时会明确标记为对话回退结果。';
+    renderQuizPanel(quiz, afterBubble, '');
+  }
+}
+
+function renderQuizPanel(quiz, afterBubble, assessmentId='') {
+  const panel = document.createElement('div');
+  panel.className = 'quiz';
+  if (assessmentId) panel.dataset.assessmentId = assessmentId;
+  if (quiz.profile && ['completed', 'needs_review'].includes(quiz.status)) {
+    renderAssessmentResult(panel, quiz, false);
+    const msgWrap = afterBubble.closest('.msg');
+    msgWrap.parentNode.insertBefore(panel, msgWrap.nextSibling);
+    scrollPanelIntoView(panel);
+    return;
+  }
+  const answers = {};
+  const confidence = {};
+  const verification = {};
+  const saved = Object.fromEntries((quiz.responses || []).map((item) => [item.question_id, item]));
+  const timers = {};
+  const stage = quiz.stage || 'independent';
+  const stageNumber = stage === 'ai_collaboration' ? 2 : 1;
+  const stageTitle = stage === 'ai_collaboration' ? 'AI 协作与验收' : '独立作答';
+  const stageCopy = stage === 'ai_collaboration'
+    ? '可以使用下方站内助手。最终分数会同时看你如何提问、如何修订，以及你怎样验收结果。'
+    : '这一阶段请不要借助 AI 或搜索。我们评估的是你当前能独立调用的知识和迁移能力。';
+  const progress = quiz.progress || {};
+  const progressPct = Math.round(100 * Number(progress.answered || 0) / Math.max(1, Number(progress.total || quiz.questions.length)));
+  const phaseHead = document.createElement('div');
+  phaseHead.className = 'phase-head';
+  phaseHead.innerHTML = `<div class="phase-kicker">阶段 ${stageNumber} / 2 · 已完成 ${Number(progress.answered || 0)} / ${Number(progress.total || quiz.questions.length)}</div>` +
+    `<div class="phase-title">${stageTitle}</div><div class="phase-copy">${stageCopy}</div>` +
+    `<div class="progress-track"><div class="progress-bar" style="width:${progressPct}%"></div></div>`;
+  panel.appendChild(phaseHead);
+
+  quiz.questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q';
+    const qid = q.id || ('q' + (idx + 1));
+    const hasOptions = Array.isArray(q.options) && q.options.length > 0;
+    const opts = (q.options || []).map((o) =>
+      `<button class="opt" data-opt="${encodeURIComponent(o)}">${escapeText(o)}</button>`
+    ).join('');
+    const answerUi = hasOptions
+      ? `${opts}<button class="opt other" data-other="1">其他 / 补充说明</button><textarea class="other-input" rows="2" placeholder="写下你的真实情况，或说明上面选项都不贴切"></textarea>`
+      : `<textarea class="direct-answer" rows="3" placeholder="请写下你的原始判断或做法"></textarea>`;
+    const scoreOptions = '<option value="">请选择</option>' + [1,2,3,4,5].map((n) => `<option value="${n}">${n} / 5</option>`).join('');
+    const assistUi = stage === 'ai_collaboration' ?
+      `<div class="assist-box"><div class="assist-label">站内 AI 协作助手</div><div class="assist-copy">让它帮你拆解、质疑或给候选方案；它不会替你提交答案。</div><div class="assist-compose"><textarea class="assist-prompt" placeholder="例如：先帮我拆解这个任务，并指出我需要补充哪些信息"></textarea><button type="button" class="assist-send">请求协助</button></div><div class="assist-reply"></div></div>` +
+      `<div class="verification"><label>你如何验收并修订了 AI 的帮助？</label><textarea class="verification-input" placeholder="写下你检查了什么、发现了什么问题，以及最终做了哪些修改"></textarea></div>` : '';
+    card.innerHTML =
+      (q.dimension ? `<div class="dim">${escapeText(q.dimension)}</div>` : '') +
+      `<div class="qp">${idx + 1}. ${escapeText(q.prompt || '')}</div>` +
+      `<div class="opts">${answerUi}</div>${assistUi}` +
+      `<div class="confidence-row"><label>提交前，你对这份答案有多大把握？<select class="confidence" aria-label="答案信心分">${scoreOptions}</select></label><span class="save-state">未保存</span></div>`;
+    const otherInput = card.querySelector('.other-input');
+    const old = saved[qid] || {};
+    if (old.answer) answers[qid] = old.answer;
+    if (old.self_confidence != null) confidence[qid] = String(old.self_confidence);
+    if (old.verification_notes) verification[qid] = old.verification_notes;
+    if (old.answer && old.self_confidence != null) card.querySelector('.save-state').textContent = '已保存';
+    card.querySelectorAll('.opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        card.querySelectorAll('.opt').forEach(b => b.classList.remove('sel'));
+        btn.classList.add('sel');
+        if (btn.dataset.other) {
+          if (otherInput) otherInput.classList.add('show');
+          answers[qid] = otherInput.value.trim() ? `其他：${otherInput.value.trim()}` : '其他 / 补充说明';
+          if (otherInput) otherInput.focus();
+        } else {
+          if (otherInput) otherInput.classList.remove('show');
+          answers[qid] = decodeURIComponent(btn.dataset.opt);
+        }
+        scheduleSave(); updateSubmit();
+      });
+    });
+    if (otherInput) otherInput.addEventListener('input', () => {
+      const otherBtn = card.querySelector('.opt.other');
+      if (!otherBtn.classList.contains('sel')) {
+        card.querySelectorAll('.opt').forEach(b => b.classList.remove('sel'));
+        otherBtn.classList.add('sel');
+        otherInput.classList.add('show');
+      }
+      answers[qid] = otherInput.value.trim() ? `其他：${otherInput.value.trim()}` : '其他 / 补充说明';
+      scheduleSave(); updateSubmit();
+    });
+    const directAnswer = card.querySelector('.direct-answer');
+    if (directAnswer) directAnswer.addEventListener('input', () => {
+      answers[qid] = directAnswer.value.trim();
+      scheduleSave(); updateSubmit();
+    });
+    const confidenceSelect = card.querySelector('.confidence');
+    confidenceSelect.value = confidence[qid] || '';
+    confidenceSelect.addEventListener('change', () => {
+      confidence[qid] = confidenceSelect.value;
+      scheduleSave(); updateSubmit();
+    });
+    const verificationInput = card.querySelector('.verification-input');
+    if (verificationInput) {
+      verificationInput.value = verification[qid] || '';
+      verificationInput.addEventListener('input', () => {
+        verification[qid] = verificationInput.value.trim();
+        scheduleSave(); updateSubmit();
+      });
+    }
+    if (old.answer) {
+      const direct = card.querySelector('.direct-answer');
+      if (direct) direct.value = old.answer;
+      const option = [...card.querySelectorAll('.opt')].find((btn) => !btn.dataset.other && decodeURIComponent(btn.dataset.opt || '') === old.answer);
+      if (option) option.classList.add('sel');
+      else if (otherInput) { otherInput.classList.add('show'); otherInput.value = old.answer.replace(/^其他：/, ''); }
+    }
+    const assistBtn = card.querySelector('.assist-send');
+    if (assistBtn) assistBtn.addEventListener('click', async () => {
+      const input = card.querySelector('.assist-prompt');
+      const reply = card.querySelector('.assist-reply');
+      const prompt = input.value.trim();
+      if (!prompt) { input.focus(); return; }
+      assistBtn.disabled = true; assistBtn.textContent = '思考中…';
+      try {
+        const res = await fetch(`/api/baseline/assessments/${encodeURIComponent(assessmentId)}/assist`, {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ question_id: qid, prompt }),
+        });
+        if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
+        const data = await res.json();
+        reply.textContent = data.reply; reply.classList.add('show'); input.value = '';
+      } catch (error) { reply.textContent = '协作助手暂不可用：' + error.message; reply.classList.add('show'); }
+      finally { assistBtn.disabled = false; assistBtn.textContent = '请求协助'; }
+    });
+    function scheduleSave() {
+      if (!assessmentId || !String(answers[qid] || '').trim() || !confidence[qid]) return;
+      clearTimeout(timers[qid]);
+      card.querySelector('.save-state').textContent = '保存中…';
+      timers[qid] = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/baseline/assessments/${encodeURIComponent(assessmentId)}/responses/${encodeURIComponent(qid)}`, {
+            method: 'PUT', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ answer: answers[qid], self_confidence: Number(confidence[qid]), verification_notes: verification[qid] || '' }),
+          });
+          if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
+          card.querySelector('.save-state').textContent = '已保存';
+        } catch { card.querySelector('.save-state').textContent = '待重试'; }
+      }, 450);
+    }
+    panel.appendChild(card);
+  });
+
+  const submitRow = document.createElement('div');
+  submitRow.className = 'submit-row';
+  submitRow.innerHTML =
+    `<button class="submit" disabled>${stage === 'independent' ? '完成独立作答' : '提交并生成能力画像'}</button>` +
+    `<span class="submit-hint">还需选 ${quiz.questions.length} 题</span>`;
+  panel.appendChild(submitRow);
+
+  const submitBtn = submitRow.querySelector('.submit');
+  const hint = submitRow.querySelector('.submit-hint');
+  function updateSubmit() {
+    const done = quiz.questions.filter((q, i) => {
+      const qid = q.id || ('q' + (i + 1));
+      return String(answers[qid] || '').trim() && confidence[qid] && (stage !== 'ai_collaboration' || String(verification[qid] || '').trim());
+    }).length;
+    const total = quiz.questions.length;
+    submitBtn.disabled = done < total;
+    hint.textContent = done < total ? `还有 ${total - done} 题未完成作答、信心分或验收说明` : '当前阶段已完成，可以提交';
+  }
+  updateSubmit();
+  submitBtn.addEventListener('click', async () => {
+    submitBtn.disabled = true;
+    hint.textContent = stage === 'independent' ? '正在进入 AI 协作阶段…' : '正在按证据评分…';
+    const lines = quiz.questions.map((q, i) => {
+      const qid = q.id || ('q' + (i + 1));
+      const dim = q.dimension ? `【${q.dimension}】` : '';
+      const prompt = String(q.prompt || '').replace(/\s+/g, ' ').trim();
+      return `${qid}. ${dim}${prompt} → ${answers[qid]}（作答信心 ${confidence[qid]}/5）`;
+    });
+    let profile = null;
+    try {
+      if (assessmentId) {
+        const responses = quiz.questions.map((q, i) => {
+          const qid = q.id || ('q' + (i + 1));
+          return {
+            question_id: qid,
+            answer: answers[qid],
+            phase: stage,
+            self_confidence: Number(confidence[qid]),
+            verification_notes: verification[qid] || '',
+          };
+        });
+        const res = await fetch(`/api/baseline/assessments/${encodeURIComponent(assessmentId)}/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phase: stage, responses }),
+        });
+        if (!res.ok) throw new Error(await res.text() || ('HTTP ' + res.status));
+        const result = await res.json();
+        if (result.status === 'in_progress' && (result.current_questions || []).length) {
+          panel.remove();
+          renderQuizPanel(assessmentToQuiz(result, quiz.intro), afterBubble, assessmentId);
+          return;
+        }
+        profile = result.profile;
+        panel.innerHTML = '';
+        renderAssessmentResult(panel, result, true);
+        if (!profile || result.status !== 'completed') return;
+      }
+      const prefix = profile
+        ? `我的结构化摸底结果（assessment_id=${assessmentId}）：\n${profile.summary}\n`
+        : '我的摸底选择（结构化保存失败，请按对话信息继续）：\n';
+      sendMessage(prefix + lines.join('\n'), '✅ 已完成真实能力诊断，画像与评分证据已保存');
+    } catch (error) {
+      console.error(error);
+      submitBtn.disabled = false;
+      hint.textContent = '保存失败，请检查后重试：' + error.message;
+      setStatus('❌ 摸底结果未保存，请重试', 'error');
+    }
+  });
+
+  // 插到助手气泡所在 message 之后
+  const msgWrap = afterBubble.closest('.msg');
+  msgWrap.parentNode.insertBefore(panel, msgWrap.nextSibling);
+  scrollPanelIntoView(panel);
+}
+
+function renderAssessmentResult(panel, assessment, continueConversation=false) {
+  const profile = assessment.profile || {};
+  const completed = assessment.status === 'completed';
+  const abilities = (profile.abilities || []).map((item) =>
+    `<span class="score-pill">${escapeText(item.label)} <strong>${Math.round(Number(item.score || 0))}</strong></span>`
+  ).join('');
+  const evidenceCount = (profile.score_evidence || []).length;
+  const evidenceHtml = (profile.score_evidence || []).map((item) =>
+    `<div class="evidence-item"><strong>${escapeText(item.question_id)} · ${escapeText(item.capability)}</strong> · ${Math.round(Number(item.observed_score || 0))}/100 · 置信度 ${Math.round(Number(item.confidence || 0) * 100)}%<br>${escapeText(item.reason || '')}</div>`
+  ).join('');
+  const card = document.createElement('div');
+  card.className = 'evidence-result';
+  card.innerHTML = `<div class="phase-kicker">${completed ? '诊断完成' : '需要复核'}</div>` +
+    `<h3>${completed ? '你的能力画像已由作答证据生成' : '当前证据置信度不足，画像暂不影响学习路径'}</h3>` +
+    `<div class="phase-copy">${escapeText(profile.summary || assessment.error || '评分暂未完成。')}</div>` +
+    `<div class="score-strip">${abilities}</div>` +
+    `<div class="evidence-line">证据 → ${evidenceCount} 条题目级评分记录；判断 → 画像置信度 ${Math.round(Number(profile.profile_confidence || 0) * 100)}%；路径影响 → ${completed ? '薄弱能力会转成带证据引用的先修、迁移或验收任务。' : '暂不进入路径生成，可重新评分。'}</div>` +
+    (evidenceHtml ? `<details class="evidence-details"><summary>查看题目级评分依据</summary>${evidenceHtml}</details>` : '');
+  if (completed && assessment.id) {
+    const disputeToggle = document.createElement('button');
+    disputeToggle.className = 'secondary-action'; disputeToggle.textContent = '对评分有异议';
+    const disputeBox = document.createElement('div');
+    disputeBox.className = 'dispute-box';
+    disputeBox.innerHTML = '<textarea placeholder="说明你认为哪项判断不准确，以及可补充的证据"></textarea><button class="submit" type="button">提交异议</button>';
+    disputeToggle.addEventListener('click', () => { disputeBox.classList.toggle('show'); if (disputeBox.classList.contains('show')) disputeBox.querySelector('textarea').focus(); });
+    disputeBox.querySelector('button').addEventListener('click', async (event) => {
+      const reason = disputeBox.querySelector('textarea').value.trim();
+      if (!reason) return disputeBox.querySelector('textarea').focus();
+      event.currentTarget.disabled = true;
+      try {
+        const res = await fetch(`/api/baseline/assessments/${encodeURIComponent(assessment.id)}/dispute`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reason})});
+        if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
+        disputeBox.innerHTML = '<div class="evidence-line">异议已登记，原始评分证据已保留并进入复核队列。</div>';
+      } catch (error) { event.currentTarget.disabled = false; setStatus('异议提交失败：' + error.message, 'error'); }
+    });
+    card.appendChild(disputeToggle); card.appendChild(disputeBox);
+  }
+  if (!completed && assessment.id) {
+    const retry = document.createElement('button');
+    retry.className = 'submit'; retry.textContent = '重新评分'; retry.style.marginTop = '13px';
+    retry.addEventListener('click', async () => {
+      retry.disabled = true; retry.textContent = '评分中…';
+      try {
+        const res = await fetch(`/api/baseline/assessments/${encodeURIComponent(assessment.id)}/submit`, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{"responses":[]}'});
+        if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
+        const next = await res.json(); panel.innerHTML = ''; renderAssessmentResult(panel, next, continueConversation);
+      } catch (error) { retry.disabled = false; retry.textContent = '重试失败，再试一次'; setStatus(error.message, 'error'); }
+    });
+    card.appendChild(retry);
+  }
+  panel.appendChild(card);
+}
+
+async function resumeBaselineAssessment() {
+  try {
+    const res = await fetch(`/api/baseline/assessments/current?session_id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const assessment = data.assessment;
+    if (!assessment || assessment.status === 'superseded' || document.querySelector(`[data-assessment-id="${assessment.id}"]`)) return;
+    dismissHero();
+    const bubble = appendMessage('assistant', assessment.status === 'completed' ? '这是你已完成的真实能力诊断结果。' : '继续你刚才未完成的真实能力诊断。答案和 assessment_id 已恢复，不会重复生成。');
+    renderQuizPanel(assessmentToQuiz(assessment), bubble, assessment.id);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function escapeText(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+// 去掉结构化标记块 + 残留围栏，得到可读正文
+const MARKER_RE = /<<<(?:GENERATE|QUIZ|CHOICES)>>>/;
+function cleanVisible(text) {
+  let t = String(text ?? '');
+  const m = t.match(MARKER_RE);
+  if (m) t = t.slice(0, m.index);                 // 标记块及之后全部砍掉
+  t = t.replace(/<<<\/?[A-Z]+>>>/g, '');          // 残留的 <<<END>>> 等
+  t = t.replace(/^\s*```[a-zA-Z]*\s*$/gm, '');     // 单独成行的代码围栏
+  t = t.replace(/```[a-zA-Z]*\s*$/, '');           // 结尾未闭合的围栏起始
+  t = t.replace(/`{2,}\s*$/, '');                  // 结尾散落的多个反引号
+  return t.replace(/\s+$/, '');
+}
+
+// 极简 Markdown → HTML（标题/加粗/斜体/行内码/代码块/表格/列表/分隔线/链接）
+function renderMarkdown(src) {
+  const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const inline = s => esc(s)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>')
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines = src.replace(/\r\n/g, '\n').split('\n');
+  let html = '', i = 0;
+  const isTableSep = l => /\|/.test(l) && /-/.test(l) && /^[\s:|-]+$/.test(l);
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^\s*```/.test(line)) {                    // 代码块
+      let code = ''; i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) { code += lines[i] + '\n'; i++; }
+      i++; html += '<pre><code>' + esc(code.replace(/\n$/, '')) + '</code></pre>'; continue;
+    }
+    if (line.includes('|') && i + 1 < lines.length && isTableSep(lines[i + 1])) {   // 表格
+      const row = r => r.replace(/^\s*\|/, '').replace(/\|\s*$/, '').split('|').map(c => c.trim());
+      const headers = row(line); i += 2;
+      let body = '';
+      while (i < lines.length && lines[i].includes('|') && lines[i].trim() !== '') {
+        const cells = row(lines[i]);
+        body += '<tr>' + headers.map((_, k) => '<td>' + inline(cells[k] || '') + '</td>').join('') + '</tr>'; i++;
+      }
+      html += '<table><thead><tr>' + headers.map(h => '<th>' + inline(h) + '</th>').join('') +
+              '</tr></thead><tbody>' + body + '</tbody></table>'; continue;
+    }
+    const hm = line.match(/^(#{1,4})\s+(.*)$/);    // 标题
+    if (hm) { const lv = hm[1].length; html += `<h${lv}>` + inline(hm[2]) + `</h${lv}>`; i++; continue; }
+    if (/^\s*([-*_])\1\1+\s*$/.test(line)) { html += '<hr>'; i++; continue; }   // 分隔线
+    if (/^\s*[-*+]\s+/.test(line)) {               // 无序列表
+      html += '<ul>';
+      while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) { html += '<li>' + inline(lines[i].replace(/^\s*[-*+]\s+/, '')) + '</li>'; i++; }
+      html += '</ul>'; continue;
+    }
+    if (/^\s*\d+\.\s+/.test(line)) {               // 有序列表
+      html += '<ol>';
+      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) { html += '<li>' + inline(lines[i].replace(/^\s*\d+\.\s+/, '')) + '</li>'; i++; }
+      html += '</ol>'; continue;
+    }
+    if (line.trim() === '') { i++; continue; }
+    let para = line; i++;                            // 段落
+    while (i < lines.length && lines[i].trim() !== '' && !/^\s*```/.test(lines[i]) &&
+           !/^(#{1,4})\s/.test(lines[i]) && !/^\s*[-*+]\s+/.test(lines[i]) &&
+           !/^\s*\d+\.\s+/.test(lines[i]) && !lines[i].includes('|')) {
+      para += '\n' + lines[i]; i++;
+    }
+    html += '<p>' + inline(para).replace(/\n/g, '<br>') + '</p>';
+  }
+  return html;
+}
+
+const CHOICES_RE = /<<<CHOICES>>>\s*```(?:json)?\s*([\s\S]+?)```\s*(?:<<<END>>>)?/;
+function parseChoices(text) {
+  const m = text.match(CHOICES_RE);
+  if (!m) return null;
+  try {
+    const d = JSON.parse(m[1].trim());
+    if (!Array.isArray(d.options) || !d.options.length) return null;
+    return d;
+  } catch { return null; }
+}
+
+function renderChoices(data, afterBubble) {
+  const panel = document.createElement('div');
+  panel.className = 'choices';
+  const multi = !!data.multi;
+  const allowCustom = data.allow_custom !== false;
+  const selected = new Set();
+
+  if (data.question) {
+    const q = document.createElement('div');
+    q.className = 'choice-question';
+    q.textContent = data.question;
+    panel.appendChild(q);
+  }
+
+  const row = document.createElement('div');
+  row.className = 'chip-row';
+  let confirmBtn = null;
+
+  (data.options || []).forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'ch';
+    b.textContent = o;
+    b.addEventListener('click', () => {
+      if (multi) {
+        b.classList.toggle('sel');
+        if (selected.has(o)) selected.delete(o); else selected.add(o);
+        if (confirmBtn) confirmBtn.disabled = selected.size === 0;
+      } else {
+        if (isStreaming || panel.classList.contains('done')) return;
+        row.querySelectorAll('.ch').forEach(x => x.classList.remove('sel'));
+        b.classList.add('sel');
+        panel.classList.add('done');
+        sendMessage('我选择：' + o, o);
+      }
+    });
+    row.appendChild(b);
+  });
+  panel.appendChild(row);
+
+  function submitCustom() {
+    const text = customInput ? customInput.value.trim() : '';
+    if (!text || isStreaming) return;
+    const message = multi && selected.size ? '我选：' + [...selected, `其他：${text}`].join('、') : text;
+    const display = multi && selected.size ? [...selected, `其他：${text}`].join('、') : text;
+    panel.classList.add('done');
+    sendMessage(message, display);
+  }
+
+  if (multi) {
+    confirmBtn = document.createElement('button');
+    confirmBtn.className = 'confirm';
+    confirmBtn.textContent = '确定';
+    confirmBtn.disabled = true;
+    confirmBtn.addEventListener('click', () => {
+      const arr = [...selected];
+      panel.classList.add('done');
+      sendMessage('我选：' + arr.join('、'), arr.join('、'));
+    });
+    panel.appendChild(confirmBtn);
+  }
+
+  let customInput = null;
+  if (allowCustom) {
+    const h = document.createElement('div');
+    h.className = 'custom-hint';
+    h.textContent = '上面的选项不贴切时，可以补充自己的答案。';
+    panel.appendChild(h);
+
+    const custom = document.createElement('div');
+    custom.className = 'custom-answer';
+    custom.innerHTML = `<textarea rows="1" placeholder="其他 / 补充说明"></textarea><button type="button" disabled>发送</button>`;
+    customInput = custom.querySelector('textarea');
+    const customBtn = custom.querySelector('button');
+    customInput.addEventListener('input', () => {
+      customBtn.disabled = !customInput.value.trim();
+    });
+    customInput.addEventListener('keydown', (e) => {
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitCustom();
+      }
+    });
+    customBtn.addEventListener('click', submitCustom);
+    panel.appendChild(custom);
+  }
+
+  const msgWrap = afterBubble.closest('.msg');
+  msgWrap.parentNode.insertBefore(panel, msgWrap.nextSibling);
+  scrollPanelIntoView(panel);
+}
+
+function parseEvent(block) {
+  let event = 'message', dataStr = '';
+  for (const line of block.split('\n')) {
+    if (line.startsWith('event:')) event = line.slice(6).trim();
+    else if (line.startsWith('data:')) dataStr = line.slice(5).trim();
+  }
+  if (!dataStr) return {};
+  let data; try { data = JSON.parse(dataStr); } catch { return {}; }
+  if (event === 'token') return { token: data.token };
+  if (event === 'generate_start') return { generateStart: data };
+  if (event === 'generate_progress') return { generateProgress: data };
+  if (event === 'generate') return { generate: data };
+  if (event === 'error') return { error: data.error };
+  return {};
+}
+
+function renderGenerateSteps(steps = []) {
+  const fallback = [
+    { label: '整理目标画像', detail: '汇总对话、目标、基线和偏好。' },
+    { label: '检索与校验资料', detail: '结合知识库和外部来源做事实接地。' },
+    { label: '拆解能力图谱', detail: '推演每周主题、每日节奏和阶段目标。' },
+    { label: '质量审查与保存', detail: '检查结构完整性，保存学习路径。' },
+  ];
+  const safeSteps = (steps.length ? steps : fallback).map((step, index) => ({
+    label: step.label || `步骤 ${index + 1}`,
+    detail: step.detail || '正在推进学习路径生成。',
+  }));
+  genSteps.innerHTML = '';
+  safeSteps.forEach((step, index) => {
+    const item = document.createElement('div');
+    item.className = 'genchk';
+    item.dataset.i = String(index);
+    const icon = document.createElement('div');
+    icon.className = 'gck';
+    const text = document.createElement('div');
+    text.className = 'gen-step-text';
+    const label = document.createElement('strong');
+    label.textContent = step.label;
+    const detail = document.createElement('span');
+    detail.textContent = step.detail;
+    text.appendChild(label);
+    text.appendChild(detail);
+    item.appendChild(icon);
+    item.appendChild(text);
+    genSteps.appendChild(item);
+  });
+}
+
+function showGenerateOverlay(data = {}) {
+  if (data.job_id) rememberGenerateJob(data.job_id);
+  if (data.job_id) stopGenerateLocalTimer();
+  setStatus('');
+  genTitle.textContent = data.title || '正在深度构建你的学习路径…';
+  genMessage.textContent = data.message || 'LearnBuddy 会先做资料检索、能力拆解和质量审查，再生成可执行计划';
+  renderGenerateSteps(data.steps || []);
+  overlay.classList.add('on');
+  updateGenerateProgress({
+    index: 0,
+    label: '开始生成',
+    detail: '已进入学习路径构建流程。',
+    elapsed: 0,
+  });
+}
+
+function stopGenerateLocalTimer() {
+  if (generateLocalTimer) {
+    clearInterval(generateLocalTimer);
+    generateLocalTimer = null;
+  }
+  generateLocalStartedAt = 0;
+  generateLocalProgress = null;
+}
+
+function startGenerateLocalTimer(progress = {}) {
+  stopGenerateLocalTimer();
+  generateLocalStartedAt = Date.now();
+  generateLocalProgress = { ...progress };
+  const tick = () => {
+    const elapsed = Math.max(0, Math.floor((Date.now() - generateLocalStartedAt) / 1000));
+    updateGenerateProgress({ ...generateLocalProgress, elapsed });
+  };
+  tick();
+  generateLocalTimer = setInterval(tick, 1000);
+}
+
+function updateGenerateProgress(data = {}) {
+  const items = [...overlay.querySelectorAll('.genchk')];
+  if (data.job_id) {
+    rememberGenerateJob(data.job_id);
+    stopGenerateLocalTimer();
+  }
+  if (data.status === 'ready' || data.status === 'error') stopGenerateLocalTimer();
+  const current = Math.max(0, Math.min(Number(data.index ?? data.stage_index ?? 0), Math.max(0, items.length - 1)));
+  items.forEach((el, i) => {
+    const icon = el.querySelector('.gck');
+    el.classList.toggle('done', i < current);
+    el.classList.toggle('on', i === current);
+    if (i < current) icon.textContent = '✓';
+    else if (i === current) icon.innerHTML = '<span class="spin"></span>';
+    else icon.textContent = '';
+  });
+  const total = Math.max(1, items.length);
+  const explicitPercent = Number(data.progress_percent);
+  const percent = Number.isFinite(explicitPercent)
+    ? Math.max(8, Math.min(100, explicitPercent))
+    : Math.max(8, Math.round(((current + 1) / total) * 100));
+  genBar.style.width = `${percent}%`;
+  const label = data.label || data.stage_label || '正在生成';
+  const stageDetail = data.detail || data.stage_detail || '';
+  const detail = stageDetail ? ` · ${stageDetail}` : '';
+  const seconds = data.elapsed ?? data.elapsed_seconds;
+  const elapsed = Number.isFinite(Number(seconds)) ? ` · 已用 ${seconds}s` : '';
+  genLive.textContent = `${label}${detail}${elapsed}`;
+}
+
+function finishGenerateOverlay(url) {
+  stopGenerateLocalTimer();
+  clearGenerateJob();
+  if (!overlay.classList.contains('on')) showGenerateOverlay();
+  const items = [...overlay.querySelectorAll('.genchk')];
+  items.forEach((el) => {
+    el.classList.remove('on');
+    el.classList.add('done');
+    el.querySelector('.gck').textContent = '✓';
+  });
+  genBar.style.width = '100%';
+  genLive.textContent = '学习路径已生成，正在进入学习空间…';
+  localStorage.removeItem(SESSION_KEY);
+  setTimeout(() => { window.location.href = url; }, 650);
+}
+
+// 输入交互
+let isComposingInput = false;
+function autoResize() { inputEl.style.height = 'auto'; inputEl.style.height = Math.min(inputEl.scrollHeight, 180) + 'px'; }
+inputEl.addEventListener('input', autoResize);
+inputEl.addEventListener('compositionstart', () => { isComposingInput = true; });
+inputEl.addEventListener('compositionend', () => { isComposingInput = false; });
+inputEl.addEventListener('keydown', (e) => {
+  if (isComposingInput || e.isComposing || e.keyCode === 229) return;
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    submit();
+  }
+});
+sendBtn.addEventListener('click', submit);
+function submit() {
+  const msg = inputEl.value.trim();
+  if (!msg) return;
+  inputEl.value = ''; autoResize();
+  sendMessage(msg);
+}
+
+// 示例 chips
+document.querySelectorAll('#chips .chip').forEach(c => {
+  c.addEventListener('click', () => { inputEl.value = c.textContent; submit(); });
+});
+
+window.addEventListener('DOMContentLoaded', async () => {
+  runtimeReady.catch(() => {});
+  await loadOpening();
+  resumeBaselineAssessment();
+  resumeGenerateJob();
+  inputEl.focus();
+});
+window.itutor = {
+  resetSession: () => { localStorage.removeItem(SESSION_KEY); location.reload(); },
+  get sessionId() { return sessionId; },
+};
+</script>
+
+</body>
+</html>

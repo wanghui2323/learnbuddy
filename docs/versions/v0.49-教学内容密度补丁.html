@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V0.49 教学内容密度、展开层与时长合同 · 三件套</title>
+<link rel="stylesheet" href="./version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">V0.49 教学内容密度、展开层与时长合同<small>需求方案 · 技术方案 · 开发范式</small></div>
+  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">密度门槛已开发 · 展开层已接入 · 学习时长合同已接入 · 质量 Loop 已验收</span>
+    <h1>让核心内容既能讲深，也能支撑真实学习时长</h1>
+    <p>V0.49 不是推翻 V0.48 流水线，而是补上它暴露出的质量缺口：先让短句清单式 lesson 不能过关，再引入 <code>expansions[]</code> 展开层，把机制、边界、反例、来源证据和 worked example 放到卡内按需展开；同时复用 onboarding 已收集的每日学习时长生成 <code>_session_contract</code>，让 1–2 小时学习者拿到完整学习单元，而不是 20–40 分钟微课；critic 触发后进入有边界的质量迭代 loop，直到通过、停滞、变差或达到轮数上限。</p>
+    <div class="meta"><span class="pill gold">状态：golden case 通过</span><span class="pill">ADR-046</span><span class="pill gray">下一步：人工读课 + 部署前回归</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求方案</h2><p>用户实测反馈：新流水线生成的内容仍明显偏少，深度不够；如果用户选择每天 1–2 小时，单节内容必须能支撑这个学习时长。</p><ul><li>不能把 6 张短卡、一个图解和两个例子当成“深度课”。</li><li>核心卡必须能独立教学，而不是只列本节怎么学。</li><li>更多信息要按需展开，不直接挤满首屏。</li><li>目标是知识完备性、学习质量、需求匹配度和个性化学习构建一起达标。</li></ul></article>
+    <article class="card panel"><h2>技术方案</h2><p>把“核心教学密度 + 可展开信息层 + 学习时长合同”纳入 prompt、critic、本地质量门和学习页渲染。</p><ul><li><code>lesson_write.md</code> 要求至少 3 张深讲卡。</li><li><code>content_quality.py</code> 检查 <code>teaching_chars</code>、<code>dense_teaching_cards</code>、<code>estimated_minutes</code> 与 <code>activity_plan</code>。</li><li>新增增量字段 <code>expansions[]</code>、<code>activity_plan</code>、<code>rubric</code>。</li><li>学习页默认展示核心卡，并展示“本节学习安排”。</li></ul></article>
+    <article class="card panel"><h2>开发范式</h2><p>兼容旧 lesson schema，增量支持展开层，并把展开层纳入质量门和 bounded loop。</p><ul><li>旧缓存继续可读，不迁移线上数据。</li><li>缺 <code>expansions</code> 时照常展示 <code>body/items</code>。</li><li>质量门新增 <code>expansion_blocks</code> 与 <code>expansion_kinds</code>。</li><li><code>ITUTOR_LESSON_MAX_REVISIONS</code> 默认 3、最高 5，候选变差则保留 best。</li><li>部署前必须人工读一节真 LLM 重生成内容。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>补丁内容</h2><p>这次仍放在 V0.49：密度门槛是第一步，展开层是同版自然延伸。</p></div><span class="pill">Patch Scope</span></div>
+    <div class="table-wrap"><table><thead><tr><th>层级</th><th>改动</th><th>验收信号</th></tr></thead><tbody>
+      <tr><td>写作</td><td>强制机制推演、边界对比、worked example 三类深讲卡。</td><td>新 lesson 至少 3 张核心卡能删掉标题后仍独立教学。</td></tr>
+      <tr><td>质量门</td><td>新增核心教学字量、深讲卡数量、展开层数量和展开类型检查。</td><td><code>checks.teaching_chars</code>、<code>dense_teaching_cards</code>、<code>expansion_blocks</code> 与 <code>expansion_kinds</code> 可解释。</td></tr>
+      <tr><td>critic</td><td>短句清单式内容必须 revise，depth 最高 65。</td><td>critic 不再只看 specificity / insight，而会指向具体浅卡。</td></tr>
+      <tr><td>返工</td><td>新增 <code>lesson_revise.md</code>，按 critic 指令加深整节课。</td><td>修订后补机制、边界、逐步例题，而不是只补字段。</td></tr>
+      <tr><td>质量 Loop</td><td><code>critic → revise → quality gate → critic</code>，默认最多 3 轮并保留 best。</td><td><code>_quality_loop.stop_reason</code>、<code>best_round</code>、每轮分数可观测。</td></tr>
+      <tr><td>时长合同</td><td>从已收集的每日学习时长推导 <code>_session_contract</code>；目标 >=60 分钟时强制 <code>estimated_minutes/activity_plan/rubric</code>。</td><td>1–2 小时用户不会再拿到 20–40 分钟微课。</td></tr>
+      <tr><td>四指标评审</td><td>critic 新增知识完备性、学习质量、需求匹配度、个性化学习构建指标。</td><td>loop 的优化目标从“更深一点”升级为“更完整、更好学、更贴合、更个性化”。</td></tr>
+      <tr><td>展开层</td><td>核心卡新增 <code>expansions[]</code>：mechanism、boundary、contrast、worked_example、counterexample、common_mistake、source_evidence、advanced。</td><td>默认首屏清楚，展开后能看到真实信息增量。</td></tr>
+      <tr><td>前端</td><td>学习页把 expansions 渲染为卡内折叠区，不做卡片套卡片。</td><td>“为什么 / 边界 / 看完整例子 / 来源依据”等入口清楚且不挤占主线。</td></tr>
+      <tr><td>测试</td><td>新增 outline-like lesson、展开层和质量 loop 回归样本。</td><td>6 张短卡即使结构完整也不能通过；缺展开层不能通过；候选变差时不覆盖 best。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>上线前验收</h2><p>必须用真实内容验证，不只看测试通过。</p></div><span class="pill gold">Go Live Gate</span></div>
+    <div class="table-wrap"><table><thead><tr><th>验收项</th><th>通过标准</th><th>当前状态</th></tr></thead><tbody>
+      <tr><td>单测</td><td><code>tests/test_content_quality.py</code> / <code>tests/test_content_review.py</code> / <code>tests/test_golden.py</code> 通过。</td><td>已通过。</td></tr>
+      <tr><td>真 LLM 重生成</td><td>用用户反馈样本同类主题重生成，人工确认不再只是提纲。</td><td>已通过：180.00s，低于 300s 预算。</td></tr>
+      <tr><td>质量报告</td><td><code>_quality.checks.dense_teaching_cards >= 3</code>，并能看到 expansions 的数量和类型；若目标 >=60 分钟，还要看到 <code>target_minutes / estimated_minutes / activity_minutes</code>；<code>_quality_loop</code> 记录每轮迭代。</td><td>已通过：quality 100，teaching_chars 5949，dense_teaching_cards 4，expansion_blocks 6。</td></tr>
+      <tr><td>人工阅读</td><td>首屏能抓主线；展开后至少能读到机制推演、边界对比、worked example 和来源证据。</td><td>待部署前人工读最终样本。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>收口结论</h2><p>V0.49 把“内容太薄”从主观感受变成可测、可展开的内容合同。</p></div><span class="pill gold">Decision</span></div>
+    <div class="callout"><b>收口结论：</b>V0.48 的流水线方向是对的，但质量门仍太容易被短句卡片刷过。V0.49 以后，生成链路必须证明自己写出了足够的核心教学内容，并且能支撑用户实际选择的学习时长；更多信息不直接堆在首屏，而是通过 <code>expansions[]</code> 展开层承载；修订不再只做一次，而是在 bounded loop 中按四个质量指标保留最佳版本。本轮真实线上验收已通过：<code>scripts/verify_lesson_quality_loop.py</code> 跑 90 分钟 Agent memory golden case，180.00s 完成，critic 分数最低 80。</div>
+  </section>
+  <div class="footer">V0.49 · 教学内容密度、展开层与时长合同 · golden case 已通过，待人工读课和部署前回归。</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<svg viewBox="0 0 940 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Harness 技术体系总图">
+  <defs>
+    <marker id="arr-h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-h-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-h-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-h-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-h-4" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e3edf5" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-h-5" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#efeae0" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <style>
+    .h-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .h-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .h-card { stroke: #d8d2c4; stroke-width: 1; }
+    .h-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+    .h-tag { font: 700 10.5px -apple-system, "PingFang SC", sans-serif; fill: #fff; }
+  </style>
+
+  <text x="40" y="32" class="h-title">Harness 技术体系总图（harness = 模型 + agent + 全部外部工程）</text>
+  <text x="40" y="50" class="h-sub">从内到外：模型 → Agent → Harness 工程层 → LearnBuddy 主系统</text>
+
+  <!-- L0 -->
+  <rect x="40" y="70" width="860" height="48" rx="10" fill="url(#g-h-1)" class="h-card" />
+  <circle cx="62" cy="94" r="11" fill="#2c6e6a" />
+  <text x="62" y="98" text-anchor="middle" class="h-tag">L0</text>
+  <text x="84" y="92" class="h-title">导论层</text>
+  <text x="84" y="108" class="h-sub">模型 ≠ Agent · harness 必要性 · 四层架构导论</text>
+
+  <line x1="470" y1="118" x2="470" y2="146" class="h-conn" marker-end="url(#arr-h)" />
+
+  <!-- L1 -->
+  <rect x="40" y="148" width="860" height="48" rx="10" fill="url(#g-h-2)" class="h-card" />
+  <circle cx="62" cy="172" r="11" fill="#4a9d6e" />
+  <text x="62" y="176" text-anchor="middle" class="h-tag">L1</text>
+  <text x="84" y="166" class="h-title">地基层</text>
+  <text x="84" y="182" class="h-sub">基础架构 · 训练对齐 · 模型调用与推理控制（仅做调用与控制）</text>
+
+  <line x1="470" y1="196" x2="470" y2="224" class="h-conn" marker-end="url(#arr-h)" />
+
+  <!-- L2 Harness 核心 -->
+  <rect x="40" y="226" width="860" height="120" rx="12" fill="url(#g-h-3)" class="h-card" />
+  <circle cx="62" cy="256" r="11" fill="#d98a3d" />
+  <text x="62" y="260" text-anchor="middle" class="h-tag">L2</text>
+  <text x="84" y="250" class="h-title">Harness 层（核心）</text>
+  <text x="84" y="266" class="h-sub">Prompt · Context · Memory · Agentic Loop · Tool · Skill · Guardrails · MCP · RAG</text>
+
+  <!-- L2 子节点 5 个 -->
+  <rect x="80" y="282" width="160" height="48" rx="8" fill="#fff" class="h-card" />
+  <text x="160" y="302" text-anchor="middle" class="h-title">输入组织</text>
+  <text x="160" y="318" text-anchor="middle" class="h-sub">05 Prompt · 06 Context</text>
+
+  <rect x="260" y="282" width="160" height="48" rx="8" fill="#fff" class="h-card" />
+  <text x="340" y="302" text-anchor="middle" class="h-title">记忆</text>
+  <text x="340" y="318" text-anchor="middle" class="h-sub">07 Memory · 13 RAG</text>
+
+  <rect x="440" y="282" width="160" height="48" rx="8" fill="#fff" class="h-card" />
+  <text x="520" y="302" text-anchor="middle" class="h-title">执行</text>
+  <text x="520" y="318" text-anchor="middle" class="h-sub">08 Loop · 09 Tool · 10 Skill</text>
+
+  <rect x="620" y="282" width="160" height="48" rx="8" fill="#fff" class="h-card" />
+  <text x="700" y="302" text-anchor="middle" class="h-title">约束与护栏</text>
+  <text x="700" y="318" text-anchor="middle" class="h-sub">11 输出解析与护栏</text>
+
+  <rect x="800" y="282" width="80" height="48" rx="8" fill="#fff" class="h-card" />
+  <text x="840" y="302" text-anchor="middle" class="h-title">连接</text>
+  <text x="840" y="318" text-anchor="middle" class="h-sub">12 MCP</text>
+
+  <line x1="470" y1="346" x2="470" y2="374" class="h-conn" marker-end="url(#arr-h)" />
+
+  <!-- L3 -->
+  <rect x="40" y="376" width="860" height="60" rx="12" fill="url(#g-h-4)" class="h-card" />
+  <circle cx="62" cy="406" r="11" fill="#3d6e9e" />
+  <text x="62" y="410" text-anchor="middle" class="h-tag">L3</text>
+  <text x="84" y="400" class="h-title">安全与应用层</text>
+  <text x="84" y="416" class="h-sub">14 安全攻防（注入防护 / AgentGuard · 本期必补）</text>
+  <text x="84" y="430" class="h-sub">15 CLI / 16 Coding Agent / 17 Sandbox · 暂不做</text>
+
+  <line x1="470" y1="436" x2="470" y2="464" class="h-conn" marker-end="url(#arr-h)" />
+
+  <!-- L4 -->
+  <rect x="40" y="466" width="860" height="60" rx="12" fill="url(#g-h-1)" class="h-card" />
+  <circle cx="62" cy="496" r="11" fill="#7b5ea7" />
+  <text x="62" y="500" text-anchor="middle" class="h-tag">L4</text>
+  <text x="84" y="490" class="h-title">编排层</text>
+  <text x="84" y="506" class="h-sub">18 编排架构 · 19 协作机制（Handoff / A2A）</text>
+  <text x="84" y="520" class="h-sub">20 动态 vs 静态 · 个人助理升级模式的承载层</text>
+
+  <line x1="470" y1="526" x2="470" y2="554" class="h-conn" marker-end="url(#arr-h)" />
+
+  <!-- L5 -->
+  <rect x="40" y="556" width="860" height="60" rx="12" fill="url(#g-h-2)" class="h-card" />
+  <circle cx="62" cy="586" r="11" fill="#b9852f" />
+  <text x="62" y="590" text-anchor="middle" class="h-tag">L5</text>
+  <text x="84" y="580" class="h-title">治理层</text>
+  <text x="84" y="596" class="h-sub">21 Eval & Observability · 22 Token 经济学</text>
+  <text x="84" y="610" class="h-sub">Eval Harness / Golden Set / Cache 命中率 / Routing 经济策略</text>
+
+  <line x1="470" y1="616" x2="470" y2="644" class="h-conn" marker-end="url(#arr-h)" />
+
+  <!-- L6 -->
+  <rect x="40" y="646" width="860" height="56" rx="12" fill="url(#g-h-5)" class="h-card" />
+  <circle cx="62" cy="674" r="11" fill="#235955" />
+  <text x="62" y="678" text-anchor="middle" class="h-tag">L6</text>
+  <text x="84" y="668" class="h-title">收官层 · Spec-driven Development</text>
+  <text x="84" y="684" class="h-sub">SPEC.md ADR · AGENTS.md 工程铁律 · docs 站 · 文档即代码</text>
+</svg>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 方案工作台</title>
+<style>
+  :root {
+    --bg: #f7f4ee; --card: #ffffff; --paper-2: #efeae0;
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --line: #e7e1d6;
+    --red: #c2603f; --red-soft: #f7e4dc;
+    --amberb: #b9852f; --amberb-soft: #f8edd8;
+    --blue: #3d6e9e; --blue-soft: #e3edf5;
+    --green: #4a9d6e; --green-soft: #e7f3ec;
+    --radius: 14px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 8px 24px rgba(43,41,38,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+
+  /* top bar */
+  .topbar { position: sticky; top: 0; z-index: 30; background: #fffdf9ee; backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  .topbar .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  .topbar .ttl { font-weight: 700; font-size: 15px; } .topbar .ttl small { font-weight: 500; color: var(--ink-faint); font-size: 12.5px; margin-left: 6px; }
+  .topbar .spacer { flex: 1; }
+  .topbar a.nav { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; padding: 7px 13px; border-radius: 8px; font-weight: 600; }
+  .topbar a.nav:hover { background: var(--teal-soft); color: var(--teal-dark); }
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 30px 24px 90px; }
+
+  /* hero */
+  .hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; border-radius: 18px;
+    padding: 26px 30px; box-shadow: 0 12px 32px rgba(44,110,106,.22); }
+  .hero h1 { font-size: 22px; font-weight: 700; } .hero .one { font-size: 14.5px; opacity: .95; margin-top: 8px; line-height: 1.7; }
+  .hero .meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); }
+  .hero .meta .k { font-size: 11px; opacity: .75; letter-spacing: .04em; } .hero .meta .v { font-size: 15px; font-weight: 600; margin-top: 2px; }
+
+  /* section */
+  .sec { margin-top: 34px; }
+  .sec-h { display: flex; align-items: center; gap: 11px; margin-bottom: 4px; }
+  .sec-h .no { width: 30px; height: 30px; border-radius: 9px; background: var(--amber-soft); color: var(--amberb);
+    font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .sec-h h2 { font-size: 20px; font-weight: 700; letter-spacing: -.2px; }
+  .sec-desc { color: var(--ink-soft); font-size: 13.5px; margin: 0 0 16px 41px; }
+
+  .block-t { font-size: 15px; font-weight: 700; margin: 22px 0 12px; display: flex; align-items: center; gap: 8px; }
+  .block-t .bar { width: 4px; height: 15px; border-radius: 3px; background: var(--teal); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+  .lead { font-size: 15px; line-height: 1.75; } .lead b { color: var(--teal-dark); }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  th, td { text-align: left; padding: 11px 14px; font-size: 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #faf7f1; font-weight: 700; color: var(--ink-soft); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  td .id { font-weight: 700; color: var(--teal); white-space: nowrap; }
+  td .loc { color: var(--ink-faint); font-size: 12px; font-family: Menlo, Consolas, monospace; }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .b-block { background: var(--red-soft); color: var(--red); }
+  .b-high { background: var(--amberb-soft); color: var(--amberb); }
+  .b-mid { background: var(--blue-soft); color: var(--blue); }
+  .b-low { background: var(--paper-2); color: var(--ink-soft); }
+  .b-done { background: var(--green-soft); color: var(--green); }
+  .b-todo { background: var(--amber-soft); color: var(--amberb); }
+  .b-na { background: var(--paper-2); color: var(--ink-faint); }
+
+  /* diff cards */
+  .diffs { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .diff { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; box-shadow: var(--shadow); }
+  .diff .d-id { font-size: 12px; font-weight: 700; color: var(--amber); }
+  .diff .d-name { font-size: 15px; font-weight: 700; margin: 3px 0 5px; }
+  .diff .d-desc { font-size: 13px; color: var(--ink-soft); }
+
+  /* phases */
+  .phase { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 15px 18px; margin-bottom: 11px; box-shadow: var(--shadow); }
+  .phase .p-h { display: flex; align-items: center; gap: 10px; }
+  .phase .p-tag { font-size: 12px; font-weight: 700; padding: 3px 11px; border-radius: 7px; }
+  .phase .p-name { font-weight: 700; font-size: 14.5px; }
+  .phase ul { margin: 10px 0 0 4px; list-style: none; } .phase li { font-size: 13.5px; color: var(--ink-soft); padding: 3px 0 3px 18px; position: relative; }
+  .phase li::before { content: "·"; position: absolute; left: 4px; color: var(--teal); font-weight: 700; }
+
+  /* arch diagram */
+  .arch { display: flex; flex-direction: column; gap: 0; }
+  .layer { border: 1px solid var(--line); background: var(--card); border-radius: 11px; padding: 13px 17px; box-shadow: var(--shadow); position: relative; }
+  .layer .l-name { font-weight: 700; font-size: 13.5px; color: var(--teal-dark); }
+  .layer .l-body { font-size: 13px; color: var(--ink-soft); margin-top: 3px; }
+  .arrow { text-align: center; color: var(--ink-faint); font-size: 13px; padding: 5px 0; }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { font-size: 12.5px; padding: 4px 11px; border-radius: 20px; background: var(--paper-2); color: var(--ink-soft); }
+  .pill b { color: var(--ink); }
+
+  .note { background: var(--amber-soft); border-radius: 10px; padding: 12px 15px; font-size: 13px; color: #8a5a1f; margin-top: 12px; }
+  .codeline { font-family: Menlo, Consolas, monospace; font-size: 12.5px; background: var(--paper-2); padding: 2px 7px; border-radius: 5px; color: var(--teal-dark); }
+
+  .links { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 6px; }
+  .lk { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 9px; text-decoration: none; color: var(--ink); font-size: 13.5px; box-shadow: var(--shadow); }
+  .lk:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+  .foot { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-faint); }
+  @media (max-width: 720px) { .topbar .ttl small { display: none; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">i</div>
+  <div class="ttl">LearnBuddy 方案工作台<small>需求 · 技术</small></div>
+  <div class="spacer"></div>
+  <a class="nav" href="#req">需求方案</a>
+  <a class="nav" href="#tech">技术方案</a>
+  <a class="nav" href="http://127.0.0.1:8000/space" target="_blank">打开产品 ↗</a>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>LearnBuddy 学习伙伴 · 方案工作台</h1>
+    <div class="one" id="one-liner"></div>
+    <div class="meta" id="hero-meta"></div>
+  </div>
+
+  <!-- ============ 需求方案 ============ -->
+  <section class="sec" id="req">
+    <div class="sec-h"><div class="no">01</div><h2>需求方案</h2></div>
+    <div class="sec-desc">这个产品做什么、为谁做、解决什么缺口、哪些是不可砍的核心。</div>
+
+    <div class="block-t"><span class="bar"></span>问题缺口</div>
+    <table id="gaps-table">
+      <thead><tr><th style="width:140px">缺口</th><th>现状</th><th>影响</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="block-t"><span class="bar"></span>核心差异点（砍了就和普通 ChatGPT 没区别）</div>
+    <div class="diffs" id="diffs"></div>
+
+    <div class="block-t"><span class="bar"></span>功能范围分期（先稳 → 再深 → 后大）</div>
+    <div id="phases"></div>
+
+    <div class="block-t"><span class="bar"></span>多端策略与手机端联通（web 学得深 · 手机不掉线）</div>
+    <div class="card"><div class="lead" style="font-size:13.5px" id="me-why"></div></div>
+    <table id="me-split" style="margin-top:12px">
+      <thead><tr><th style="width:200px">端</th><th style="width:70px">定位</th><th>承载</th><th style="width:130px">形态</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1.3fr .9fr;gap:12px;margin-top:12px" id="me-grid">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:8px">联通 5 大能力</div>
+        <div class="diffs" id="me-conn" style="grid-template-columns:1fr"></div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:8px">形态分期（公众号优先 · PWA 后移）</div>
+        <div id="me-phase"></div>
+      </div>
+    </div>
+    <div class="note" id="me-dep" style="margin-top:10px"></div>
+
+    <div class="block-t"><span class="bar"></span>个人记忆系统（越用越懂你 · D6）</div>
+    <div class="card"><div class="lead" style="font-size:13.5px" id="mem-why"></div></div>
+    <table id="mem-layers" style="margin-top:12px">
+      <thead><tr><th style="width:60px">层</th><th style="width:110px">名称</th><th>记什么</th><th>喂给谁 → 怎么变个性化</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="note" id="mem-loop" style="margin-top:12px"></div>
+    <div id="mem-phase" style="margin-top:12px"></div>
+
+    <div class="block-t"><span class="bar"></span>明确不做（防无底洞）</div>
+    <div class="card"><div class="pill-row" id="nongoals"></div></div>
+  </section>
+
+  <!-- ============ 技术方案 ============ -->
+  <section class="sec" id="tech">
+    <div class="sec-h"><div class="no">02</div><h2>技术方案</h2></div>
+    <div class="sec-desc">怎么实现：分层架构、模块职责、关键工程规范、技术债清单、技术栈。</div>
+
+    <div class="block-t"><span class="bar"></span>分层架构</div>
+    <div class="arch" id="arch"></div>
+
+    <div class="block-t"><span class="bar"></span>模块职责</div>
+    <table id="modules-table">
+      <thead><tr><th style="width:170px">模块</th><th>职责</th><th style="width:90px">状态</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="block-t"><span class="bar"></span>关键工程规范</div>
+    <div class="card">
+      <div class="lead" style="font-size:14px">
+        <b>① LLM 同步/异步边界（强制）</b>：FastAPI async handler 里**禁止**直接调同步 <span class="codeline">client.chat</span>，
+        必须 <span class="codeline">await asyncio.to_thread(fn)</span>，否则阻塞整个事件循环。
+      </div>
+      <div class="lead" style="font-size:14px;margin-top:10px">
+        <b>② 任何 LLM 输出都要有"看得到的回退路径"</b>：出题、判分、周计划、学习手册都有 fallback，不静默失败。
+      </div>
+      <div class="lead" style="font-size:14px;margin-top:10px">
+        <b>③ venv 不进 iCloud</b>：源码可同步，但 venv / 运行时数据必须放本地非同步路径（启动卡死的根因）。
+      </div>
+      <div class="lead" style="font-size:14px;margin-top:10px">
+        <b>④ 多端联通：一个后端、一份数据、两个前端</b>：手机端是复用 <span class="codeline">/api/*</span> 的 PWA，不是新系统。V0.5 先预埋 <span class="codeline">ReviewItem</span> schema + <span class="codeline">/today</span> <span class="codeline">/review/*</span> 接口，V1 再上 Web Push + APScheduler。
+      </div>
+      <div class="note">评估闭环：对话挖掘目标 → evaluator 出题 → 双坐标答题 → scorer 判分 → profiler 画像 → generator 弱项加权生成路径。</div>
+      <div class="note" style="background:var(--blue-soft);color:var(--blue);margin-top:8px">推送链路(V1)：APScheduler 每日定时 → 算今日任务+到期复习 → pywebpush 下发 → service worker 弹通知 → 点开 PWA 完成 → POST /api/review/submit 回写。</div>
+    </div>
+
+    <div class="block-t"><span class="bar"></span>技术债登记（逐条排进里程碑修复）</div>
+    <table id="debt-table">
+      <thead><tr><th style="width:60px">ID</th><th>描述</th><th style="width:200px">位置</th><th style="width:70px">严重度</th><th style="width:50px">里程碑</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="block-t"><span class="bar"></span>技术栈</div>
+    <div class="card"><div class="pill-row" id="stack"></div></div>
+  </section>
+
+  <!-- LINKS -->
+  <section class="sec">
+    <div class="block-t"><span class="bar"></span>完整文档</div>
+    <div class="links">
+      <a class="lk" href="./01-需求方案.md">📄 01 需求方案</a>
+      <a class="lk" href="./02-技术方案.md">📐 02 技术方案</a>
+      <a class="lk" href="./03-开发方案与计划.md">🗂️ 03 开发方案与计划</a>
+      <a class="lk" href="./04-进度管理.md">📊 04 进度管理</a>
+      <a class="lk" href="http://127.0.0.1:8000/space" target="_blank">🎓 打开产品</a>
+    </div>
+  </section>
+
+  <div class="foot">
+    LearnBuddy 方案工作台 · 单文件离线仪表盘 · 内容内嵌于 <code>DATA</code> 对象，更新方案直接改本文件数据块即可 ·
+    本工作台只做"需求 + 技术"两件事的梳理，进度/里程碑见 04 文档。
+  </div>
+</div>
+
+<script>
+const DATA = {
+  oneLiner: "把「个性化学习路径生成」做成<b>领域无关的可复用引擎</b>——任何人用自然语言说出学习需求，10–30 分钟对话后得到一条量身定做、可执行、带考核与反遗忘机制的 4–24 周学习路径。",
+  meta: [
+    { k: "当前阶段", v: "V0.5（产品本质补完）" },
+    { k: "产品形态", v: "教学主导型 · 通用引擎" },
+    { k: "首个 demo", v: "日语 N3 备考 3 个月" },
+    { k: "技术栈", v: "FastAPI + DeepSeek" },
+  ],
+  gaps: [
+    { id: "P1 学习细节不足", now: "周计划是写死的时间段模板，与领域无关（学日语和学编程排出来一样）", impact: "计划“看着对”但不可执行，缺具体资源/量化/验收" },
+    { id: "P2 无考核性", now: "没有任何测验机制", impact: "用户无法验证学没学会，路径变“纸上计划”" },
+    { id: "P3 无用户画像", now: "只有一句 baseline_summary 文本", impact: "系统不“懂”用户，无法对靶弱项" },
+    { id: "P4 评估未闭环", now: "评估器代码已写但游离在运行路径外", impact: "核心差异点（即时基线评估）没真正发挥作用" },
+    { id: "E1 运行环境", now: ".venv 在 iCloud，启动卡几分钟", impact: "系统几乎无法在本机正常起服务" },
+    { id: "E2 并发阻塞", now: "同步 LLM 调用塞在 async 事件循环里", impact: "单连接卡死拖垮整个 server" },
+    { id: "E3 无超时保护", now: "流式无首 token 超时", impact: "LLM 卡住时连接永久挂起" },
+  ],
+  diffs: [
+    { id: "D1", name: "即时基线评估", desc: "LLM 现场为领域出题，双坐标系（独立完成 vs AI 协作）区分“会做”与“借助 AI 能做”。" },
+    { id: "D2", name: "个性化路径", desc: "不是通用模板，按目标/时间/基线/画像生成对靶路径。" },
+    { id: "D3", name: "反遗忘 5 机制", desc: "micro-review / 间隔重复 / 周回测 / 月度雪球 / 解释关延迟。" },
+    { id: "D4", name: "6 关自检 + R 规则", desc: "每周自检 6 维度，不过自动触发节奏调整（R1–R10）。" },
+    { id: "D5", name: "考核闭环", desc: "每日小测 / 周章考 / 月度大考，结果回流画像。" },
+    { id: "D6", name: "个人记忆系统", desc: "跨任务沉淀「懂你」的记忆（画像/偏好/弱项/行为/背景），越用越个性化。" },
+  ],
+  phases: [
+    { tag: "V0", tagCls: "b-done", state: "已交付", name: "基线跑通", items: ["对话引擎（system prompt + GENERATE + SSE）", "个性化生成器（参数包 → 5 件套）", "FastAPI 服务 + 对话页 + 实例页", "88 个单元测试"] },
+    { tag: "V0.5", tagCls: "b-todo", state: "本轮重点", name: "产品本质补完", items: ["稳定性修复（venv 移出 iCloud / async 不阻塞 / 首 token 超时）", "评估闭环（evaluator 接进对话流，LLM 现场判分）", "用户画像（N 维度 × 0–5 评分 × 双坐标）", "详细周计划（LLM 生成每日资源/量化/验收）", "考核体系（每日小测 + 周章考 + 月度大考）", "6 关自检页 + R1 自动判断", "预留手机端触点接口（今日任务 / 复习队列 API + ReviewItem 字段）", "个人记忆预埋（UserMemory schema + 评估/学练写入）"] },
+    { tag: "V1", tagCls: "b-na", state: "规划", name: "成型 · 多租户 · 手机端", items: ["反遗忘 5 机制工程化（SM-2 间隔重复）", "多租户 + 用户体系（登录 / Postgres / 行级权限）", "手机端前期：微信公众号绑定 + 每日提醒（增强公众号粘性 · 双向导流）", "APScheduler 推送调度器 + 双端数据一致", "个人记忆系统（LLM 抽取 + 召回注入 + 记忆面板）", "持续运营仪表盘（today/calendar/progress）", "后续周 lazy build + 手动调整对话"] },
+    { tag: "V2", tagCls: "b-na", state: "远期", name: "规模化与智能化", items: ["Claude Agent SDK 5 模式", "多 LLM provider 路由（异常切 fallback）", "学习画像长期演进", "强实操领域接入（硬件/视频反馈）"] },
+  ],
+  nonGoals: ["❌ 课程内容生产（不卖课）", "❌ 社交 / 师生匹配", "❌ AI 替你学（给脚手架不给答案）", "❌ 强实操领域（V2 才考虑）", "❌ 4 周以内速成", "❌ V0.5 不做手机端 UI（只预埋接口）", "❌ 前期不自建 App/PWA（先用公众号验证提醒价值）"],
+  multiEnd: {
+    split: [
+      { end: "Web · 主动深度学习场", role: "学得深", carry: "路径生成对话 · 学练单元（讲解+练习）· 学情面板 · 资料 · 6 关自检", feat: "大屏 · 长时段 · 专注" },
+      { end: "手机端 L1 提醒层（前期·公众号）", role: "叫回来", carry: "微信公众号绑定 · 每日任务/复习提醒 · 关键词「今日」查看 · 落地链接", feat: "高到达率 · 低成本 · 增强粘性" },
+      { end: "手机端 L2 学练层（后期·PWA）", role: "不掉线", carry: "micro-review 闪卡 · 碎片小测 · 打卡 · 离线", feat: "碎片化 · 单手 · 离线" },
+    ],
+    why: "教学主导型产品不能只靠用户主动打开 web——「推进」和「反遗忘」靠触点。<b>前期手机端极简：直接绑微信公众号做提醒</b>，成本低、国内到达率高，每条提醒=一次公众号回访，学习路径↔公众号双向导流增强粘性。深度碎片学练（PWA）后移。",
+    conn: [
+      { id: "C1", name: "账户/实例同步", desc: "公众号网页授权拿 openid 绑定 web 账户" },
+      { id: "C2", name: "推送下发", desc: "服务号订阅通知/模板消息推今日任务+复习提醒（订阅号降级被动触发）" },
+      { id: "C3", name: "轻查看", desc: "关键词「今日」被动回复任务摘要 + 落地链接" },
+      { id: "C4", name: "完成回写", desc: "点链接打开 web 完成 → 学情同步更新" },
+      { id: "C5", name: "碎片/离线（后期）", desc: "PWA 闪卡、小测、离线缓存（L2 学练层）" },
+    ],
+    phase: [
+      { tag: "V0.5", cls: "b-todo", txt: "不做手机 UI，预埋触点接口 + ReviewItem/推送字段" },
+      { tag: "V1 前期", cls: "b-na", txt: "微信公众号绑定（OAuth openid）+ 每日提醒 + APScheduler，最低成本验证 + 增强粘性" },
+      { tag: "V1.5", cls: "b-na", txt: "PWA + Web Push + 离线缓存，承接碎片化深度学练（L2）" },
+      { tag: "V2", cls: "b-na", txt: "视规模评估小程序 / 原生 App" },
+    ],
+    dep: "⚠️ 依赖：能否每日主动推送取决于公众号类型——认证服务号→完整提醒；订阅号→降级为关键词被动触发 + 每日群发（PRD Q4 待确认）。",
+  },
+  memory: {
+    why: "画像回答「你现在水平怎样」（单任务），<b>记忆系统回答「你是个什么样的学习者」</b>——跨任务、跨会话长期沉淀，让系统越用越个性化，是 LearnBuddy 从「一次性生成器」走向「长期学习伙伴」的关键（D6）。",
+    layers: [
+      { id: "M1", name: "画像记忆", store: "各能力维度随时间的演进轨迹", use: "生成器：知道你哪些在涨、哪些卡住" },
+      { id: "M2", name: "偏好记忆", store: "学习风格/节奏/时段/形式（爱例子、嫌长文）", use: "内容生成+教练语气：按你喜欢的方式讲" },
+      { id: "M3", name: "错题/弱项", store: "反复错的点、易混概念", use: "间隔重复+出题：优先重练弱项" },
+      { id: "M4", name: "行为记忆", store: "完成率、连续打卡、掉线信号、卡壳位置", use: "每日推荐：节奏调整、干预流失" },
+      { id: "M5", name: "背景/事实", store: "目标、Deadline、职业背景、跨领域线索", use: "全局：举例贴背景、跨任务复用" },
+    ],
+    loop: "学练/对话/考核/打卡 → ① 写入：LLM 抽取记忆增量 → 个人记忆库（按层结构化） → ② 巩固：合并去重/淘汰过期（防膨胀） → ③ 读取：生成/推荐/教练前召回相关记忆注入 prompt → 更懂你的输出 → 再写入（正循环）",
+    phase: [
+      { tag: "V0.5", cls: "b-todo", txt: "UserMemory schema + core/memory.py 规则版 write/recall/render + 评估/学练写入" },
+      { tag: "V1", cls: "b-na", txt: "LLM 记忆抽取 + consolidate + 召回注入 + 记忆面板（查看/编辑/删除）+ 跨任务复用" },
+      { tag: "V2", cls: "b-na", txt: "向量记忆（语义召回）+ 长期巩固「记忆雪球」" },
+    ],
+  },
+  arch: [
+    { name: "前端层 · 双端", body: "Web（web/）主动深度学习：对话 · 学习场 · 答题(V0.5) ／ 手机端 PWA(V1) 被动触点：今日任务 · 闪卡 · 打卡 · 推送接收" },
+    { name: "服务层 · server.py（FastAPI）", body: "路由 · SSE 流式 · 会话池 · 实例读写 API · 内容生成 API · 推送调度器/复习队列 API(V1)" },
+    { name: "核心引擎层 · core/", body: "engine 对话 · evaluator 评估 · scorer 判分(V0.5) · profiler 画像(V0.5) · generator 生成 · content 内容生成 · memory 个人记忆 · schemas · llm_client · prompts/" },
+    { name: "数据层 · data/instances/{slug}/", body: "V0: JSON 文件 → V0.5: 继续 JSON → V1: Postgres" },
+  ],
+  modules: [
+    { name: "core/schemas.py", duty: "Pydantic 数据模型，所有 LLM 输出过这层校验", st: "V0", cls: "b-done" },
+    { name: "core/llm_client.py", duty: "DeepSeek 封装（同步 + 异步流式 + 异常归一）", st: "V0", cls: "b-done" },
+    { name: "core/engine.py", duty: "对话状态机 + GENERATE 解析 + slug 生成", st: "V0", cls: "b-done" },
+    { name: "core/generator.py", duty: "参数包 → 5 件套", st: "V0", cls: "b-done" },
+    { name: "core/content.py", duty: "内容生成 agent：实时出讲解卡 + 点选练习", st: "V0.5", cls: "b-todo" },
+    { name: "core/memory.py", duty: "个人记忆：写入增量 / 巩固去重 / 召回注入 prompt", st: "V0.5预埋", cls: "b-todo" },
+    { name: "core/evaluator.py", duty: "即时基线评估出题", st: "未接入", cls: "b-high" },
+    { name: "core/scorer.py", duty: "LLM 判分（独立 / AI 协作双坐标）", st: "V0.5", cls: "b-todo" },
+    { name: "core/profiler.py", duty: "评估结果 → 结构化画像", st: "V0.5", cls: "b-todo" },
+    { name: "server.py", duty: "FastAPI 路由 + SSE", st: "V0", cls: "b-done" },
+  ],
+  debt: [
+    { id: "E1", desc: "venv 在 iCloud 导致启动卡几分钟", loc: "运行环境", sev: "阻塞", cls: "b-block", ms: "M0" },
+    { id: "E2", desc: "同步 LLM 调用阻塞 async 事件循环", loc: "server.py generate_instance", sev: "阻塞", cls: "b-block", ms: "M0" },
+    { id: "E3", desc: "流式无首 token 超时，连接永久挂起", loc: "llm_client.chat_stream", sev: "高", cls: "b-high", ms: "M0" },
+    { id: "B1", desc: "evaluator.py 是死代码，未接入运行路径", loc: "core/evaluator.py", sev: "高", cls: "b-high", ms: "M1" },
+    { id: "B2", desc: "build_week_plan 写死模板，无视领域", loc: "generator _WEEKDAY_OUTPUT_TASKS", sev: "高", cls: "b-high", ms: "M2" },
+    { id: "B3", desc: "内存 session 池只增不减，无 TTL", loc: "server.py _sessions", sev: "中", cls: "b-mid", ms: "M1" },
+    { id: "Q3", desc: "domain_to_slug 仅认 ~40 硬编码词", loc: "core/engine.py", sev: "低", cls: "b-low", ms: "M2" },
+    { id: "Q4", desc: "单测全用 Fake，无真实 server 集成测试", loc: "tests/", sev: "中", cls: "b-mid", ms: "M1" },
+  ],
+  stack: ["语言 <b>Python 3.11+</b>", "Web <b>FastAPI + uvicorn</b>", "LLM SDK <b>openai>=1.50</b>", "Provider <b>DeepSeek</b>", "数据建模 <b>Pydantic v2</b>", "前端 <b>原生 HTML/JS + marked.js</b>", "持久化 <b>JSON（V1 起 Postgres）</b>", "测试 <b>pytest + httpx</b>"],
+};
+
+document.getElementById('one-liner').innerHTML = DATA.oneLiner;
+document.getElementById('hero-meta').innerHTML = DATA.meta.map(m => `<div><div class="k">${m.k}</div><div class="v">${m.v}</div></div>`).join('');
+document.querySelector('#gaps-table tbody').innerHTML = DATA.gaps.map(g =>
+  `<tr><td><span class="id">${g.id}</span></td><td>${g.now}</td><td style="color:var(--ink-soft)">${g.impact}</td></tr>`).join('');
+document.getElementById('diffs').innerHTML = DATA.diffs.map(d =>
+  `<div class="diff"><div class="d-id">${d.id}</div><div class="d-name">${d.name}</div><div class="d-desc">${d.desc}</div></div>`).join('');
+document.getElementById('phases').innerHTML = DATA.phases.map(p =>
+  `<div class="phase"><div class="p-h"><span class="p-tag ${p.tagCls}">${p.tag}</span><span class="p-name">${p.name}</span><span style="font-size:12.5px;color:var(--ink-faint)">${p.state}</span></div><ul>${p.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('');
+document.getElementById('nongoals').innerHTML = DATA.nonGoals.map(n => `<span class="pill">${n}</span>`).join('');
+document.getElementById('me-why').innerHTML = DATA.multiEnd.why;
+document.querySelector('#me-split tbody').innerHTML = DATA.multiEnd.split.map(s =>
+  `<tr><td><b>${s.end}</b></td><td><span class="badge b-done">${s.role}</span></td><td style="color:var(--ink-soft)">${s.carry}</td><td style="color:var(--ink-faint);font-size:12px">${s.feat}</td></tr>`).join('');
+document.getElementById('me-conn').innerHTML = DATA.multiEnd.conn.map(c =>
+  `<div class="diff" style="padding:11px 14px"><div class="d-id">${c.id} · ${c.name}</div><div class="d-desc" style="margin-top:3px">${c.desc}</div></div>`).join('');
+document.getElementById('me-phase').innerHTML = DATA.multiEnd.phase.map(p =>
+  `<div class="phase" style="padding:11px 14px;margin-bottom:8px"><div class="p-h"><span class="p-tag ${p.cls}">${p.tag}</span><span style="font-size:13px;color:var(--ink-soft)">${p.txt}</span></div></div>`).join('');
+document.getElementById('me-dep').innerHTML = DATA.multiEnd.dep;
+document.getElementById('mem-why').innerHTML = DATA.memory.why;
+document.querySelector('#mem-layers tbody').innerHTML = DATA.memory.layers.map(l =>
+  `<tr><td><span class="id">${l.id}</span></td><td><b>${l.name}</b></td><td style="color:var(--ink-soft)">${l.store}</td><td style="color:var(--ink-soft)">${l.use}</td></tr>`).join('');
+document.getElementById('mem-loop').innerHTML = '<b>记忆闭环：</b>' + DATA.memory.loop;
+document.getElementById('mem-phase').innerHTML = DATA.memory.phase.map(p =>
+  `<div class="phase" style="padding:11px 14px;margin-bottom:8px"><div class="p-h"><span class="p-tag ${p.cls}">${p.tag}</span><span style="font-size:13px;color:var(--ink-soft)">${p.txt}</span></div></div>`).join('');
+document.getElementById('arch').innerHTML = DATA.arch.map((l,i) =>
+  `<div class="layer"><div class="l-name">${l.name}</div><div class="l-body">${l.body}</div></div>${i<DATA.arch.length-1?'<div class="arrow">▼</div>':''}`).join('');
+document.querySelector('#modules-table tbody').innerHTML = DATA.modules.map(m =>
+  `<tr><td><span class="loc">${m.name}</span></td><td>${m.duty}</td><td><span class="badge ${m.cls}">${m.st}</span></td></tr>`).join('');
+document.querySelector('#debt-table tbody').innerHTML = DATA.debt.map(d =>
+  `<tr><td><span class="id">${d.id}</span></td><td>${d.desc}</td><td><span class="loc">${d.loc}</span></td><td><span class="badge ${d.cls}">${d.sev}</span></td><td><span class="badge b-low">${d.ms}</span></td></tr>`).join('');
+document.getElementById('stack').innerHTML = DATA.stack.map(s => `<span class="pill">${s}</span>`).join('');
+</script>
+</body>
+</html>

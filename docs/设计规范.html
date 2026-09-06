@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 通用设计规范</title>
+<link rel="stylesheet" href="./versions/version-doc.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">L</div>
+  <div class="brand">LearnBuddy 通用设计规范<small>跨版本设计准则 · Design System v1 · Visual Asset System v1</small></div>
+  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">长期规范 · 每次迭代对照 · 不占版本号</span>
+    <h1>用一套通用设计规范约束 LearnBuddy 的每次产品迭代</h1>
+    <p>这不是某个版本的需求，而是跨版本设计准则。它定义 LearnBuddy 的产品调性、信息层级、组件规则、AI 状态、图片资产和验收方式；后续每次迭代都要检查是否遵守，具体页面改造再单独立版本。</p>
+    <div class="meta"><span class="pill gold">状态：长期生效</span><span class="pill">ADR-047</span><span class="pill gray">版本开发前必看</span></div>
+  </section>
+
+  <section class="grid3">
+    <article class="card panel"><h2>需求背景</h2><p>内容质量已经进入受控流水线，但视觉承接仍像多轮迭代拼起来的原型。</p><ul><li>页面级内联样式多，组件语言不统一。</li><li>暖纸底、卡片、按钮、状态色缺少统一规则。</li><li>登录页、学习空间、路径页和学练页没有共同的品牌气质。</li><li>图片资产没有系统标准，容易变成随机装饰。</li></ul></article>
+    <article class="card panel"><h2>用户价值</h2><p>让产品第一眼更可信，学习过程更清楚，行动入口更稳定。</p><ul><li>用户能更快判断“现在该做什么”。</li><li>深讲内容有更好的阅读层级，不退回长讲义。</li><li>状态、错误、加载和完成反馈更一致。</li><li>视觉资产帮助理解学习场景，而不是抢注意力。</li></ul></article>
+    <article class="card panel"><h2>使用口径</h2><p>本页是通用规范，不直接代表某个版本排期。</p><ul><li>新页面设计前先看本规范。</li><li>旧页面改造时优先按本规范收口。</li><li>具体实现进入独立版本需求页。</li><li>不新增学习功能，不迁移用户数据。</li></ul></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>调研结论</h2><p>成熟设计系统的共同点不是“好看的组件”，而是把原则、token、组件、模式、内容和验收连成一套可执行系统。</p></div><span class="pill">Research</span></div>
+    <div class="table-wrap"><table><thead><tr><th>参考系统</th><th>可借鉴点</th><th>LearnBuddy 转译</th></tr></thead><tbody>
+      <tr><td><a href="https://designsystem.digital.gov/">USWDS</a></td><td>把组件、模式、设计 token、模板、可访问性和性能放在同一个体系里，服务“可访问、移动友好、一致”的公共服务。</td><td>设计规范不能只写颜色表，要同时定义学习路径、学练单元、自检、登录等页面模式与验收规则。</td></tr>
+      <tr><td><a href="https://design-system.service.gov.uk/">GOV.UK Design System</a></td><td>用 styles、components、patterns 组织规范，并强调复用研究和避免重复劳动。</td><td>我们应建立“学习场景 patterns”：当前学习、生成进度、复习提醒、展开深讲、错题反馈，而不是堆通用卡片。</td></tr>
+      <tr><td><a href="https://carbondesignsystem.com/all-about-carbon/what-is-carbon/">IBM Carbon</a></td><td>设计系统包含工作代码、设计工具、人机界面指南和社区；原则是开放、包容、模块化、用户优先和一致。</td><td>LearnBuddy 先轻量落地：CSS tokens + 原生组件规范 + 页面模式；未来再接 Figma 或组件库。</td></tr>
+      <tr><td><a href="https://atlassian.design/foundations/color">Atlassian Design</a></td><td>颜色按语义角色、强调层级和交互状态使用，而不是随手挑色；警告、危险、成功、信息有明确意图。</td><td>把当前 teal/amber 从“主题色”升级为语义 token：action、learning、review、warning、danger、success、locked。</td></tr>
+      <tr><td><a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a></td><td>可访问性用可测试标准约束，覆盖感知、可操作、可理解和稳健四个原则。</td><td>验收必须包含对比度、焦点可见、键盘路径、目标尺寸、文本重排和状态消息，不只靠截图好看。</td></tr>
+      <tr><td><a href="https://www.w3.org/community/design-tokens/">W3C Design Tokens CG</a></td><td>Design tokens 正在成为跨设计工具和代码共享设计决策的标准方式。</td><td>从通用规范起用语义 token 命名，避免页面里散落十几套 hex、radius、shadow。</td></tr>
+      <tr><td><a href="https://www.microsoft.com/en-us/haxtoolkit/ai-guidelines/">Microsoft HAX</a></td><td>AI 体验要覆盖初次交互、交互中、AI 出错时和长期使用，并提供模式和工作簿帮助团队落地。</td><td>LearnBuddy 的设计规范必须有 AI 状态：能力边界、生成进度、来源可信、错误修复、人工可控和长期记忆。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>产品调性</h2><p>LearnBuddy 的气质不应是花哨的 AI 玩具，也不是冷冰冰的企业后台。</p></div><span class="pill gold">Tone</span></div>
+    <div class="grid3">
+      <article class="card panel"><h3>可信的学习工作台</h3><p>界面首先要帮用户判断状态、下一步和证据。视觉上克制、清晰、密度适中，接近“学习驾驶舱”而不是营销页。</p></article>
+      <article class="card panel"><h3>有温度的 AI 教练</h3><p>语言和微交互可以温暖，但不拟人过头。鼓励用户行动、复盘和修正，而不是用可爱包装掩盖不确定性。</p></article>
+      <article class="card panel"><h3>可验证的内容工厂</h3><p>来源、质量、生成阶段和返工状态要能被看见。设计要让“认真备课”显性化，而不是让用户误以为只是聊天生成。</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>规范分层</h2><p>LearnBuddy 的设计规范按 7 层建设，由产品语义往组件和验收落地。</p></div><span class="pill">System Layers</span></div>
+    <div class="table-wrap"><table><thead><tr><th>层级</th><th>规范内容</th><th>第一版产物</th></tr></thead><tbody>
+      <tr><td>1. 产品原则</td><td>行动优先、学习工作台感、状态透明、可验证、低噪音。</td><td>5 条设计原则 + 反例清单。</td></tr>
+      <tr><td>2. 信息架构</td><td>页面优先级固定为：当前行动 → 诊断/反馈 → 当前状态 → 解释信息 → 运营信息。</td><td>登录、学习空间、路径页、学练页、自检页的信息层级图。</td></tr>
+      <tr><td>3. Design Tokens</td><td>颜色、字体、间距、圆角、阴影、层级、焦点、状态、动画。</td><td><code>web/design-tokens.css</code> 或并入 <code>common.css</code> 的 token 区。</td></tr>
+      <tr><td>4. 组件规范</td><td>按钮、标签、卡片、折叠、步骤轨、进度、表单、toast、dialog、空态、加载态。</td><td>组件使用规则 + 禁用场景。</td></tr>
+      <tr><td>5. 学习模式</td><td>生成进度、当前学习、深讲展开、练习反馈、自评、自检、复习提醒、路径锁定。</td><td>LearnBuddy 专属 patterns。</td></tr>
+      <tr><td>6. 视觉资产</td><td>登录背景、路径封面、领域图、概念辅助图、成就图；包含 prompt、尺寸、裁切、回退。</td><td>Visual Asset System v1。</td></tr>
+      <tr><td>7. 验收规则</td><td>截图回归、响应式、对比度、键盘、文本溢出、状态可见、AI 失败路径。</td><td>浏览器验收清单 + 后续 Playwright 脚本。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>适用范围</h2><p>通用规范的核心是体验基础设施，不是单页改色。</p></div><span class="pill">Scope</span></div>
+    <div class="table-wrap"><table><thead><tr><th>模块</th><th>规范要求</th><th>不做</th></tr></thead><tbody>
+      <tr><td>Design Tokens</td><td>统一颜色、字体、间距、圆角、阴影、状态色、焦点样式和层级。</td><td>不继续让页面各自发明主色、圆角和按钮规则。</td></tr>
+      <tr><td>基础组件</td><td>建立 button、icon button、tag、card、tabs、dialog、toast、progress、empty、loading、form、status chip 规范。</td><td>不为了视觉升级引入重型前端框架。</td></tr>
+      <tr><td>页面优先级</td><td>首批候选为登录页、学习空间、路径页、学练页、自检页。</td><td>不一次性重做所有后台和档案页。</td></tr>
+      <tr><td>信息层级</td><td>每页第一屏回答“我现在该做什么”，再展示诊断、状态、解释和运营信息。</td><td>不做营销式 hero，不堆大统计卡和重复 CTA。</td></tr>
+      <tr><td>可访问性</td><td>移动端、键盘焦点、对比度、文本溢出和状态反馈进入验收。</td><td>不靠“看起来还行”收口。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>Visual Asset System v1</h2><p>图片可以用，但必须服务产品语义和学习任务。</p></div><span class="pill gold">Image Rules</span></div>
+    <div class="table-wrap"><table><thead><tr><th>场景</th><th>使用方式</th><th>验收要求</th></tr></thead><tbody>
+      <tr><td>登录页</td><td>使用一张大幅背景图建立 LearnBuddy 第一印象，表达安静、专注、个性化学习空间。</td><td>表单区高对比；移动端可裁切但不得遮挡关键主体；必须有纯色/渐变回退。</td></tr>
+      <tr><td>学习空间</td><td>路径卡片可使用领域封面图，帮助快速识别语言、技术、职业、考试等路径。</td><td>图片降权，主信息仍是路径名称、状态、进度和下一步动作。</td></tr>
+      <tr><td>学练单元</td><td>默认优先排版与结构层级；只有图能解释概念、流程、对比或案例时才进入内容卡片。</td><td>不使用纯装饰大图，不用模糊 stock 风背景。</td></tr>
+      <tr><td>生成资产</td><td>每张生成图都必须记录用途、prompt、尺寸、裁切规则和回退方案。</td><td>不能让随机图片决定产品风格。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>设计原则</h2><p>这组原则用于判断后续视觉方案是否跑偏。</p></div><span class="pill">Principles</span></div>
+    <div class="grid3">
+      <article class="card panel"><h3>清楚</h3><p>每个页面优先呈现当前行动、关键状态和下一步，不把解释信息放到首屏中心。</p></article>
+      <article class="card panel"><h3>可信</h3><p>视觉语言要像学习工作台，克制、稳定、有证据感，而不是活动页或宣传页。</p></article>
+      <article class="card panel"><h3>可行动</h3><p>主按钮、进度、错误、加载、完成和锁定状态必须一眼能判断。</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>迭代前检查清单</h2><p>每次视觉或页面迭代开始前，先回答这些问题。</p></div><span class="pill gold">Before Build</span></div>
+    <div class="table-wrap"><table><thead><tr><th>问题</th><th>需要确认的答案</th><th>状态</th></tr></thead><tbody>
+      <tr><td>视觉方向</td><td>LearnBuddy 应更偏“专业学习工作台”、 “温暖教练”，还是两者折中？</td><td>待确认</td></tr>
+      <tr><td>本轮页面</td><td>本次迭代涉及登录页、学习空间、路径页、学练页、自检页中的哪些页面？</td><td>每轮确认</td></tr>
+      <tr><td>登录页图片</td><td>大背景图的主体、风格、色调、明暗、人物/空间比例和移动端裁切规则。</td><td>待确认</td></tr>
+      <tr><td>组件粒度</td><td>先用 CSS class 统一现有原生页面，还是同步规划轻量组件化？</td><td>待确认</td></tr>
+      <tr><td>验收方式</td><td>是否用 Playwright 截图覆盖 390px、768px、1440px 三类视口？</td><td>每轮确认</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>收口结论</h2><p>设计系统是跨版本规范，具体页面改造再进入版本。</p></div><span class="pill gold">Decision</span></div>
+    <div class="callout"><b>收口结论：</b>LearnBuddy 设计系统不作为 V0.50 版本需求，而作为长期通用设计规范。后续每个版本只要涉及页面、组件、图片、AI 状态或学习流程展示，都必须对照本规范；如果要大规模改造登录页、学习空间或学练页，再单独立对应版本需求和验收脚本。</div>
+  </section>
+  <div class="footer">LearnBuddy 通用设计规范 · 跨版本生效 · 每次迭代前对照。</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<svg viewBox="0 0 940 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="生成链路">
+  <defs>
+    <marker id="arr-gen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-gen-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-gen-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-gen-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <style>
+    .gn-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .gn-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .gn-card { stroke: #d8d2c4; stroke-width: 1; }
+    .gn-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+  </style>
+
+  <rect x="40" y="40" width="220" height="60" rx="12" fill="url(#g-gen-1)" class="gn-card" />
+  <text x="60" y="64" class="gn-title">前端对话</text>
+  <text x="60" y="84" class="gn-sub">用户自然语言表达学习目标</text>
+
+  <line x1="150" y1="100" x2="150" y2="138" class="gn-conn" marker-end="url(#arr-gen)" />
+
+  <rect x="40" y="142" width="220" height="60" rx="12" fill="url(#g-gen-2)" class="gn-card" />
+  <text x="60" y="166" class="gn-title">server.py SSE</text>
+  <text x="60" y="186" class="gn-sub">承接流式输出与会话状态</text>
+
+  <line x1="150" y1="202" x2="150" y2="240" class="gn-conn" marker-end="url(#arr-gen)" />
+
+  <rect x="40" y="244" width="220" height="60" rx="12" fill="url(#g-gen-3)" class="gn-card" />
+  <text x="60" y="268" class="gn-title">engine.py 收敛参数</text>
+  <text x="60" y="288" class="gn-sub">目标 / 时间 / 节奏 / 风格 / 难点</text>
+
+  <line x1="150" y1="304" x2="150" y2="342" class="gn-conn" marker-end="url(#arr-gen)" />
+
+  <rect x="40" y="346" width="220" height="60" rx="12" fill="url(#g-gen-1)" class="gn-card" />
+  <text x="60" y="370" class="gn-title">即时基线评估</text>
+  <text x="60" y="390" class="gn-sub">出题 → 回答 → 判分 → 画像</text>
+
+  <!-- 评估分叉 -->
+  <path d="M260 376 C 320 376, 320 308, 360 308" class="gn-conn" marker-end="url(#arr-gen)" />
+  <path d="M260 376 C 320 376, 320 440, 360 440" class="gn-conn" marker-end="url(#arr-gen)" />
+
+  <rect x="360" y="276" width="200" height="56" rx="10" fill="#fff" class="gn-card" />
+  <text x="380" y="298" class="gn-title">独立判分</text>
+  <text x="380" y="318" class="gn-sub">关闭 AI 后真实水平</text>
+
+  <rect x="360" y="408" width="200" height="56" rx="10" fill="#fff" class="gn-card" />
+  <text x="380" y="430" class="gn-title">协作判分</text>
+  <text x="380" y="450" class="gn-sub">使用 AI 后能力上限</text>
+
+  <!-- 汇合到 generator -->
+  <path d="M460 332 C 520 332, 520 376, 580 376" class="gn-conn" marker-end="url(#arr-gen)" />
+  <path d="M460 464 C 520 464, 520 376, 580 376" class="gn-conn" />
+
+  <rect x="580" y="346" width="260" height="60" rx="12" fill="url(#g-gen-3)" class="gn-card" />
+  <text x="600" y="370" class="gn-title">generator.py 生成</text>
+  <text x="600" y="390" class="gn-sub">master / W1 / 学习手册 / 契约</text>
+
+  <line x1="710" y1="406" x2="710" y2="444" class="gn-conn" marker-end="url(#arr-gen)" />
+
+  <rect x="580" y="448" width="260" height="60" rx="12" fill="url(#g-gen-1)" class="gn-card" />
+  <text x="600" y="472" class="gn-title">写入实例 / 索引</text>
+  <text x="600" y="492" class="gn-sub">持久化到学习档案</text>
+
+  <line x1="710" y1="508" x2="710" y2="540" class="gn-conn" marker-end="url(#arr-gen)" />
+
+  <text x="40" y="540" class="gn-sub">最终 → 跳转学习路径页（前端）</text>
+</svg>

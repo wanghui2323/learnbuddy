@@ -1,0 +1,94 @@
+name: learnbuddy
+
+services:
+  learnbuddy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: learnbuddy-local:dev
+    init: true
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # 仓库默认保持 cloud；个人 Compose 按显式环境变量切换。
+      LEARNBUDDY_EDITION: ${LEARNBUDDY_EDITION:-personal}
+      HOST: 0.0.0.0
+      PORT: 8000
+      ITUTOR_DB_PATH: /app/data/itutor.db
+      ITUTOR_AGENT_REMINDERS_ENABLED: ${ITUTOR_AGENT_REMINDERS_ENABLED:-1}
+    ports:
+      # 未完成唯一 owner 初始化前，不得改为 0.0.0.0。
+      - "${LEARNBUDDY_BIND_ADDRESS:-127.0.0.1}:${LEARNBUDDY_PORT:-8000}:8000"
+    volumes:
+      - learnbuddy_data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=4).read(1)"
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  openclaw:
+    profiles:
+      - agent
+    # 固定官方版本，不跟随 latest 漂移。升级时先备份再显式改版本。
+    image: ${OPENCLAW_IMAGE:-ghcr.io/openclaw/openclaw:2026.8.2}
+    init: true
+    restart: unless-stopped
+    depends_on:
+      learnbuddy:
+        condition: service_healthy
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_DISABLE_BONJOUR: "1"
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN:-}
+      FEISHU_APP_ID: ${FEISHU_APP_ID:-}
+      FEISHU_APP_SECRET: ${FEISHU_APP_SECRET:-}
+      LEARNBUDDY_BASE_URL: http://learnbuddy:8000
+      LEARNBUDDY_BRIDGE_TOKEN: ${ITUTOR_OPENCLAW_BRIDGE_TOKEN:-}
+      LEARNBUDDY_FEISHU_ACCOUNT_ID: ${ITUTOR_FEISHU_ACCOUNT_ID:-default}
+    command:
+      - node
+      - dist/index.js
+      - gateway
+      - --bind
+      - lan
+      - --port
+      - "18789"
+    ports:
+      - "127.0.0.1:${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+    volumes:
+      - openclaw_state:/home/node/.openclaw
+      - openclaw_workspace:/home/node/.openclaw/workspace
+      - ./integrations/openclaw-learnbuddy:/opt/learnbuddy-plugin:ro
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:18789/healthz').then((response)=>process.exit(response.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+
+volumes:
+  learnbuddy_data:
+  openclaw_state:
+  openclaw_workspace:

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · OpenClaw 接入方案</title>
+<style>
+  :root {
+    --bg: #f7f4ee; --card: #ffffff; --line: #e7e1d6; --paper-2: #efeae0;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd; --amber-dark: #b9852f;
+    --blue: #3d6e9e; --blue-soft: #e3edf5; --green: #4a9d6e; --green-soft: #e7f3ec;
+    --purple: #7b5ea7; --purple-soft: #ece5f5; --radius: 14px;
+    --shadow: 0 1px 2px rgba(43,41,38,.05), 0 8px 24px rgba(43,41,38,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.7; }
+  .topbar { position: sticky; top: 0; z-index: 30; background: #fffdf9ee; backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark)); color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  .ttl { font-weight: 700; font-size: 15px; }
+  .ttl small { font-weight: 500; color: var(--ink-faint); font-size: 12.5px; margin-left: 6px; }
+  .spacer { flex: 1; }
+  .nav { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; padding: 7px 13px; border-radius: 8px; font-weight: 600; }
+  .nav:hover, .nav.active { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 30px 24px 80px; }
+  .hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; border-radius: 18px; padding: 28px 30px; box-shadow: 0 12px 32px rgba(44,110,106,.22); }
+  .hero h1 { font-size: 24px; }
+  .hero p { margin-top: 8px; font-size: 14.5px; max-width: 920px; opacity: .96; }
+  .meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); }
+  .meta .k { font-size: 11px; opacity: .74; letter-spacing: .04em; }
+  .meta .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .quick-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .quick-actions a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 9px; background: rgba(255,255,255,.14); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,.16); }
+  .quick-actions a:hover { background: rgba(255,255,255,.22); }
+  .sec { margin-top: 34px; }
+  .sec h2 { font-size: 20px; margin-bottom: 4px; }
+  .desc { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 16px; }
+  .card, table, .diagram { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .card { padding: 18px 20px; }
+  table { width: 100%; border-collapse: collapse; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #faf7f1; color: var(--ink-soft); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  .diagram { padding: 18px 20px; overflow: auto; }
+  .arch-svg { width: 100%; min-height: 600px; display: block; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .tag.ok { background: var(--green-soft); color: var(--green); }
+  .tag.partial { background: var(--amber-soft); color: var(--amber-dark); }
+  .tag.gap { background: #f6d6d6; color: #b94545; }
+  .note { margin-top: 12px; background: var(--amber-soft); color: #87561d; border-radius: 10px; padding: 12px 14px; font-size: 13px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .lk { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid var(--line); color: var(--ink); font-size: 13px; background: #fff; }
+  .lk:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .foot { margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: 12.5px; }
+  @media (max-width: 860px) { .arch-svg { min-height: 460px; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">O</div>
+  <div class="ttl">OpenClaw 接入方案<small>不 fork + 双层部署 · ADR-010</small></div>
+  <div class="spacer"></div>
+  <a class="nav" href="./文档中心.html">文档中心</a>
+  <a class="nav" href="./工作台.html">工作台</a>
+  <a class="nav" href="./需求方案.html">需求方案</a>
+  <a class="nav" href="./技术方案.html">技术方案</a>
+  <a class="nav" href="./架构总览.html">架构总览</a>
+  <a class="nav" href="./协作机制.html">协作机制</a>
+  <a class="nav" href="./开发方案与计划.html">主方案</a>
+  <a class="nav" href="./Harness技术体系对齐.html">Harness</a>
+  <a class="nav active" href="./OpenClaw接入方案.html">OpenClaw</a>
+</div>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>OpenClaw 接入方案（LearnBuddy 对照版）</h1>
+    <p>把 ADR-010 “OpenClaw 集成策略：不 fork + 双层部署” 落到可执行清单、最小验证路径和排期。同时给“个人助理升级模式”一个真正能跑的外部 runtime。</p>
+    <div class="meta">
+      <div><div class="k">定位</div><div class="v">升级模式承载层</div></div>
+      <div><div class="k">双层</div><div class="v">中心化飞书 + 自托管 OpenClaw</div></div>
+      <div><div class="k">核心决策</div><div class="v">不 fork + 不替用户托管</div></div>
+      <div><div class="k">新增任务</div><div class="v">T-38 → T-44</div></div>
+    </div>
+    <div class="quick-actions">
+      <a href="#arch">接入架构图</a>
+      <a href="#dual">双层定位</a>
+      <a href="#verify">最小验证路径</a>
+      <a href="#todo">OpenClaw 待办</a>
+      <a href="./06-OpenClaw接入方案.md">打开 Markdown 原文</a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>一句话定位</h2>
+    <div class="card">
+      <p><b>OpenClaw = 个人助理升级模式（Pro）的运行时和承载层，不替代 LearnBuddy。</b></p>
+      <p style="margin-top:6px;color:var(--ink-soft);font-size:13.5px;">不替代 Web / PWA，不改学习真相源，不动账本；负责“主动找你 / 主动执行 / 跨端连续”。</p>
+    </div>
+  </section>
+
+  <section class="sec" id="dual">
+    <h2>双层定位</h2>
+    <table>
+      <thead><tr><th style="width:110px">层</th><th>用户</th><th>形态</th><th style="width:130px">是否经 OpenClaw</th><th>部署门槛</th><th>核心价值</th></tr></thead>
+      <tbody>
+        <tr><td><b>大众层</b></td><td>所有 LearnBuddy 用户</td><td>多租户 SaaS + Web/PWA + 中心化飞书机器人</td><td>❌ 不经过</td><td>零部署，飞书 OAuth 即可</td><td>移动触点 / 卡片测验 / 推送 / 晚复盘</td></tr>
+        <tr><td><b>Pro 层</b></td><td>想自托管、要数据自主、要 agent 自由度</td><td>自托管 OpenClaw + iTutor skill 包</td><td>✅ 经过</td><td>自跑实例 + 自备 LLM key + 自建飞书应用</td><td>进阶自治玩法 + 跨端 agent</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="arch">
+    <h2>接入架构图</h2>
+    <div class="desc">左：LearnBuddy 主系统（始终是真相源）· 中：MCP / tools · 右：双层部署</div>
+    <div class="diagram">
+      <object class="arch-svg" type="image/svg+xml" data="./OpenClaw接入方案.svg" aria-label="OpenClaw 接入架构图"></object>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>LearnBuddy 侧接入清单</h2>
+    <table>
+      <thead><tr><th>能力</th><th style="width:160px">当前状态</th><th>接入前必须</th></tr></thead>
+      <tbody>
+        <tr><td>core/tools.py 统一工具注册</td><td><span class="tag ok">已落地</span></td><td>工具描述 / 参数 schema 标准化</td></tr>
+        <tr><td>mcp_server.py MCP stdio 服务</td><td><span class="tag ok">已落地</span></td><td>至少一个 stdio client 跑通</td></tr>
+        <tr><td>get_today_plan / generate_lesson / record_answer / get_analytics / get_graph / kb_search / coach_reply</td><td><span class="tag ok">多数已落地</span></td><td>文档化入参出参与错误码</td></tr>
+        <tr><td>用户身份绑定</td><td><span class="tag partial">部分</span></td><td>增加 ITUTOR_MCP_TOKEN 二选一</td></tr>
+        <tr><td>速率限制</td><td><span class="tag ok">已落地</span></td><td>MCP 路径增加连接级限频</td></tr>
+        <tr><td>审计日志</td><td><span class="tag partial">部分</span></td><td>Pro 层强制启用审计</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>OpenClaw 侧接入清单</h2>
+    <table>
+      <thead><tr><th style="width:200px">项</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>Skill 包</b></td><td>iTutor skill 包：注册 MCP 端点 + iTutor 教练 prompt + 工具映射</td></tr>
+        <tr><td><b>Plugin</b></td><td>@larksuite/openclaw-lark（官方飞书插件）</td></tr>
+        <tr><td><b>飞书应用</b></td><td>自建应用，IM 机器人权限、消息发送/接收、卡片模板</td></tr>
+        <tr><td><b>WebSocket</b></td><td>OpenClaw ↔ 飞书长连接；国内版零公网 IP</td></tr>
+        <tr><td><b>模型</b></td><td>OpenClaw 用户自备 LLM key，LearnBuddy 不承担</td></tr>
+        <tr><td><b>命令执行</b></td><td>Pro 层禁用系统命令（仅 read-only + 进度写入）</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="verify">
+    <h2>最小验证路径</h2>
+    <div class="desc">作者本人先把现有 iTutor 接自托管 OpenClaw + 飞书，dogfood 跑通三件事后再决定是否投入“中心化飞书机器人”。</div>
+    <table>
+      <thead><tr><th style="width:140px">验证项</th><th>说明</th><th>验收</th></tr></thead>
+      <tbody>
+        <tr><td><b>早推计划</b></td><td>早 9 点由 OpenClaw 触发，主动推送今日计划</td><td>飞书卡片能收到</td></tr>
+        <tr><td><b>卡片测验</b></td><td>用户在卡片里直接作答，反写回 LearnBuddy</td><td>完成度可查</td></tr>
+        <tr><td><b>晚复盘</b></td><td>晚 9 点自动复盘当日学了什么 / 没学什么</td><td>摘要卡片 + 留存记录</td></tr>
+      </tbody>
+    </table>
+    <div class="note">三件至少跑一周无异常，才能决定是否投入“中心化飞书机器人”。</div>
+  </section>
+
+  <section class="sec">
+    <h2>安全边界</h2>
+    <table>
+      <thead><tr><th style="width:180px">项</th><th>边界</th></tr></thead>
+      <tbody>
+        <tr><td><b>学习真相源</b></td><td>计划 / 学情 / 记忆 / 掌握度 / 推荐 / 权益统一归主系统</td></tr>
+        <tr><td><b>账本</b></td><td>支付 / 积分 / 订阅只在主系统，OpenClaw 只能读取/消费权益</td></tr>
+        <tr><td><b>数据库</b></td><td>OpenClaw 不允许直连 DB</td></tr>
+        <tr><td><b>工具</b></td><td>只能走 core/tools.py 注册的受控工具</td></tr>
+        <tr><td><b>命令执行</b></td><td>Pro 层默认禁用；如开放必须沙盒 + 用户确认</td></tr>
+        <tr><td><b>提示注入</b></td><td>启用 AgentGuard 拦截 + 输入审计</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="todo">
+    <h2>OpenClaw 接入待办（T-38 → T-44）</h2>
+    <div class="desc">挂在 M4 / M5，与 Harness 对齐任务 T-21 → T-37 并行。</div>
+    <table>
+      <thead><tr><th style="width:60px">ID</th><th>任务</th><th>验收标准</th><th style="width:170px">关联模块</th></tr></thead>
+      <tbody>
+        <tr><td>T-38</td><td>OpenClaw 接入方案页落地</td><td>当前文档可独立回答“OpenClaw 是什么 / 怎么接 / 谁来用”</td><td>docs/06-OpenClaw接入方案.md</td></tr>
+        <tr><td>T-39</td><td>MCP 端点 schema 标准化</td><td>工具描述 / 参数 / 错误码全文档化，可被外部 client 直接消费</td><td>mcp_server.py</td></tr>
+        <tr><td>T-40</td><td>iTutor skill 包 v0</td><td>skill.yaml + 工具映射 + 教练 prompt，能挂在 OpenClaw plugin 扩展点</td><td>iTutor-skill/</td></tr>
+        <tr><td>T-41</td><td>中心化飞书机器人原型</td><td>LearnBuddy 直接拉飞书 WebSocket，单应用 OAuth 跑通</td><td>core/lark_bot/</td></tr>
+        <tr><td>T-42</td><td>AgentGuard 接入</td><td>prompt / indirect injection 拦截 + 审计日志</td><td>core/security/agentguard.py</td></tr>
+        <tr><td>T-43</td><td>自托管 OpenClaw + 飞书 dogfood</td><td>作者本人完成早推 / 卡片测验 / 晚复盘三件验证</td><td>scripts/dogfood/</td></tr>
+        <tr><td>T-44</td><td>OpenClaw 升级模式商业化</td><td>Pro 层订阅开通后自动下发 skill 包 / token</td><td>core/assistant/</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="links">
+    <a class="lk" href="./Harness技术体系对齐.html">查看 Harness 对齐页</a>
+    <a class="lk" href="./开发方案与计划.html#todo">查看主方案待办</a>
+    <a class="lk" href="./06-OpenClaw接入方案.md">查看 Markdown 真相源</a>
+    <a class="lk" href="./SPEC.md">查看 SPEC ADR-010 / ADR-017</a>
+  </div>
+
+  <div class="foot">
+    LearnBuddy OpenClaw 接入方案页 · 不 fork + 双层部署 · 文字真相源：<code>06-OpenClaw接入方案.md</code>
+  </div>
+</div>
+</body>
+</html>

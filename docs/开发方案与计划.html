@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 开发方案与计划</title>
+<style>
+  :root {
+    --bg: #f7f4ee; --card: #ffffff; --paper-2: #efeae0; --line: #e7e1d6;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd; --amber-dark: #b9852f;
+    --blue: #3d6e9e; --blue-soft: #e3edf5; --green: #4a9d6e; --green-soft: #e7f3ec;
+    --radius: 14px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 8px 24px rgba(43,41,38,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.65; }
+  .topbar { position: sticky; top: 0; z-index: 30; background: #fffdf9ee; backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark)); color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  .ttl { font-weight: 700; font-size: 15px; } .ttl small { font-weight: 500; color: var(--ink-faint); font-size: 12.5px; margin-left: 6px; }
+  .spacer { flex: 1; }
+  .nav { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; padding: 7px 13px; border-radius: 8px; font-weight: 600; }
+  .nav:hover { background: var(--teal-soft); color: var(--teal-dark); }
+  .nav.active { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 30px 24px 80px; }
+  .hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; border-radius: 18px; padding: 28px 30px; box-shadow: 0 12px 32px rgba(44,110,106,.22); }
+  .hero h1 { font-size: 24px; }
+  .hero p { margin-top: 8px; font-size: 14.5px; max-width: 920px; opacity: .96; }
+  .meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); }
+  .meta .k { font-size: 11px; opacity: .74; letter-spacing: .04em; } .meta .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .quick-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .quick-actions a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 9px; background: rgba(255,255,255,.14); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,.16); }
+  .quick-actions a:hover { background: rgba(255,255,255,.22); }
+  .sec { margin-top: 34px; }
+  .sec h2 { font-size: 20px; margin-bottom: 4px; }
+  .desc { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .split { display: grid; grid-template-columns: 1.08fr .92fr; gap: 14px; }
+  .card, table { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .card { padding: 18px 20px; }
+  .lead { font-size: 14.5px; line-height: 1.75; }
+  table { width: 100%; border-collapse: collapse; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #faf7f1; color: var(--ink-soft); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .b-done { background: var(--green-soft); color: var(--green); }
+  .b-now { background: var(--amber-soft); color: var(--amber-dark); }
+  .b-next { background: var(--blue-soft); color: var(--blue); }
+  .note { background: var(--amber-soft); color: #87561d; border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-top: 12px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .lk { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid var(--line); color: var(--ink); font-size: 13px; background: #fff; }
+  .lk:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .foot { margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: 12.5px; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .ttl small { display: none; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">P</div>
+  <div class="ttl">LearnBuddy 开发方案与计划<small>主方案 HTML · 需求 / 技术 / 进度 / 计划</small></div>
+  <div class="spacer"></div>
+  <a class="nav" href="./文档中心.html">文档中心</a>
+  <a class="nav" href="./工作台.html">工作台</a>
+  <a class="nav" href="./需求方案.html">需求方案</a>
+  <a class="nav" href="./技术方案.html">技术方案</a>
+  <a class="nav" href="./架构总览.html">架构总览</a>
+  <a class="nav" href="./协作机制.html">协作机制</a>
+  <a class="nav active" href="./开发方案与计划.html">主方案</a>
+  <a class="nav" href="./Harness技术体系对齐.html">Harness</a>
+  <a class="nav" href="./OpenClaw接入方案.html">OpenClaw</a>
+</div>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>LearnBuddy 学习伙伴 · 开发方案与计划</h1>
+    <p>这页是 `03-开发方案与计划.md` 的 HTML 主方案页，集中呈现当前需求方案、技术方案、开发进度和后续计划。以后日常查看优先看这里，深度修改仍回到 Markdown 真相源。</p>
+    <div class="meta">
+      <div><div class="k">当前版本</div><div class="v">V0.19</div></div>
+      <div><div class="k">当前阶段</div><div class="v">迭代增强期</div></div>
+      <div><div class="k">当前重点</div><div class="v">体验收口 · 连续学习 · 商业化前置</div></div>
+      <div><div class="k">文字真相源</div><div class="v">03-开发方案与计划.md</div></div>
+    </div>
+    <div class="quick-actions">
+      <a href="#progress">当前进度</a>
+      <a href="#todo">待办任务</a>
+      <a href="#plan">开发计划</a>
+      <a href="#gaps">当前问题</a>
+      <a href="./需求方案.html#need-arch">需求架构图</a>
+      <a href="./技术方案.html#tech-arch">技术总图</a>
+      <a href="./03-开发方案与计划.md">Markdown 原文</a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>文档定位</h2>
+    <div class="desc">主方案页负责把分散在多个说明里的当前结论收成一个统一视图。</div>
+    <table>
+      <thead><tr><th style="width:210px">文档/页面</th><th style="width:160px">角色</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>03-开发方案与计划.md</b></td><td>唯一真相源</td><td>统一维护当前需求、技术、进度和计划</td></tr>
+        <tr><td><b>开发方案与计划.html</b></td><td>主方案 HTML</td><td>给人直接看，不替代 Markdown 版本控制</td></tr>
+        <tr><td><b>工作台.html</b></td><td>总览镜像</td><td>更偏路线图、问题缺口、优先级和快速浏览</td></tr>
+        <tr><td><b>需求/技术/架构/协作 HTML</b></td><td>专题页</td><td>按主题展开，便于讨论与图示化理解</td></tr>
+      </tbody>
+    </table>
+    <div class="note">当前规则已经固定：顶部是一级导航，页内动作放 hero 或正文；HTML 负责清晰查看，Markdown 负责真相源。</div>
+  </section>
+
+  <section class="sec" id="goals">
+    <h2>三目标对齐</h2>
+    <div class="desc">把项目内所有“看起来冲突”的目标摆到同一张表里：哪个是首要、哪个是辅助、哪个是间接，避免后面为“该先做产品还是先做技术”反复纠结。</div>
+    <table>
+      <thead><tr><th style="width:80px">层级</th><th style="width:180px">目标</th><th>含义</th><th style="width:240px">怎么判断</th></tr></thead>
+      <tbody>
+        <tr><td><b>首要</b></td><td>完成软件开发，构建一个好的产品</td><td>LearnBuddy 真正能跑、能用、有人用、有人付费</td><td>主路径跑通 / 关键闭环有证据 / 用户能稳定连续学下去</td></tr>
+        <tr><td><b>辅助</b></td><td>落地所有前沿技术方案</td><td>借 LearnBuddy 把 harness 主流体系（详见 [<code>Harness 技术体系对齐.html</code>](./Harness技术体系对齐.html)）和 OpenClaw 个人助理升级模式（详见 [<code>OpenClaw 接入方案.html</code>](./OpenClaw接入方案.html)）实践一遍</td><td>每条对应到 T-21 → T-44 的具体任务；不挤占产品主线</td></tr>
+        <tr><td><b>间接</b></td><td>输出公众号文章系列</td><td>把过程沉淀成可对外分享的内容资产</td><td>每完成一段对应排期，沉淀一篇或一组文章；不因为赶文章阻塞产品</td></tr>
+      </tbody>
+    </table>
+    <div class="note">三目标优先级固定：产品 > 技术 > 文章。当三者冲突时，先砍文章、再砍技术 demo，绝不砍产品主线。这也是 ADR-018 的核心结论。</div>
+  </section>
+
+  <section class="sec">
+    <h2>整体判断</h2>
+    <div class="desc">项目已经不是早期 demo，而是在把已有能力收口成可持续使用的产品。</div>
+    <div class="split">
+      <div class="card">
+        <div class="lead">当前主线不是继续横向堆功能，而是按这个顺序推进：</div>
+        <div class="note">先收口体验 → 再补连续学习 → 再补差异化闭环 → 最后补工程底线与升级模式</div>
+      </div>
+      <div class="card">
+        <div class="lead">一句话结论：</div>
+        <div class="note">先把 LearnBuddy Web/PWA 做顺手、做稳定、做成环，再把个人助理升级模式作为下一阶段能力层接上。</div>
+      </div>
+    </div>
+    <div class="links">
+      <a class="lk" href="./需求方案.html#need-arch">需求架构图</a>
+      <a class="lk" href="./技术方案.html#tech-arch">技术架构图</a>
+      <a class="lk" href="./技术方案.html#billing-arch">支付与权益架构图</a>
+      <a class="lk" href="./架构总览.html">全局架构总览</a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>当前需求方案</h2>
+    <div class="desc">产品已经明确分成标准学习模式和个人助理升级模式，需求专题页现在也补成了“架构图 + 用户旅程 + 商业化链路 + 阶段判断口径”的完整版本。</div>
+    <div class="grid">
+      <div class="card">
+        <h3>用户模式分层</h3>
+        <table style="margin-top:10px">
+          <thead><tr><th style="width:120px">模式</th><th style="width:90px">定位</th><th>核心能力</th><th style="width:120px">收费</th></tr></thead>
+          <tbody>
+            <tr><td><b>标准学习模式</b></td><td><span class="badge b-done">默认</span></td><td>路径生成、学练、学情、推荐、复习、基础推送</td><td>免费或基础订阅</td></tr>
+            <tr><td><b>个人助理模式</b></td><td><span class="badge b-now">升级</span></td><td>专属学习助理、长期记忆、主动提醒、主动复盘、跨端联动、IM 对话</td><td>额外收费，用户自选开通</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>当前边界</h3>
+        <table style="margin-top:10px">
+          <thead><tr><th>边界</th><th>当前结论</th></tr></thead>
+          <tbody>
+            <tr><td><b>主线产品</b></td><td>继续以 LearnBuddy Web/PWA 为主</td></tr>
+            <tr><td><b>OpenClaw</b></td><td>只作为升级模式承载层，不替代主产品</td></tr>
+            <tr><td><b>移动端</b></td><td>先走 PWA / Push / IM 触点，不做独立 App</td></tr>
+            <tr><td><b>数据真相源</b></td><td>始终在 LearnBuddy 主系统内，不在 IM 侧分叉</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <table style="margin-top:12px">
+      <thead><tr><th style="width:160px">新增高优先需求</th><th>说明</th><th style="width:90px">阶段</th></tr></thead>
+      <tbody>
+        <tr><td><b>手机验证码注册登录</b></td><td>降低注册门槛，适配移动端转化与正式运营</td><td>P0 / P1</td></tr>
+        <tr><td><b>支付能力</b></td><td>支撑升级模式开通、套餐购买、权益发放</td><td>P0 / P1</td></tr>
+        <tr><td><b>积分体系</b></td><td>按积分面向用户计费，不直接暴露 token</td><td>P0 / P1</td></tr>
+        <tr><td><b>赠送积分</b></td><td>支撑拉新、活动、补偿、试用和运营激励</td><td>P0 / P2</td></tr>
+      </tbody>
+    </table>
+    <div class="note">商业化原则已经固定：订阅负责持续服务，积分负责弹性消耗与运营调节；个人助理模式更适合“订阅打底 + 额外积分”。</div>
+    <div class="links">
+      <a class="lk" href="./需求方案.html#need-arch">需求架构图</a>
+      <a class="lk" href="./需求方案.html#journey">用户旅程闭环</a>
+      <a class="lk" href="./需求方案.html#billing-flow">商业化链路</a>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>当前技术方案</h2>
+    <div class="desc">技术上不推倒重来，继续在主系统真相源之上补全工具层、调度层和升级模式接入层；技术专题页现在也补成了“系统总图 + 关键链路 + 支付技术架构 + OpenClaw 边界”的完整版本。</div>
+    <table>
+      <thead><tr><th style="width:160px">层</th><th style="width:140px">角色</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>Web / PWA 层</b></td><td>用户主入口</td><td>`index` / `instance` / `space` / 推送订阅 / 学练与学情展示</td></tr>
+        <tr><td><b>服务层</b></td><td>编排与 API</td><td>`server.py` 负责 SSE、鉴权、实例 API、lesson / analytics / recommend / push / admin</td></tr>
+        <tr><td><b>Core 引擎层</b></td><td>学习内核</td><td>`engine` / `generator` / `content` / `concepts` / `rag` / `memory` / `recommend` / `replan` / `scheduler`</td></tr>
+        <tr><td><b>数据层</b></td><td>学习真相源</td><td>SQLite 承载用户/行为/反馈/追踪，JSON/Markdown 保留路径档案与学习产物</td></tr>
+        <tr><td><b>扩展层</b></td><td>升级模式预埋</td><td>MCP / tools / 未来 agent runtime / OpenClaw skill 包</td></tr>
+      </tbody>
+    </table>
+    <div class="grid" style="margin-top:12px">
+      <div class="card"><b>确定性优先</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">能不用 LLM 就不用 LLM，推荐/重规划/调度优先规则化。</p></div>
+      <div class="card"><b>学习真相源统一</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">计划、学情、记忆、推荐都以 LearnBuddy 主系统为准。</p></div>
+      <div class="card"><b>LLM 有回退</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">所有模型调用必须有可见 fallback 或错误提示。</p></div>
+      <div class="card"><b>工作流先于 Agent</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">先把产品闭环做扎实，再把 agent 接到上层。</p></div>
+    </div>
+    <div class="links">
+      <a class="lk" href="./技术方案.html#tech-arch">系统总图</a>
+      <a class="lk" href="./技术方案.html#tech-seq">关键运行链路</a>
+      <a class="lk" href="./技术方案.html#billing-arch">支付技术架构</a>
+    </div>
+  </section>
+
+  <section class="sec" id="progress">
+    <h2>当前进度总览</h2>
+    <div class="desc">一张图看清楚 M0–M5 走到哪了，进度按当前已确认完成的关键产物估算。</div>
+    <div class="diagram">
+      <object class="arch-svg" type="image/svg+xml" data="./进度总览.svg" aria-label="当前进度总览图"></object>
+    </div>
+    <div class="note">进度数据来自 <a href="./工作台.html#plan">工作台任务树</a> 和 <a href="../SPEC.md">SPEC.md §8 版本日志</a>，每完成一条会同步刷新。</div>
+  </section>
+
+  <section class="sec" id="todo">
+    <h2>接下来 4 周待办任务清单</h2>
+    <div class="desc">按周拆开，方便直接用来排期。每条都有“任务 / 验收 / 关联模块”，不再停在“需要做这个”这种空话。</div>
+
+    <h3 style="margin-top:18px;font-size:16px;color:var(--teal-dark)">第 1 周 · 体验收口</h3>
+    <table>
+      <thead><tr><th style="width:80px">ID</th><th>任务</th><th>验收标准</th><th style="width:170px">关联模块</th></tr></thead>
+      <tbody>
+        <tr><td>T-01</td><td>前端响应式收口（index / instance / space）</td><td>360px 起无横向滚动；关键操作可点；样式不依赖外部 CDN</td><td>web/* assets/style.css</td></tr>
+        <tr><td>T-02</td><td>6 关自检交互页</td><td>可在前端完成 6 维度评分 + AI 反馈；结果回流 mastery / replan</td><td>web/* + core/replan.py</td></tr>
+        <tr><td>T-03</td><td>W2-WN lazy build</td><td>进入下一周可按反馈生成后续周；不阻塞首屏</td><td>core/generator.py</td></tr>
+        <tr><td>T-04</td><td>推送链路 dogfood 收口</td><td>订阅 / scheduler / 通知 / deep-link / 回流全链路实测</td><td>core/push_*.py + sw.js</td></tr>
+        <tr><td>T-05</td><td>文档真相源统一</td><td>主文档 / 主方案 / 工作台口径一致；旧入口收敛</td><td>docs/</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:18px;font-size:16px;color:var(--teal-dark)">第 2 周 · 账号与商业化前置</h3>
+    <table>
+      <thead><tr><th style="width:80px">ID</th><th>任务</th><th>验收标准</th><th style="width:170px">关联模块</th></tr></thead>
+      <tbody>
+        <tr><td>T-06</td><td>手机验证码注册登录方案定稿</td><td>短信服务商、限频、绑定策略、隐私说明、风控齐备</td><td>core/auth.py + 短信服务商</td></tr>
+        <tr><td>T-07</td><td>支付通道方案定稿</td><td>微信 / 支付宝 / 聚合中选定；订单状态机、回调验签、幂等确定</td><td>core/billing/*</td></tr>
+        <tr><td>T-08</td><td>积分账户 + 赠送积分</td><td>PointsAccount / PointsLedger 落地；付费 / 赠送分账；过期规则生效</td><td>core/points/*</td></tr>
+        <tr><td>T-09</td><td>商品体系编码</td><td>订阅 / 积分包 / Pro 升级 / 混合套餐入商品库；价格与权益明确</td><td>core/catalog/*</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:18px;font-size:16px;color:var(--teal-dark)">第 3 周 · 差异化深化</h3>
+    <table>
+      <thead><tr><th style="width:80px">ID</th><th>任务</th><th>验收标准</th><th style="width:170px">关联模块</th></tr></thead>
+      <tbody>
+        <tr><td>T-10</td><td>评估闭环贯通</td><td>出题 → 判分 → 画像 → 路径结构化回流</td><td>core/evaluator.py + generator.py</td></tr>
+        <tr><td>T-11</td><td>FSRS 调度升级</td><td>替换或并行 SM-2；推荐结果可验证</td><td>core/scheduler.py</td></tr>
+        <tr><td>T-12</td><td>手动调整对话</td><td>用户可调强度 / 节奏 / 时间预算并局部重生成</td><td>core/engine.py</td></tr>
+        <tr><td>T-13</td><td>周回测 / 月度 R11</td><td>周 / 月复盘可触发计划调整</td><td>core/replan.py</td></tr>
+        <tr><td>T-14</td><td>Prompt 版本化 / AB</td><td>质量面板可对比 prompt 版本效果</td><td>core/prompts/* + admin/quality</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:18px;font-size:16px;color:var(--teal-dark)">第 4 周 · 工程底线 + 升级模式预埋</h3>
+    <table>
+      <thead><tr><th style="width:80px">ID</th><th>任务</th><th>验收标准</th><th style="width:170px">关联模块</th></tr></thead>
+      <tbody>
+        <tr><td>T-15</td><td>会话持久化 + TTL</td><td>对话状态可恢复；session 可清理</td><td>server.py + core/session.py</td></tr>
+        <tr><td>T-16</td><td>首 token 超时 + 错误 UX</td><td>上游慢时用户看到明确错误与重试</td><td>core/llm_client.py</td></tr>
+        <tr><td>T-17</td><td>异地备份 / 导出</td><td>关键数据可恢复、可导出</td><td>scripts/backup.sh</td></tr>
+        <tr><td>T-18</td><td>CDN 依赖收口 + 安全加固</td><td>关键资源本地可用；cookie / 限流 / 权限最小闭环</td><td>assets/* + server.py</td></tr>
+        <tr><td>T-19</td><td>Agent 接入层预埋</td><td>tools / memory / scheduler 可被统一 runtime 调用</td><td>core/tools.py + mcp_server.py</td></tr>
+        <tr><td>T-20</td><td>个人助理模式接入层</td><td>订阅 / 积分 / Pro 升级权益走主系统，OpenClaw 只承担运行时</td><td>core/assistant/*</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">排期口径：以上 4 周若同步推进则属于“节奏正常”；若连续 2 周有任务跨周未动，需要回到本页重新判断排期，而不是默默往后顺延。</div>
+  </section>
+
+  <section class="sec" id="harness-todo">
+    <h2>Harness 对标与待办（按 23 篇拆）</h2>
+    <div class="desc">把“借 LearnBuddy 把主流 harness 技术体系过一遍”这个私心落到排期。新增任务 T-21 → T-37 挂在 M4 / M5，不挤占原 4 周排期。</div>
+    <div class="links" style="margin-top:0;margin-bottom:14px;">
+      <a class="lk" href="./Harness技术体系对齐.html">打开 Harness 完整对齐页</a>
+      <a class="lk" href="./Harness技术体系对齐.html#status">查看 23 篇现状</a>
+      <a class="lk" href="./05-Harness技术体系对齐.md">查看 Markdown 真相源</a>
+    </div>
+    <table>
+      <thead><tr><th style="width:60px">ID</th><th>关联篇</th><th>任务</th><th style="width:80px">阶段</th></tr></thead>
+      <tbody>
+        <tr><td>T-21</td><td>04</td><td>推理模型路由（deepseek-reasoner）</td><td>M4</td></tr>
+        <tr><td>T-22</td><td>04</td><td>批处理与缓存</td><td>M4</td></tr>
+        <tr><td>T-23</td><td>05</td><td>Prompt 版本化 + AB</td><td>M4</td></tr>
+        <tr><td>T-24</td><td>06</td><td>Context 预算 + 用量埋点</td><td>M4</td></tr>
+        <tr><td>T-25</td><td>07</td><td>Memory 三层分层</td><td>M5</td></tr>
+        <tr><td>T-26</td><td>08</td><td>Agentic Loop 抽象</td><td>M5</td></tr>
+        <tr><td>T-27</td><td>09 / 12</td><td>Tool 走 MCP 协议</td><td>M5</td></tr>
+        <tr><td>T-28</td><td>10</td><td>Skill 包化与复用</td><td>M5</td></tr>
+        <tr><td>T-29</td><td>11</td><td>Guardrails + LLM-as-Judge</td><td>M4</td></tr>
+        <tr><td>T-30</td><td>12</td><td>对齐 MCP 标准</td><td>M5</td></tr>
+        <tr><td>T-31</td><td>13</td><td>Embedding 选型 + 检索评估</td><td>M4</td></tr>
+        <tr><td>T-32</td><td>14</td><td>注入防护 + AgentGuard</td><td>M4</td></tr>
+        <tr><td>T-33</td><td>18</td><td>Agent Team 抽象</td><td>M5</td></tr>
+        <tr><td>T-34</td><td>19</td><td>Handoff + A2A</td><td>M5</td></tr>
+        <tr><td>T-35</td><td>20</td><td>Dynamic Workflow 框架</td><td>M5</td></tr>
+        <tr><td>T-36</td><td>21</td><td>Eval Harness + Golden Set</td><td>M4</td></tr>
+        <tr><td>T-37</td><td>22</td><td>Cache + Routing 经济策略</td><td>M4</td></tr>
+      </tbody>
+    </table>
+    <div class="note">三条边界：不变成 AI 名词百科 · 不被热点牵着跑 · 不退回工具测评视角。</div>
+  </section>
+
+  <section class="sec">
+    <h2>当前开发完成情况</h2>
+    <div class="desc">核心学习闭环已经成形，但差异化能力、长期连续性和工程底线仍在收口阶段。</div>
+    <table>
+      <thead><tr><th style="width:180px">模块</th><th style="width:110px">状态</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>对话 onboarding</b></td><td><span class="badge b-done">已完成</span></td><td>`core/engine.py` + SSE 对话页已上线</td></tr>
+        <tr><td><b>个性化路径生成</b></td><td><span class="badge b-done">已完成</span></td><td>`master/W1/学习手册/愿景契约` 已稳定生成</td></tr>
+        <tr><td><b>注册登录 + 多用户</b></td><td><span class="badge b-done">已完成</span></td><td>`core/auth.py` + SQLite 用户体系已落地</td></tr>
+        <tr><td><b>学练 / 学情 / 图谱 / RAG</b></td><td><span class="badge b-done">已完成</span></td><td>学练单元、双坐标学情、概念图谱、引用讲解已成环</td></tr>
+        <tr><td><b>推荐 / 重规划 / 记忆</b></td><td><span class="badge b-done">已完成</span></td><td>`recommend.py`、`replan.py`、`memory.py` 已成环</td></tr>
+        <tr><td><b>推送地基 / 公网部署</b></td><td><span class="badge b-done">已完成</span></td><td>PWA + Web Push + APScheduler 地基与 ECS 品牌适配已完成</td></tr>
+      </tbody>
+    </table>
+    <table style="margin-top:12px">
+      <thead><tr><th style="width:180px">已完成但仍需深化</th><th style="width:110px">当前状态</th><th>下一步</th></tr></thead>
+      <tbody>
+        <tr><td><b>即时基线评估</b></td><td><span class="badge b-now">部分完成</span></td><td>打通“出题 → 判分 → 画像 → 路径”闭环</td></tr>
+        <tr><td><b>反遗忘机制</b></td><td><span class="badge b-now">部分完成</span></td><td>补周回测 / 月度雪球 / 自检交互</td></tr>
+        <tr><td><b>周计划生成</b></td><td><span class="badge b-now">部分完成</span></td><td>从 `W1` 走向 `W2-WN lazy build`</td></tr>
+        <tr><td><b>移动端触点</b></td><td><span class="badge b-now">部分完成</span></td><td>推送 dogfood 收口，后续再补飞书 / 微信入口</td></tr>
+        <tr><td><b>个人助理模式</b></td><td><span class="badge b-next">方向已定</span></td><td>先稳主产品，再补 agent runtime 与接入层</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="gaps">
+    <h2>当前主要问题与缺口</h2>
+    <div class="desc">这部分就是当前最需要持续被消掉的真实缺口，不再让它们散落在多个文档里。</div>
+    <table>
+      <thead><tr><th style="width:70px">ID</th><th style="width:220px">缺口</th><th>当前影响</th></tr></thead>
+      <tbody>
+        <tr><td><b>G1</b></td><td>前端响应式与样式治理不足</td><td>移动端/窄屏体验差，直接影响真实使用</td></tr>
+        <tr><td><b>G2</b></td><td>后续周内容未产品化</td><td>系统更像“首周很完整”，长期连续性不足</td></tr>
+        <tr><td><b>G3</b></td><td>6 关自检仍未交互化</td><td>核心差异点之一仍停在模板层</td></tr>
+        <tr><td><b>G4</b></td><td>基线评估闭环未彻底打通</td><td>“系统懂你”的能力还不够强</td></tr>
+        <tr><td><b>G5</b></td><td>会话持久化与超时治理不足</td><td>服务重启、弱网和长连接异常体验不稳</td></tr>
+        <tr><td><b>G6</b></td><td>生产工程底线不足</td><td>备份、安全、CDN 依赖治理仍未补齐</td></tr>
+        <tr><td><b>G7</b></td><td>文档存在多入口与历史漂移</td><td>影响判断当前真实状态与后续优先级</td></tr>
+        <tr><td><b>G8</b></td><td>商业化与账号体系尚未产品化</td><td>手机端转化、正式收费和权益运营还缺完整闭环</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="plan">
+    <h2>当前开发计划</h2>
+    <div class="desc">计划分成里程碑、P0-P3 和建议执行顺序，方便直接用来排期。</div>
+    <table>
+      <thead><tr><th style="width:160px">里程碑</th><th style="width:100px">状态</th><th>结论</th></tr></thead>
+      <tbody>
+        <tr><td><b>M0 基础跑通</b></td><td><span class="badge b-done">Done</span></td><td>项目已远超“能跑”阶段</td></tr>
+        <tr><td><b>M1 学习闭环地基</b></td><td><span class="badge b-done">Done</span></td><td>登录、路径、学练、学情、图谱、RAG、推荐、记忆、重规划已成环</td></tr>
+        <tr><td><b>M2 公网可用化</b></td><td><span class="badge b-done">Done</span></td><td>Web Push 地基、公网部署、品牌适配已完成</td></tr>
+        <tr><td><b>M3 当前收口</b></td><td><span class="badge b-now">Doing</span></td><td>响应式、自检交互、后续周 lazy build、文档统一是当前重点</td></tr>
+        <tr><td><b>M4 差异化深化</b></td><td><span class="badge b-next">Todo</span></td><td>评估闭环、FSRS、周回测、手动调整</td></tr>
+        <tr><td><b>M5 工程与升级模式</b></td><td><span class="badge b-next">Todo</span></td><td>持久会话、备份、安全、个人助理模式接入层</td></tr>
+      </tbody>
+    </table>
+    <div class="grid" style="margin-top:12px">
+      <div class="card">
+        <h3>P0 · 最近 1-2 周</h3>
+        <table style="margin-top:10px">
+          <thead><tr><th>任务</th><th>验收标准</th></tr></thead>
+          <tbody>
+            <tr><td>前端响应式收口</td><td>手机与窄屏下核心页面可用，无明显布局错位</td></tr>
+            <tr><td>6 关自检交互页</td><td>可在前端完成评分、得到反馈、触发调整建议</td></tr>
+            <tr><td>`W2-WN lazy build`</td><td>进入下一周时能按反馈生成后续周内容</td></tr>
+            <tr><td>推送链路 dogfood 收口</td><td>订阅、scheduler、通知、deep-link、回流全链路实测通过</td></tr>
+            <tr><td>文档真相源统一</td><td>主文档、主方案页、工作台口径一致</td></tr>
+            <tr><td>手机号登录 / 支付 / 积分方案定稿</td><td>账号链路、支付对象、积分规则和赠送机制明确</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>P1 · 接下来的 2-4 周</h3>
+        <table style="margin-top:10px">
+          <thead><tr><th>任务</th><th>验收标准</th></tr></thead>
+          <tbody>
+            <tr><td>评估闭环贯通</td><td>评估结果可结构化回流生成器</td></tr>
+            <tr><td>FSRS 调度升级</td><td>替换或并行 SM-2，推荐结果可验证</td></tr>
+            <tr><td>手动调整对话</td><td>用户可调强度/节奏/时间预算并局部重生成</td></tr>
+            <tr><td>周回测 / 月度 R11</td><td>周/月复盘可触发计划调整</td></tr>
+            <tr><td>Prompt 版本化 / AB</td><td>质量面板可对比 prompt 版本效果</td></tr>
+            <tr><td>手机验证码注册登录 / 支付 + 积分账户</td><td>手机号链路、积分流水、基础套餐能力跑通</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>P2 · 并行准备</h3>
+        <table style="margin-top:10px">
+          <thead><tr><th>任务</th><th>验收标准</th></tr></thead>
+          <tbody>
+            <tr><td>会话持久化 + TTL 治理</td><td>对话状态可恢复，session 可清理</td></tr>
+            <tr><td>首 token 超时 + 错误 UX</td><td>上游慢时用户能明确收到错误反馈</td></tr>
+            <tr><td>异地备份 / 导出</td><td>关键数据可恢复、可导出</td></tr>
+            <tr><td>CDN 依赖收口 / 安全加固</td><td>关键资源本地可用，cookie/限流/权限最小闭环</td></tr>
+            <tr><td>Agent 接入层预埋 / 权益风控</td><td>tools / memory / scheduler 可被统一 runtime 调用</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>P3 · 下一阶段扩展</h3>
+        <table style="margin-top:10px">
+          <thead><tr><th>方向</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>飞书 / 微信等 IM 轨道</td><td>把移动端触点做成更强提醒、小测、复盘入口</td></tr>
+            <tr><td>个人助理模式</td><td>用户可选开通的付费升级模式</td></tr>
+            <tr><td>OpenClaw / agent runtime</td><td>作为升级模式承载层，不替代主产品</td></tr>
+            <tr><td>多 provider / 容灾</td><td>降低单模型风险</td></tr>
+            <tr><td>更强长期画像</td><td>跨空间、跨周期的学习者模型</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note">建议执行顺序已经固定：先解决看得见的问题，再解决能不能持续学，最后补差异化闭环，再接升级模式。</div>
+  </section>
+
+  <section class="sec">
+    <h2>怎么看这几周是否 OK</h2>
+    <div class="desc">如果你要判断当前几周排期是否合理，不要只盯一个功能点，而要同时检查下面 4 条线有没有一起推进。</div>
+    <table>
+      <thead><tr><th style="width:170px">判断维度</th><th>你该看什么</th><th>如果缺失说明什么</th></tr></thead>
+      <tbody>
+        <tr><td><b>学习闭环</b></td><td>评估、自检、复习、重规划有没有继续连起来</td><td>产品仍停留在“会生成，但不够会带你学”</td></tr>
+        <tr><td><b>长期连续性</b></td><td>后续周、推送回流、个人记忆有没有增强</td><td>体验只对首周友好，留存和陪伴会弱</td></tr>
+        <tr><td><b>运营底座</b></td><td>登录、支付、积分、升级模式有没有成链</td><td>无法进入正式运营和收费阶段</td></tr>
+        <tr><td><b>架构边界</b></td><td>主系统真相源、Agent、IM、支付有没有继续混层</td><td>后续越做越难维护，也难判断问题落在哪层</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>验证与文档治理</h2>
+    <div class="desc">开发收尾必须同时满足验证和文档同步，避免出现“代码改了、方案没跟”的漂移。</div>
+    <div class="split">
+      <table>
+        <thead><tr><th style="width:140px">验证类型</th><th>要求</th></tr></thead>
+        <tbody>
+          <tr><td><b>单元测试</b></td><td>`core/` 改动必须 pytest 通过</td></tr>
+          <tr><td><b>浏览器实测</b></td><td>web 改动必须实测一次</td></tr>
+          <tr><td><b>端到端验证</b></td><td>路径生成 / 学练 / 推送 / 自检至少验证一条真实链路</td></tr>
+          <tr><td><b>可见回退</b></td><td>LLM 相关必须有用户看得见的降级路径</td></tr>
+          <tr><td><b>文档同步</b></td><td>每轮开发结束后同步主文档、主方案页与工作台</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th style="width:180px">文档</th><th>角色</th></tr></thead>
+        <tbody>
+          <tr><td><b>03-开发方案与计划.md</b></td><td>主文档，维护当前需求、技术、进度、计划</td></tr>
+          <tr><td><b>开发方案与计划.html</b></td><td>主方案 HTML，给人直接看</td></tr>
+          <tr><td><b>工作台.html</b></td><td>HTML 总览镜像，快速看当前状态</td></tr>
+          <tr><td><b>01 / 02 / 04</b></td><td>专题背景与协作机制说明</td></tr>
+          <tr><td><b>SPEC.md</b></td><td>ADR 与版本级关键决策</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="foot">
+    LearnBuddy 主方案 HTML 页 · 日常查看优先使用本页，深度修改请回到 `03-开发方案与计划.md`
+  </div>
+</div>
+</body>
+</html>

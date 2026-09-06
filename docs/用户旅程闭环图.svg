@@ -1,0 +1,95 @@
+<svg viewBox="0 0 940 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="用户旅程闭环图">
+  <defs>
+    <marker id="arr-j" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-j-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-j-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-j-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .j-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .j-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .j-card { stroke: #d8d2c4; stroke-width: 1; }
+    .j-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+  </style>
+
+  <!-- 上半区：左侧主流程 -->
+  <rect x="40" y="40" width="220" height="74" rx="12" fill="url(#g-j-1)" class="j-card" />
+  <text x="60" y="68" class="j-title">进入产品</text>
+  <text x="60" y="88" class="j-sub">对话首页 / 学习路径入口</text>
+
+  <line x1="150" y1="114" x2="150" y2="156" class="j-conn" marker-end="url(#arr-j)" />
+
+  <rect x="40" y="158" width="220" height="74" rx="12" fill="url(#g-j-2)" class="j-card" />
+  <text x="60" y="186" class="j-title">对话澄清目标 / 时间 / 约束</text>
+  <text x="60" y="206" class="j-sub">收敛自然语言到参数包</text>
+
+  <line x1="150" y1="232" x2="150" y2="274" class="j-conn" marker-end="url(#arr-j)" />
+
+  <rect x="40" y="276" width="220" height="74" rx="12" fill="url(#g-j-3)" class="j-card" />
+  <text x="60" y="304" class="j-title">即时基线评估</text>
+  <text x="60" y="324" class="j-sub">出题 → 回答 → 判分 → 画像</text>
+
+  <!-- 评估分叉 -->
+  <path d="M260 312 C 320 312, 320 256, 360 256" class="j-conn" marker-end="url(#arr-j)" />
+  <path d="M260 312 C 320 312, 320 360, 360 360" class="j-conn" marker-end="url(#arr-j)" />
+
+  <rect x="360" y="226" width="180" height="60" rx="10" fill="#fff" class="j-card" />
+  <text x="378" y="248" class="j-title">独立完成能力</text>
+  <text x="378" y="268" class="j-sub">不借助 AI 的真实能力</text>
+
+  <rect x="360" y="332" width="180" height="60" rx="10" fill="#fff" class="j-card" />
+  <text x="378" y="354" class="j-title">AI 协作能力</text>
+  <text x="378" y="374" class="j-sub">借助 AI 后的能力上限</text>
+
+  <line x1="150" y1="350" x2="150" y2="392" class="j-conn" marker-end="url(#arr-j)" />
+
+  <rect x="40" y="394" width="220" height="74" rx="12" fill="url(#g-j-1)" class="j-card" />
+  <text x="60" y="422" class="j-title">生成个性化学习路径</text>
+  <text x="60" y="442" class="j-sub">master / W1 / 学习手册 / 契约</text>
+
+  <line x1="150" y1="468" x2="150" y2="510" class="j-conn" marker-end="url(#arr-j)" />
+
+  <!-- 右侧执行与回流 -->
+  <rect x="360" y="120" width="220" height="60" rx="10" fill="url(#g-j-3)" class="j-card" />
+  <text x="378" y="142" class="j-title">进入学习空间</text>
+  <text x="378" y="162" class="j-sub">今日任务 / 学练 / 自检</text>
+
+  <path d="M260 430 C 320 430, 320 150, 360 150" class="j-conn" marker-end="url(#arr-j)" />
+
+  <rect x="620" y="120" width="280" height="60" rx="10" fill="#fff" class="j-card" />
+  <text x="640" y="142" class="j-title">每日小测 / 周自检 / 周回测 / 月度大考</text>
+  <text x="640" y="162" class="j-sub">把“学了”变成“知道会不会”</text>
+
+  <path d="M580 150 C 600 150, 600 150, 620 150" class="j-conn" marker-end="url(#arr-j)" />
+
+  <rect x="620" y="220" width="280" height="60" rx="10" fill="url(#g-j-2)" class="j-card" />
+  <text x="640" y="242" class="j-title">更新画像 / 记忆 / 掌握度</text>
+  <text x="640" y="262" class="j-sub">结果持续回流到系统认知层</text>
+
+  <path d="M760 180 L 760 220" class="j-conn" marker-end="url(#arr-j)" />
+
+  <rect x="620" y="320" width="280" height="60" rx="10" fill="url(#g-j-3)" class="j-card" />
+  <text x="640" y="342" class="j-title">推荐 / 重规划 / 提醒</text>
+  <text x="640" y="362" class="j-sub">驱动下一轮学习</text>
+
+  <path d="M760 280 L 760 320" class="j-conn" marker-end="url(#arr-j)" />
+
+  <!-- 回流闭环 -->
+  <path d="M620 350 C 590 350, 540 350, 470 310 C 360 250, 240 260, 180 276" class="j-conn" stroke-dasharray="5 4" marker-end="url(#arr-j)" />
+  <text x="380" y="244" class="j-sub">持续回流</text>
+
+  <rect x="40" y="510" width="220" height="38" rx="10" fill="#fff" class="j-card" />
+  <text x="60" y="534" class="j-title">下一轮学习（闭环）</text>
+</svg>

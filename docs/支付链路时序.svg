@@ -1,0 +1,67 @@
+<svg viewBox="0 0 940 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="支付链路时序">
+  <defs>
+    <marker id="arr-pay" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#235955" />
+    </marker>
+    <linearGradient id="g-pay-1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4efee" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-pay-2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e7f3ec" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <linearGradient id="g-pay-3" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fbeedd" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <style>
+    .py-title { font: 700 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #235955; }
+    .py-sub { font: 400 11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #6b6760; }
+    .py-card { stroke: #d8d2c4; stroke-width: 1; }
+    .py-conn { stroke: #235955; stroke-width: 1.6; fill: none; }
+    .py-tag { font: 700 10.5px -apple-system, "PingFang SC", sans-serif; fill: #fff; }
+  </style>
+
+  <!-- 横向三泳道 -->
+  <rect x="40" y="40" width="280" height="56" rx="12" fill="url(#g-pay-1)" class="py-card" />
+  <text x="60" y="64" class="py-title">前端</text>
+  <text x="60" y="84" class="py-sub">用户提交购买请求</text>
+
+  <rect x="340" y="40" width="280" height="56" rx="12" fill="url(#g-pay-2)" class="py-card" />
+  <text x="360" y="64" class="py-title">LearnBuddy 服务端</text>
+  <text x="360" y="84" class="py-sub">订单创建 / 状态机</text>
+
+  <rect x="640" y="40" width="280" height="56" rx="12" fill="url(#g-pay-3)" class="py-card" />
+  <text x="660" y="64" class="py-title">支付渠道</text>
+  <text x="660" y="84" class="py-sub">微信 / 支付宝 / 聚合</text>
+
+  <line x1="180" y1="96" x2="180" y2="128" class="py-conn" marker-end="url(#arr-pay)" />
+  <rect x="40" y="130" width="280" height="48" rx="10" fill="#fff" class="py-card" />
+  <text x="60" y="152" class="py-title">提交购买请求</text>
+  <text x="60" y="170" class="py-sub">选择商品 + 支付方式</text>
+
+  <line x1="480" y1="154" x2="480" y2="186" class="py-conn" marker-end="url(#arr-pay)" />
+  <rect x="340" y="188" width="280" height="48" rx="10" fill="#fff" class="py-card" />
+  <text x="360" y="210" class="py-title">创建 Order (pending)</text>
+  <text x="360" y="228" class="py-sub">幂等订单号 + 商品快照</text>
+
+  <line x1="480" y1="236" x2="780" y2="236" class="py-conn" marker-end="url(#arr-pay)" />
+  <rect x="640" y="244" width="280" height="48" rx="10" fill="#fff" class="py-card" />
+  <text x="660" y="266" class="py-title">拉起支付</text>
+  <text x="660" y="284" class="py-sub">用户在渠道完成支付</text>
+
+  <line x1="780" y1="292" x2="480" y2="316" class="py-conn" marker-end="url(#arr-pay)" />
+  <rect x="340" y="318" width="280" height="48" rx="10" fill="#fff" class="py-card" />
+  <text x="360" y="340" class="py-title">接收异步回调</text>
+  <text x="360" y="358" class="py-sub">验签 + 幂等检查</text>
+
+  <line x1="480" y1="366" x2="480" y2="390" class="py-conn" marker-end="url(#arr-pay)" />
+  <rect x="340" y="392" width="280" height="48" rx="10" fill="#fff" class="py-card" />
+  <text x="360" y="414" class="py-title">发放权益 + 写账本</text>
+  <text x="360" y="432" class="py-sub">Subscription / PointsLedger</text>
+
+  <line x1="180" y1="416" x2="180" y2="440" class="py-conn" marker-end="url(#arr-pay)" />
+  <text x="40" y="440" class="py-sub">前端轮询 / 推送：用户看到权益生效</text>
+</svg>

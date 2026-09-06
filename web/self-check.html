@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 6 关自检</title>
+<link rel="stylesheet" href="/common.css">
+<style>
+  :root {
+    --bg: #f7f4ee; --card: #ffffff; --paper-2: #efeae0;
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --line: #e7e1d6;
+    --red: #c2603f; --red-soft: #f7e4dc;
+    --green: #4a9d6e; --green-soft: #e7f3ec;
+    --radius: 14px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 8px 24px rgba(43,41,38,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  header { position: sticky; top: 0; z-index: 10; background: #fffdf9ee; backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  header .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark));
+    color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  header .ttl { font-weight: 700; font-size: 15px; }
+  header .ttl small { font-weight: 500; color: var(--ink-faint); font-size: 12.5px; margin-left: 6px; }
+  header .spacer { flex: 1; }
+  header a.bk { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; padding: 7px 13px;
+    border-radius: 8px; font-weight: 600; border: 1px solid var(--line); }
+  header a.bk:hover { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 30px 24px 80px; }
+  .hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; border-radius: 18px;
+    padding: 24px 28px; box-shadow: 0 12px 32px rgba(44,110,106,.22); }
+  .hero h1 { font-size: 22px; }
+  .hero .one { font-size: 14.5px; opacity: .95; margin-top: 8px; line-height: 1.7; }
+  .hero .meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); }
+  .hero .meta .k { font-size: 11px; opacity: .75; letter-spacing: .04em; }
+  .hero .meta .v { font-size: 15px; font-weight: 600; margin-top: 2px; }
+
+  .progress { margin-top: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; box-shadow: var(--shadow); }
+  .progress .pg-h { display: flex; justify-content: space-between; align-items: baseline; }
+  .progress .pg-h .t { font-weight: 700; font-size: 14px; }
+  .progress .pg-h .n { font-size: 12.5px; color: var(--ink-faint); }
+  .pg-bar { height: 8px; background: var(--paper-2); border-radius: 5px; overflow: hidden; margin-top: 9px; }
+  .pg-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), #1f8a70); transition: width .25s; }
+
+  .gate { background: var(--amber-soft); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #8a5a1f; margin-top: 12px; }
+  .gate.ok { background: var(--green-soft); color: #1f8a70; }
+
+  .sec { margin-top: 26px; }
+  .sec-h { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .sec-h .no { width: 30px; height: 30px; border-radius: 9px; background: var(--teal-soft); color: var(--teal-dark);
+    font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .sec-h h2 { font-size: 18px; font-weight: 700; }
+  .sec-desc { color: var(--ink-soft); font-size: 13px; margin: 0 0 14px 41px; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); margin-bottom: 12px; }
+  .gate-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .gate-card .l { font-size: 14px; }
+  .gate-card .r { font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; background: var(--paper-2); color: var(--ink-soft); }
+  .gate-card .r.advance { background: var(--green-soft); color: #1f8a70; }
+  .gate-card .r.reduce { background: var(--amber-soft); color: #8a5a1f; }
+  .gate-card .r.repeat { background: var(--red-soft); color: var(--red); }
+  .gate-card .r.reset { background: var(--paper-2); color: var(--ink-faint); }
+
+  .g6 { display: grid; gap: 12px; }
+  .gc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); transition: border-color .15s; }
+  .gc.passed { border-color: #1f8a70; }
+  .gc.locked { opacity: .55; }
+  .gc-h { display: flex; align-items: flex-start; gap: 11px; }
+  .gc-no { width: 28px; height: 28px; flex-shrink: 0; border-radius: 8px; background: var(--paper-2); color: var(--ink-soft);
+    font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .gc.passed .gc-no { background: #1f8a70; color: #fff; }
+  .gc-name { font-weight: 600; font-size: 15px; line-height: 1.4; flex: 1; }
+  .gc-idx { font-size: 11.5px; color: var(--ink-faint); }
+  .gc-pass { font-size: 11.5px; font-weight: 700; color: #1f8a70; display: none; }
+  .gc.passed .gc-pass { display: inline; }
+  .gc.signal { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0 39px; line-height: 1.5; }
+  .gc-ctrl { display: flex; gap: 16px; align-items: center; margin-top: 12px; margin-left: 39px; flex-wrap: wrap; }
+  .gc-ctrl .lb { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; min-width: 64px; }
+  .seg { display: flex; gap: 6px; }
+  .seg button { width: 38px; height: 38px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--card);
+    font: inherit; font-weight: 700; cursor: pointer; color: var(--ink-soft); transition: all .12s; }
+  .seg button:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .seg button.sel { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .seg button.sel-pass { background: #1f8a70; border-color: #1f8a70; }
+  .gc-note { width: 100%; margin-top: 10px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px;
+    font: inherit; font-size: 13px; background: var(--card); resize: vertical; min-height: 38px; line-height: 1.5; }
+  .gc-note:focus { outline: none; border-color: var(--teal); }
+
+  .acts { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; align-items: center; }
+  .btn { font: inherit; cursor: pointer; border: none; border-radius: 11px; font-weight: 600; padding: 11px 22px; transition: all .15s; }
+  .btn.primary { background: var(--teal); color: #fff; }
+  .btn.primary:hover { background: var(--teal-dark); }
+  .btn.primary:disabled { opacity: .5; cursor: not-allowed; }
+  .btn.ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: var(--paper-2); }
+  .acts .stat { font-size: 13px; color: var(--ink-soft); margin-left: auto; }
+
+  .feedback { margin-top: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; box-shadow: var(--shadow); display: none; }
+  .feedback.show { display: block; }
+  .feedback h3 { font-size: 15.5px; display: flex; align-items: center; gap: 8px; }
+  .feedback .ft-body { font-size: 14px; line-height: 1.75; color: var(--ink); margin-top: 10px; white-space: pre-wrap; }
+  .feedback .ft-meta { font-size: 12px; color: var(--ink-faint); margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); }
+
+  .hist { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; box-shadow: var(--shadow); margin-top: 14px; }
+  .hist .h-h { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+  .hist .h-h .t { font-weight: 700; font-size: 14px; }
+  .hist .h-h .a { font-size: 12.5px; color: var(--ink-faint); }
+  .hist .h-list { margin-top: 14px; }
+  .hist .h-row { display: flex; gap: 12px; padding: 10px 0; border-top: 1px dashed var(--line); align-items: center; flex-wrap: wrap; }
+  .hist .h-row:first-child { border-top: none; }
+  .hist .h-w { font-weight: 700; font-size: 13px; min-width: 50px; }
+  .hist .h-bars { display: flex; gap: 4px; flex: 1; min-width: 240px; }
+  .hist .h-bar { flex: 1; height: 18px; border-radius: 4px; background: var(--paper-2); position: relative; overflow: hidden; }
+  .hist .h-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), #1f8a70); border-radius: 4px; }
+  .hist .h-bar.locked > span { background: var(--line); }
+  .hist .h-mini { width: 56px; height: 56px; flex-shrink: 0; }
+
+  /* 雷达图（SVG，纯手写，6 维轮廓 + 周环比叠加）*/
+  .radar-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 20px; box-shadow: var(--shadow); margin-top: 16px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .radar-card .r-svg { flex-shrink: 0; }
+  .radar-card .r-info { flex: 1; min-width: 200px; }
+  .radar-card .r-info .r-title { font-size: 14.5px; font-weight: 700; }
+  .radar-card .r-info .r-sub { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+  .radar-card .r-info .r-weak { font-size: 12.5px; margin-top: 10px; color: var(--ink); line-height: 1.7; }
+  .radar-card .r-info .r-weak b { color: #1f8a70; }
+  .radar-card .r-info .r-weak em { color: var(--red); font-style: normal; font-weight: 700; }
+  .radar-card .r-empty { color: var(--ink-faint); font-size: 13px; padding: 12px 0; }
+  .radar-card .r-axis { font-size: 11.5px; fill: var(--ink-soft); font-weight: 600; }
+  .radar-card .r-grid { stroke: var(--line); fill: none; }
+  .radar-card .r-poly-prev { fill: rgba(108, 99, 86, .10); stroke: #6c6356; stroke-width: 1.4; stroke-dasharray: 4 3; }
+  .radar-card .r-poly { fill: rgba(44, 110, 106, .22); stroke: var(--teal); stroke-width: 2; stroke-linejoin: round; }
+  .radar-card .r-pt { fill: var(--teal); }
+  .radar-card .r-pt-prev { fill: #6c6356; }
+  .radar-card .r-legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink-soft); margin-top: 8px; flex-wrap: wrap; }
+  .radar-card .r-legend i { display: inline-block; width: 12px; height: 12px; vertical-align: middle; margin-right: 5px; border-radius: 3px; }
+  .radar-card .r-legend .l-cur i { background: var(--teal); }
+  .radar-card .r-legend .l-prev i { background: rgba(108, 99, 86, .3); border: 1px dashed #6c6356; }
+  .hist .h-px { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; }
+  .hist .h-tag { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 6px; min-width: 52px; text-align: center; }
+  .hist .h-tag.advance { background: var(--green-soft); color: #1f8a70; }
+  .hist .h-tag.reduce { background: var(--amber-soft); color: #8a5a1f; }
+  .hist .h-tag.repeat { background: var(--red-soft); color: var(--red); }
+  .hist .h-tag.reset { background: var(--paper-2); color: var(--ink-faint); }
+  .hist .h-tag.queued { background: var(--paper-2); color: var(--ink-faint); }
+
+  .empty { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; text-align: center; color: var(--ink-faint); font-size: 13.5px; }
+
+  .note { background: var(--amber-soft); color: #8a5a1f; border-radius: 10px; padding: 11px 15px; font-size: 13px; margin-top: 14px; }
+  .err { background: var(--red-soft); color: var(--red); border-radius: 10px; padding: 11px 15px; font-size: 13px; margin-top: 14px; display: none; }
+
+  .foot { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  @media (max-width: 720px) {
+    .gc-ctrl { margin-left: 0; }
+    .seg button { width: 36px; height: 36px; }
+    .hist .h-bars { min-width: 180px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">L</div>
+  <div class="ttl">6 关自检<small>WeeklySelfCheck · R1 自动判断</small></div>
+  <div class="spacer"></div>
+  <a class="bk" id="backLink" href="#">← 返回学习空间</a>
+</header>
+
+<div class="wrap">
+  <section class="hero" role="img" aria-label="6 关自检每周回顾">
+    <h1 id="heroTitle">6 关自检</h1>
+    <div class="one" id="heroOne">每周日花 3 分钟给本周的 6 个维度打分。结果会自动触发 R1 判断（≥4 关 = 进新内容，否则降低强度 / 重复本周）。</div>
+    <div class="meta">
+      <div><div class="k">当前周次</div><div class="v" id="metaWeek">—</div></div>
+      <div><div class="k">历史自检</div><div class="v" id="metaHist">—</div></div>
+      <div><div class="k">学习路径</div><div class="v" id="metaInst">—</div></div>
+    </div>
+  </section>
+
+  <div id="radarWrap" style="display:none">
+    <div class="radar-card" role="img" aria-label="6 维本周能力雷达图与上周对比">
+      <svg class="r-svg" id="radarLarge" width="260" height="260" viewBox="0 0 260 260" aria-hidden="true"></svg>
+      <div class="r-info">
+        <div class="r-title" id="radarTitle">本周 6 维能力轮廓</div>
+        <div class="r-sub" id="radarSub">把 6 关评分映射到 6 边形轮廓 — 外凸 = 强项，凹陷 = 弱项</div>
+        <div class="r-weak" id="radarWeak"></div>
+        <div class="r-legend">
+          <span class="l-cur"><i></i>本周</span>
+          <span class="l-prev"><i></i>上周</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="progressBox" class="progress" style="display:none">
+    <div class="pg-h"><span class="t">本周已填 <span id="pgFilled">0</span> / 6 关</span><span class="n">≥4 关 = 本周通过</span></div>
+    <div class="pg-bar"><span id="pgBar" style="width:0%"></span></div>
+    <div class="gate" id="r1Hint">先为 6 个维度各打 1 个分数，再提交。</div>
+  </div>
+
+  <section class="sec">
+    <div class="sec-h"><div class="no">关</div><h2>本周 6 关</h2></div>
+    <div class="sec-desc">0 = 还没碰 · 3 = 需要提示 · 5 = 完全独立。每关附"通过标志"，对照打分。</div>
+    <div id="gateList" class="g6"></div>
+    <div class="acts">
+      <button class="btn primary" id="submitBtn" disabled>提交本周自检</button>
+      <button class="btn ghost" id="resetBtn">重置</button>
+      <span class="stat" id="statLine">已通过 <b id="statPass">0</b>/6 · R1 = <span id="statR1">未提交</span></span>
+    </div>
+    <div class="err" id="errBox"></div>
+    <div class="feedback" id="fbBox">
+      <h3>🎯 LearnBuddy 的判断</h3>
+      <div class="ft-body" id="fbBody"></div>
+      <div class="ft-meta" id="fbMeta"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><div class="no">史</div><h2>历史自检</h2></div>
+    <div class="sec-desc">每行 = 一周。绿色段是 6 关评分（每段长 = 评分 / 5）。</div>
+    <div class="hist">
+      <div class="h-h"><span class="t">最近自检</span><span class="a" id="histMeta">—</span></div>
+      <div class="h-list" id="histList"></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>6 关自检交互页 · V0.23</span>
+    <span><a href="/space" style="color:var(--teal-dark);text-decoration:none">学习空间</a> · <a href="#" id="footInst" style="color:var(--teal-dark);text-decoration:none">当前路径</a></span>
+  </div>
+</div>
+
+<script>
+let INSTANCE_ID = null;
+let DIMENSIONS = ["听", "说", "读", "写", "翻译", "教别人"]; // 兜底
+let PASS_SIGNALS = ["", "", "", "", "", ""];                  // 通过标志（来自学习手册）
+let SCORES = [0,0,0,0,0,0];
+let PREV_SCORES = null;  // 上周评分（renderRadar 周环比用）
+let NOTES  = ["", "", "", "", "", ""];
+let PASSED_CNT = 0;
+let R1_CODE = null;
+let REQUESTED_WEEK = 1;
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+function esc(s) { return String(s||"").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c])); }
+
+// ---- init ----
+(async function init() {
+  const m = location.pathname.match(/\/self-check\/([^/?#]+)/);
+  INSTANCE_ID = m ? decodeURIComponent(m[1]) : "";
+  if (!INSTANCE_ID) { showErr("URL 缺实例 id"); return; }
+  const query = new URLSearchParams(location.search);
+  REQUESTED_WEEK = Math.max(1, Number(query.get("week") || 1) || 1);
+  const instanceUrl = `/instance/${encodeURIComponent(INSTANCE_ID)}?view=path#week-${REQUESTED_WEEK}`;
+  $("#backLink").href = instanceUrl;
+  $("#backLink").textContent = "← 返回当前学习路径";
+  $("#footInst").href = instanceUrl;
+  $("#footInst").textContent = `实例 ${INSTANCE_ID}`;
+  $("#metaInst").textContent = INSTANCE_ID;
+
+  await loadDimensions();      // 从 master.json 拉 6 维度 + 通过标志
+  await loadLatest();          // 预填最近一次
+  await loadHistory();         // 历史
+  renderGates();
+  bindActions();
+  updateProgress();
+})();
+
+function showErr(msg) {
+  const b = $("#errBox"); b.textContent = msg; b.style.display = "block";
+}
+
+async function loadDimensions() {
+  try {
+    const r = await fetch(`/api/instance/${encodeURIComponent(INSTANCE_ID)}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    const lm = (d.master && d.master.learning_methods) || {};
+    if (Array.isArray(lm.self_check_dimensions) && lm.self_check_dimensions.length >= 6) {
+      DIMENSIONS = lm.self_check_dimensions.slice(0, 6).map(String);
+    }
+    // 通过标志：学习手册 markdown 里"## 四、6 关自检"下面的表
+    const md = d.learning_manual || "";
+    const lines = md.split("\n");
+    let inTbl = false, hits = [];
+    for (const ln of lines) {
+      if (/^##\s*四、6\s*关自检/.test(ln) || /^##\s*6\s*关自检/.test(ln)) { inTbl = true; continue; }
+      if (inTbl && /^##\s/.test(ln)) break;
+      if (inTbl && /^\|/.test(ln) && !/^\|[-：\s|]+\|$/.test(ln)) {
+        const cells = ln.split("|").map(s => s.trim()).filter(Boolean);
+        // 学习手册表一般是：| 关 | 维度 | 通过标志 | 备注 |
+        if (cells.length >= 3) {
+          hits.push({ idx: cells[0], name: cells[1], signal: cells[2] });
+        }
+      }
+    }
+    PASS_SIGNALS = DIMENSIONS.map((_, i) => {
+      // 找匹配 (按维度名)
+      const m = hits.find(h => h.name === DIMENSIONS[i]);
+      return (m && m.signal) || `本关自评分达到 4 分及以上视为通过（与本领域维度「${DIMENSIONS[i]}」相关）。`;
+    });
+  } catch (e) { /* keep defaults */ }
+}
+
+async function loadLatest() {
+  try {
+    const r = await fetch(`/api/instance/${encodeURIComponent(INSTANCE_ID)}/self-check/latest?week=${REQUESTED_WEEK}`);
+    if (!r.ok) return;
+    const j = await r.json();
+    const latest = j.latest;
+    if (latest && Array.isArray(latest.scores) && latest.scores.length === 6) {
+      SCORES = latest.scores.slice();
+      NOTES  = (latest.notes || NOTES).slice();
+      $("#metaWeek").textContent = `W${REQUESTED_WEEK}（已有记录）`;
+    } else {
+      $("#metaWeek").textContent = `W${REQUESTED_WEEK}`;
+    }
+    window.__suggestWeek = REQUESTED_WEEK;
+    $("#heroTitle").textContent = `W${REQUESTED_WEEK} · 6 关自检`;
+  } catch (e) {}
+}
+
+async function loadHistory() {
+  try {
+    const r = await fetch(`/api/instance/${encodeURIComponent(INSTANCE_ID)}/self-check/history?limit=12`);
+    if (!r.ok) return;
+    const j = await r.json();
+    const items = j.items || [];
+    $("#metaHist").textContent = items.length ? `${items.length} 次` : "暂无";
+    $("#histMeta").textContent = items.length ? `${items.length} 条记录` : "暂无记录";
+    // 上周评分 = 历史里 week 倒数第二的（最新不算本周）
+    PREV_SCORES = items.length >= 2 ? (items[1].scores || null) : null;
+    renderHistory(items);
+    refreshRadar();   // 历史拿到后立即刷一次雷达（如果 SCORES 已填）
+  } catch (e) {}
+}
+
+function renderGates() {
+  const html = DIMENSIONS.map((name, i) => `
+    <div class="gc" data-i="${i}" id="gc${i}">
+      <div class="gc-h">
+        <div class="gc-no">${i+1}</div>
+        <div style="flex:1">
+          <div class="gc-name">${esc(name)}</div>
+          <div class="gc-idx">第 ${i+1} 关</div>
+        </div>
+        <span class="gc-pass">✓ 通过</span>
+      </div>
+      <div class="gc-signal">通过标志：${esc(PASS_SIGNALS[i] || "—")}</div>
+      <div class="gc-ctrl">
+        <span class="lb">本关评分</span>
+        <div class="seg" data-i="${i}">
+          ${[0,1,2,3,4,5].map(v => `<button data-v="${v}" class="${v<=3?'':'sel-pass'}">${v}</button>`).join("")}
+        </div>
+        <span class="lb" style="min-width:auto;color:var(--ink-faint)">${labelFor(SCORES[i])}</span>
+      </div>
+      <textarea class="gc-note" data-i="${i}" placeholder="这关你做了什么？卡在哪里？（可选）" rows="1">${esc(NOTES[i] || "")}</textarea>
+    </div>
+  `).join("");
+  $("#gateList").innerHTML = html;
+
+  // 绑定分数
+  $$(".seg").forEach(seg => {
+    const i = +seg.dataset.i;
+    syncSegUI(i);
+    seg.querySelectorAll("button").forEach(b => {
+      b.addEventListener("click", () => {
+        SCORES[i] = +b.dataset.v;
+        syncSegUI(i);
+        updateProgress();
+      });
+    });
+  });
+  $$(".gc-note").forEach(t => {
+    const i = +t.dataset.i;
+    t.addEventListener("input", () => { NOTES[i] = t.value.trim(); });
+  });
+}
+
+function labelFor(v) {
+  return ({0:"还没碰",1:"刚起步",2:"勉强能试",3:"需提示",4:"基本独立",5:"完全独立"})[v] || "—";
+}
+
+function syncSegUI(i) {
+  const seg = document.querySelector(`.seg[data-i="${i}"]`);
+  if (!seg) return;
+  seg.querySelectorAll("button").forEach(b => {
+    const v = +b.dataset.v;
+    const sel = v === SCORES[i];
+    b.classList.toggle("sel", sel);
+    b.classList.toggle("sel-pass", sel && v >= 4);
+  });
+  const gc = document.getElementById(`gc${i}`);
+  if (gc) {
+    gc.classList.toggle("passed", SCORES[i] >= 4);
+  }
+  const lb = seg.parentElement.querySelector(".lb:last-child");
+  if (lb) lb.textContent = labelFor(SCORES[i]);
+}
+
+function updateProgress() {
+  const filled = SCORES.filter(v => v > 0).length;
+  PASSED_CNT = SCORES.filter(v => v >= 4).length;
+  $("#pgFilled").textContent = filled;
+  const pct = Math.round((filled / 6) * 100);
+  $("#pgBar").style.width = pct + "%";
+  $("#statPass").textContent = PASSED_CNT;
+  $("#submitBtn").disabled = filled < 6;
+  if (filled < 6) {
+    $("#progressBox").style.display = "block";
+    $("#r1Hint").textContent = `先为 6 个维度各打 1 个分数，再提交（已填 ${filled}/6）。`;
+    $("#r1Hint").classList.remove("ok");
+    $("#statR1").textContent = "未提交";
+    R1_CODE = null;
+  } else {
+    $("#progressBox").style.display = "block";
+    const rule = computeR1(PASSED_CNT);
+    R1_CODE = rule.code;
+    $("#r1Hint").textContent = `预判 R1：${rule.text}`;
+    $("#r1Hint").classList.toggle("ok", PASSED_CNT >= 4);
+    $("#statR1").textContent = rule.text;
+  }
+  refreshRadar();   // 评分变化时同步刷新顶部雷达
+}
+
+function computeR1(cnt) {
+  if (cnt >= 4) return { code: "advance", text: "本周通过，下周进新内容" };
+  if (cnt === 3) return { code: "reduce",  text: "本周差 1 关，下周减量" };
+  if (cnt === 2) return { code: "repeat",  text: "本周未通过，下周重复" };
+  if (cnt === 1) return { code: "repeat",  text: "本周未通过，下周重复 + 强化弱项" };
+  return { code: "reset", text: "本周几乎未推进，建议回到上一周重学" };
+}
+
+// ---- 雷达图渲染（纯 SVG，6 维轮廓 + 周环比叠加） ----
+//
+// 入参：
+//   svg      : SVGElement（已建好 width/height/viewBox）
+//   scores   : [int*6] 当前评分 0-5
+//   prev     : [int*6]|null 上周评分（可选）
+//   labels   : [str*6] 维度名
+//   opts     : { showLabels=true, showAxes=true }
+// 算法：
+//   - 6 条轴从顶点开始（-90°），每条轴 60° 间隔
+//   - 半径 r = (score / 5) * maxR；外层再加 5% padding 放维度名
+//   - 两个多边形叠加：上周虚线低透明，本周实色高亮
+function renderRadar(svg, scores, prev, labels, opts) {
+  if (!svg) return;
+  opts = opts || {};
+  const showLabels = opts.showLabels !== false;
+  const W = +svg.getAttribute("width") || 260;
+  const H = +svg.getAttribute("height") || 260;
+  const cx = W / 2, cy = H / 2;
+  const pad = showLabels ? 30 : 6;
+  const maxR = Math.min(W, H) / 2 - pad;
+  const N = 6;
+  const norm = (v) => Math.max(0, Math.min(5, +v || 0)) / 5;
+
+  // 6 个轴端点（极坐标 → 笛卡尔，起始角 -90° 在正上方）
+  const axisEnd = (i) => {
+    const ang = (-Math.PI / 2) + i * (2 * Math.PI / N);
+    return [cx + maxR * Math.cos(ang), cy + maxR * Math.sin(ang)];
+  };
+  const pt = (i, score) => {
+    const ang = (-Math.PI / 2) + i * (2 * Math.PI / N);
+    const r = norm(score) * maxR;
+    return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+  };
+  const polygonFor = (arr) => arr.map((v, i) => pt(i, v)).map(p => p.join(",")).join(" ");
+
+  const out = [];
+  // 网格：5 层六边形（每层 1/5 半径）+ 6 条辐射轴
+  for (let level = 1; level <= 5; level++) {
+    const pts = [];
+    for (let i = 0; i < N; i++) {
+      const ang = (-Math.PI / 2) + i * (2 * Math.PI / N);
+      const r = (level / 5) * maxR;
+      pts.push((cx + r * Math.cos(ang)).toFixed(1) + "," + (cy + r * Math.sin(ang)).toFixed(1));
+    }
+    out.push(`<polygon class="r-grid" points="${pts.join(" ")}" stroke-dasharray="${level===5?'0':'2 3'}"/>`);
+  }
+  for (let i = 0; i < N; i++) {
+    const [x, y] = axisEnd(i);
+    out.push(`<line class="r-grid" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`);
+  }
+
+  // 上周轮廓（虚线 + 低透明）
+  if (prev && prev.length === N && prev.some(v => v > 0)) {
+    out.push(`<polygon class="r-poly-prev" points="${polygonFor(prev)}"/>`);
+    prev.forEach((v, i) => {
+      const [x, y] = pt(i, v);
+      out.push(`<circle class="r-pt-prev" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5"/>`);
+    });
+  }
+
+  // 本周轮廓（实色 + 高亮）
+  if (scores && scores.length === N) {
+    out.push(`<polygon class="r-poly" points="${polygonFor(scores)}"/>`);
+    scores.forEach((v, i) => {
+      const [x, y] = pt(i, v);
+      out.push(`<circle class="r-pt" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3"/>`);
+    });
+  }
+
+  // 维度名（每条轴外侧）
+  if (showLabels) {
+    labels = labels || DIMENSIONS;
+    for (let i = 0; i < N; i++) {
+      const ang = (-Math.PI / 2) + i * (2 * Math.PI / N);
+      const lr = maxR + 14;
+      const lx = cx + lr * Math.cos(ang);
+      const ly = cy + lr * Math.sin(ang);
+      const anchor = (Math.cos(ang) > 0.3) ? "start" : (Math.cos(ang) < -0.3 ? "end" : "middle");
+      const dy = (Math.sin(ang) > 0.5) ? 12 : (Math.sin(ang) < -0.5 ? -2 : 4);
+      const name = esc((labels[i] || ("维度" + (i+1))).slice(0, 4));
+      out.push(`<text class="r-axis" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" dy="${dy}">${name}</text>`);
+    }
+  }
+
+  svg.innerHTML = out.join("");
+}
+
+// 顶部大雷达卡：6 关填齐后激活；未填齐时显示提示
+function refreshRadar() {
+  const wrap = $("#radarWrap");
+  const svg = $("#radarLarge");
+  if (!wrap || !svg) return;
+  const filled = SCORES.filter(v => v > 0).length;
+  if (filled < 6) {
+    wrap.style.display = "none";
+    return;
+  }
+  wrap.style.display = "";
+  renderRadar(svg, SCORES, PREV_SCORES, DIMENSIONS, { showLabels: true });
+
+  // 弱项/强项文字总结 + 周环比
+  const labels = DIMENSIONS;
+  const strong = [], weak = [], improved = [], regressed = [];
+  SCORES.forEach((v, i) => {
+    if (v >= 4) strong.push(labels[i]);
+    else weak.push(labels[i]);
+    if (PREV_SCORES && Array.isArray(PREV_SCORES) && PREV_SCORES[i] != null) {
+      const d = v - PREV_SCORES[i];
+      if (d >= 1) improved.push(labels[i] + "(+" + d + ")");
+      else if (d <= -1) regressed.push(labels[i] + "(" + d + ")");
+    }
+  });
+  let txt = `<b>强项：</b>${strong.join("、") || "暂无"}<br>` +
+            `<em>弱项：</em>${weak.join("、") || "暂无"}`;
+  if (PREV_SCORES) {
+    txt += `<br><span style="color:var(--ink-soft)">较上周：</span>` +
+           `<b style="color:#1f8a70">↑${improved.join("、") || "—"}</b> ` +
+           `<em style="color:var(--red)">↓${regressed.join("、") || "—"}</em>`;
+  } else {
+    txt += `<br><span style="color:var(--ink-faint)">还没有上周数据，下周提交后会自动对比。</span>`;
+  }
+  $("#radarWeak").innerHTML = txt;
+  $("#radarSub").textContent = PREV_SCORES
+    ? "外凸 = 强项 · 凹陷 = 弱项 · 虚线 = 上周"
+    : "外凸 = 强项 · 凹陷 = 弱项 · 提交下周自检后会出现上周对比";
+}
+
+function bindActions() {
+  $("#submitBtn").addEventListener("click", submit);
+  $("#resetBtn").addEventListener("click", () => {
+    if (!confirm("确认清空当前 6 关评分和笔记？")) return;
+    SCORES = [0,0,0,0,0,0]; NOTES = ["","","","","",""];
+    renderGates(); updateProgress();
+    $("#fbBox").classList.remove("show");
+  });
+}
+
+async function submit() {
+  const week = window.__suggestWeek || 1;
+  const btn = $("#submitBtn");
+  setButtonLoading(btn, true, "提交中…");
+  $("#errBox").style.display = "none";
+  try {
+    const j = await fetchJson(`/api/instance/${encodeURIComponent(INSTANCE_ID)}/self-check`, {
+      method: "POST",
+      body: JSON.stringify({ week, scores: SCORES, notes: NOTES, r1_action: R1_CODE || "" }),
+    });
+
+    // 显示反馈（先本地 R1 判断，AI 反馈另外拉）
+    const rule = computeR1(PASSED_CNT);
+    $("#fbBody").textContent =
+      `通过 ${j.passed_cnt}/6 关 · ${rule.text}\n\n` +
+      `弱项：${weakItems(PASSED_CNT).join("、") || "无"}。` +
+      `强项：${strongItems(PASSED_CNT).join("、") || "无"}。`;
+    $("#fbMeta").textContent = `自检 ID #${j.id} · 创建于 ${j.created_at} · 已记录到 weekly_self_checks 表`;
+    $("#fbBox").classList.add("show");
+    $("#fbBox").scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // 异步拉 AI 反馈（/coach 调用同一数据）
+    await loadCoachFeedback(week);
+
+    // 刷新历史
+    await loadHistory();
+    showToast("本周自检已提交", "ok");
+  } catch (e) {
+    showErr("提交失败：" + (e.message || e));
+  } finally {
+    setButtonLoading(btn, false);
+  }
+}
+
+function weakItems() { return SCORES.map((v, i) => v < 4 ? DIMENSIONS[i] : null).filter(Boolean); }
+function strongItems() { return SCORES.map((v, i) => v >= 4 ? DIMENSIONS[i] : null).filter(Boolean); }
+
+async function loadCoachFeedback(week) {
+  try {
+    const r = await fetch(`/api/instance/${encodeURIComponent(INSTANCE_ID)}/coach`, {
+      method: "POST", headers: {"content-type": "application/json"},
+      body: JSON.stringify({
+        history: [{ role: "user", content: `W${week} 的 6 关自检结果：通过 ${PASSED_CNT}/6。\n弱项：${weakItems().join("、") || "无"}。\n强项：${strongItems().join("、") || "无"}。\nR1 判断：${R1_CODE || "未知"}。\n请给一段精炼的反馈（200 字内）：下周该进新内容、减量、还是重复？` }],
+      }),
+    });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (j.reply) {
+      const cur = $("#fbBody").textContent;
+      $("#fbBody").textContent = cur + "\n\n—— LearnBuddy 教练反馈 ——\n" + j.reply;
+      // 把 AI 反馈写回表（best-effort）
+      try {
+        await fetch(`/api/instance/${encodeURIComponent(INSTANCE_ID)}/self-check`, {
+          method: "POST", headers: {"content-type": "application/json"},
+          body: JSON.stringify({ week, scores: SCORES, notes: NOTES, r1_action: R1_CODE || "", ai_feedback: j.reply }),
+        });
+      } catch (_) {}
+    }
+  } catch (e) {}
+}
+
+function renderHistory(items) {
+  if (!items.length) {
+    $("#histList").innerHTML = `<div class="empty">还没有自检记录。本周第一次做完后会自动出现在这里。</div>`;
+    return;
+  }
+  $("#histList").innerHTML = items.map(it => {
+    const wk = it.week;
+    const tag = it.passed_cnt >= 4 ? "advance"
+              : it.passed_cnt === 3 ? "reduce"
+              : it.passed_cnt >= 1 ? "repeat"
+              : "reset";
+    const tagText = ({advance:"通过", reduce:"减量", repeat:"重复", reset:"重置"})[tag];
+    const bars = (it.scores || []).map((v, i) => {
+      const locked = (v || 0) < 1;
+      const w = locked ? 0 : Math.round((v / 5) * 100);
+      return `<div class="h-bar ${locked?'locked':''}" title="${esc(DIMENSIONS[i]||('关'+(i+1)))} · ${v||0}/5"><span style="width:${w}%"></span></div>`;
+    }).join("");
+    return `
+      <div class="h-row">
+        <span class="h-w">W${wk}</span>
+        <svg class="h-mini" id="rmini-${it.id}" width="56" height="56" viewBox="0 0 56 56" aria-label="W${wk} 6 维轮廓" aria-hidden="true"></svg>
+        <div class="h-bars">${bars}</div>
+        <span class="h-px">${it.passed_cnt}/6</span>
+        <span class="h-tag ${tag}">${tagText}</span>
+      </div>`;
+  }).join("");
+  // 渲染每个迷你雷达（用 scores 数据，无 prev 对比）
+  for (const it of items) {
+    const svg = document.getElementById(`rmini-${it.id}`);
+    if (svg && Array.isArray(it.scores) && it.scores.length === 6) {
+      renderRadar(svg, it.scores, null, DIMENSIONS, { showLabels: false });
+    }
+  }
+}
+</script>
+<script src="/common.js"></script>
+</body>
+</html>

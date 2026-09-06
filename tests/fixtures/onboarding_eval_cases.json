@@ -1,0 +1,176 @@
+{
+  "version": "2026-06-27.v1",
+  "purpose": "LearnBuddy 对话入口的多轮语义接地验收集。重点验证通用路由，而不是某个名词的硬编码理解。",
+  "method_sources": [
+    {
+      "title": "LangSmith Evaluation concepts",
+      "url": "https://docs.langchain.com/langsmith/evaluation-concepts",
+      "why": "区分 offline dataset、online threads、code/LLM/human evaluators。"
+    },
+    {
+      "title": "Ragas Testset Generation",
+      "url": "https://docs.ragas.io/en/stable/concepts/test_data_generation/",
+      "why": "参考从资料构造评测样本的思路。"
+    },
+    {
+      "title": "OpenAI Evals",
+      "url": "https://github.com/openai/evals",
+      "why": "参考用数据集衡量模型行为回归。"
+    }
+  ],
+  "cases": [
+    {
+      "id": "tech_mcp_first_turn",
+      "category": "known_or_groundable_tech_concept",
+      "turn_count": 0,
+      "history": [],
+      "message": "我想学mcp方面的系统知识",
+      "expect": {
+        "clarify": false,
+        "source_query_contains": ["mcp"],
+        "anchor_contains": [],
+        "forbid_question_contains": ["它属于哪个领域", "我需要先理解你说的 mcp"]
+      }
+    },
+    {
+      "id": "tech_rag_goal",
+      "category": "known_or_groundable_tech_concept",
+      "turn_count": 0,
+      "history": [],
+      "message": "我想学习 RAG 系统从 0 到上线的能力",
+      "expect": {
+        "clarify": false,
+        "source_query_contains": ["rag"],
+        "forbid_question_contains": ["它属于哪个领域"]
+      }
+    },
+    {
+      "id": "ambiguous_harness_first_turn",
+      "category": "ambiguous_term",
+      "turn_count": 0,
+      "history": [],
+      "message": "我想学会harness产品全套技术能力",
+      "expect": {
+        "clarify": true,
+        "choices": false,
+        "question_contains": ["不同语境", "最终想交付什么"],
+        "source_query_contains": ["AI evaluation harness LLM"]
+      }
+    },
+    {
+      "id": "ambiguous_cursor_first_turn",
+      "category": "ambiguous_term",
+      "turn_count": 0,
+      "history": [],
+      "message": "我想系统学习 cursor 的产品和技术能力",
+      "expect": {
+        "clarify": true,
+        "choices": false,
+        "question_contains": ["cursor", "场景"]
+      }
+    },
+    {
+      "id": "correction_ai_harness_keeps_anchor",
+      "category": "correction_memory",
+      "turn_count": 2,
+      "history": [
+        {"role": "user", "content": "我想学习harness整体系统的落地"},
+        {"role": "assistant", "content": "harness 在不同技术语境里含义不一样。"},
+        {"role": "user", "content": "AI 领域的harness工程"},
+        {"role": "assistant", "content": "明白，先按 AI 应用的运行与落地支撑层来理解。"}
+      ],
+      "message": "全流程落地，我想构建一套harness开发系统",
+      "expect": {
+        "clarify": false,
+        "anchor_contains": ["AI harness 工程", "不要按 Harness.io"],
+        "source_query_contains": ["AI application harness"]
+      }
+    },
+    {
+      "id": "unknown_new_term_uses_grounding_not_fixed_options",
+      "category": "unknown_or_emerging_term",
+      "turn_count": 0,
+      "history": [],
+      "message": "我想学习 foobarization 的完整落地能力",
+      "expect": {
+        "clarify": false,
+        "source_query_contains": ["foobarization"],
+        "forbid_question_contains": ["选项", "你更想学哪一类"]
+      }
+    },
+    {
+      "id": "common_writing_goal_no_grounding",
+      "category": "common_learning_goal",
+      "turn_count": 0,
+      "history": [],
+      "message": "我想学写作，提升公众号文章表达",
+      "expect": {
+        "clarify": false,
+        "source_query_contains": []
+      }
+    },
+    {
+      "id": "ambiguous_role_fde_open_clarify",
+      "category": "ambiguous_role",
+      "turn_count": 0,
+      "history": [],
+      "message": "我想学习 FDE 的全套能力，偏 AI 落地",
+      "expect": {
+        "clarify": true,
+        "choices": false,
+        "question_contains": ["fde", "场景"],
+        "source_query_contains": ["Forward Deployed Engineer AI role"]
+      }
+    },
+    {
+      "id": "late_non_goal_agent_no_interrupt",
+      "category": "late_conversation",
+      "turn_count": 4,
+      "history": [
+        {"role": "user", "content": "我想学 AI 产品工程"},
+        {"role": "assistant", "content": "先确认你的目标产出。"}
+      ],
+      "message": "我们再聊一下 agent",
+      "expect": {
+        "clarify": false
+      }
+    },
+    {
+      "id": "prefixed_choice_does_not_repeat",
+      "category": "choice_repeat_guard",
+      "turn_count": 1,
+      "history": [],
+      "message": "我选择：AI 领域的完整 harness 工程（模型 + Agent + 工具调用 + 数据流 + 上线观测）",
+      "expect": {
+        "clarify": false
+      }
+    }
+  ],
+  "acceptance_suites": [
+    {
+      "id": "onboarding_semantic_grounding",
+      "owner": "core/intent.py + server.py",
+      "gate": "所有 cases 必须通过；禁止出现已知技术词被当未知词反问。"
+    },
+    {
+      "id": "source_grounding",
+      "owner": "core/source_search.py",
+      "gate": "技术词目标必须产生搜索 query；有内置权威来源时优先使用官方/开源来源，失败可降级但不能伪造。"
+    },
+    {
+      "id": "conversation_memory",
+      "owner": "ConversationEngine + build_anchor_context",
+      "gate": "用户纠偏后，同一会话不能回到旧含义或重复同一澄清。"
+    },
+    {
+      "id": "baseline_assessment",
+      "owner": "core/prompts/system.md",
+      "gate": "摸底题必须区分独立底座、AI 协作、验收纠错和迁移落地，不能只出可搜索定义题。"
+    },
+    {
+      "id": "content_quality",
+      "owner": "core/content.py + core/content_quality.py",
+      "gate": "lesson 必须有来源、课设、互动链、练习和可观察产出；浅层讲义不通过质量门。"
+    }
+  ]
+}

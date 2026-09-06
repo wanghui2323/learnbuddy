@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 协作机制</title>
+<style>
+  :root {
+    --bg: #f7f4ee; --card: #ffffff; --line: #e7e1d6; --paper-2: #efeae0;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber-soft: #fbeedd; --amber-dark: #b9852f; --green-soft: #e7f3ec; --green: #4a9d6e;
+    --blue-soft: #e3edf5; --blue: #3d6e9e; --radius: 14px;
+    --shadow: 0 1px 2px rgba(43,41,38,.05), 0 8px 24px rgba(43,41,38,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.65; }
+  .topbar { position: sticky; top: 0; z-index: 30; background: #fffdf9ee; backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark)); color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  .ttl { font-weight: 700; font-size: 15px; } .ttl small { font-weight: 500; color: var(--ink-faint); font-size: 12.5px; margin-left: 6px; }
+  .spacer { flex: 1; } .nav { font-size: 13.5px; color: var(--ink-soft); text-decoration: none; padding: 7px 13px; border-radius: 8px; font-weight: 600; }
+  .nav:hover { background: var(--teal-soft); color: var(--teal-dark); }
+  .nav.active { background: var(--teal-soft); color: var(--teal-dark); }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 30px 24px 80px; }
+  .hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; border-radius: 18px; padding: 28px 30px; box-shadow: 0 12px 32px rgba(44,110,106,.22); }
+  .hero h1 { font-size: 24px; } .hero p { margin-top: 8px; font-size: 14.5px; max-width: 820px; opacity: .96; }
+  .meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); }
+  .meta .k { font-size: 11px; opacity: .74; letter-spacing: .04em; } .meta .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .sec { margin-top: 34px; } .sec h2 { font-size: 20px; margin-bottom: 4px; } .desc { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .card, table { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .card { padding: 18px 20px; }
+  table { width: 100%; border-collapse: collapse; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #faf7f1; color: var(--ink-soft); font-size: 12px; } tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .b-main { background: var(--green-soft); color: var(--green); } .b-html { background: var(--blue-soft); color: var(--blue); } .b-rule { background: var(--amber-soft); color: var(--amber-dark); }
+  .note { background: var(--amber-soft); color: #87561d; border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-top: 12px; }
+  .foot { margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: 12.5px; }
+  @media (max-width: 720px) { .ttl small { display: none; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">C</div>
+  <div class="ttl">LearnBuddy 协作机制<small>DoD · 更新流程 · 文档治理</small></div>
+  <div class="spacer"></div>
+  <a class="nav" href="./文档中心.html">文档中心</a>
+  <a class="nav" href="./工作台.html">工作台</a>
+  <a class="nav" href="./需求方案.html">需求方案</a>
+  <a class="nav" href="./技术方案.html">技术方案</a>
+  <a class="nav" href="./架构总览.html">架构总览</a>
+  <a class="nav active" href="./协作机制.html">协作机制</a>
+  <a class="nav" href="./开发方案与计划.html">主方案</a>
+  <a class="nav" href="./Harness技术体系对齐.html">Harness</a>
+  <a class="nav" href="./OpenClaw接入方案.html">OpenClaw</a>
+</div>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>LearnBuddy 学习伙伴 · 协作机制</h1>
+    <p>这页专门说明文档如何维护、任务怎么验收、更新顺序怎么走。目的是避免后续再次出现多文档并行、口径漂移和“改了页面没改真相源”的问题。</p>
+    <div class="meta">
+      <div><div class="k">真相源</div><div class="v">03 Markdown + 主方案 HTML</div></div>
+      <div><div class="k">HTML 总览</div><div class="v">工作台 / 文档中心</div></div>
+      <div><div class="k">协作要求</div><div class="v">先主文档，后 HTML</div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>现在谁负责什么</h2>
+    <div class="desc">文档体系已经收口，后续不要再让多个文档平行维护当前状态。</div>
+    <table>
+      <thead><tr><th style="width:220px">文档</th><th style="width:120px">角色</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>03-开发方案与计划.md</b></td><td><span class="badge b-main">主文档</span></td><td>统一维护当前需求、技术、进度和后续计划</td></tr>
+        <tr><td><b>开发方案与计划.html</b></td><td><span class="badge b-html">主方案 HTML</span></td><td>集中查看完整主方案，不独立承担真相源</td></tr>
+        <tr><td><b>工作台.html / 文档中心.html</b></td><td><span class="badge b-html">HTML 总览</span></td><td>负责更清晰的页面查看，不独立承担真相源</td></tr>
+        <tr><td><b>01 / 02</b></td><td><span class="badge b-rule">专题文档</span></td><td>保留需求和技术的背景分析与细节展开</td></tr>
+        <tr><td><b>04-进度管理.md</b></td><td><span class="badge b-rule">协作规则</span></td><td>保留 DoD、更新流程、风险处理原则</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>任务完成定义（DoD）</h2>
+    <div class="desc">一个任务标记为 Done，至少满足下面这些条件。</div>
+    <div class="grid">
+      <div class="card"><b>实现完成</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">代码或文档改动已经覆盖目标，不是只讨论未落地。</p></div>
+      <div class="card"><b>有验证</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">`core/` 改动看测试，`web/server` 改动看浏览器或接口实测。</p></div>
+      <div class="card"><b>有回退</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">LLM 相关能力必须有用户能看见的降级路径。</p></div>
+      <div class="card"><b>文档同步</b><p style="margin-top:6px;color:var(--ink-soft);font-size:13px;">开发结束后更新主文档和 HTML 入口页。</p></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>固定更新流程</h2>
+    <div class="desc">以后每轮开发结束，建议按这个顺序更新。</div>
+    <table>
+      <thead><tr><th style="width:80px">顺序</th><th>动作</th></tr></thead>
+      <tbody>
+        <tr><td><b>1</b></td><td>更新 `03-开发方案与计划.md`，把需求、技术、进度、计划写准</td></tr>
+        <tr><td><b>2</b></td><td>同步 `工作台.html`、`文档中心.html`、相关专题 HTML 页</td></tr>
+        <tr><td><b>3</b></td><td>如果涉及重大设计决策，再更新 `SPEC.md` ADR</td></tr>
+        <tr><td><b>4</b></td><td>如果只改协作规则，再更新 `04-进度管理.md`</td></tr>
+      </tbody>
+    </table>
+    <div class="note">简单记忆：<b>主文档先改，HTML 后跟；决策进 ADR，规则进协作机制。</b></div>
+  </section>
+
+  <section class="sec">
+    <h2>HTML 文档站规则</h2>
+    <div class="desc">为了避免“顶部 banner 跳来跳去”，所有 HTML 页面以后都按同一套规则维护。</div>
+    <table>
+      <thead><tr><th style="width:220px">项</th><th>规则</th></tr></thead>
+      <tbody>
+        <tr><td><b>一级导航</b></td><td>固定为 `文档中心 / 工作台 / 需求方案 / 技术方案 / 架构总览 / 协作机制 / 主方案`</td></tr>
+        <tr><td><b>一级导航职责</b></td><td>只做页面级跳转，不承载页内锚点、系统入口或一次性操作</td></tr>
+        <tr><td><b>当前页识别</b></td><td>当前页必须高亮，帮助用户始终知道自己在哪一层</td></tr>
+        <tr><td><b>二级快捷操作</b></td><td>统一放在 hero 区或正文，例如“开发计划”“打开产品”“打开系统”</td></tr>
+        <tr><td><b>主文档关系</b></td><td>HTML 页不单独维护真相源，只负责更清晰的查看和图示表达</td></tr>
+      </tbody>
+    </table>
+    <div class="note">记忆方式：<b>顶部是站点层，正文是页面层；一级导航固定，二级动作下沉。</b></div>
+  </section>
+
+  <section class="sec">
+    <h2>新增页面模板</h2>
+    <div class="desc">以后如果再新增 HTML 页面，建议按这个最小模板走，避免结构再次发散。</div>
+    <table>
+      <thead><tr><th style="width:120px">区块</th><th>要求</th></tr></thead>
+      <tbody>
+        <tr><td><b>Topbar</b></td><td>复用固定一级导航，顺序不改，只高亮当前页</td></tr>
+        <tr><td><b>Hero</b></td><td>放页面定位、当前摘要、二级快捷操作</td></tr>
+        <tr><td><b>正文</b></td><td>按“总览 → 结构 → 细节 → 支撑信息”组织</td></tr>
+        <tr><td><b>页脚</b></td><td>说明该页角色，以及与 Markdown 真相源的关系</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>常见风险与处理原则</h2>
+    <div class="desc">这些是最容易把项目带偏的地方。</div>
+    <table>
+      <thead><tr><th style="width:180px">风险</th><th>处理原则</th></tr></thead>
+      <tbody>
+        <tr><td><b>范围蔓延</b></td><td>先回到主文档确认当前阶段任务，避免同时做太多层级的事</td></tr>
+        <tr><td><b>文档漂移</b></td><td>发现冲突时以 `03` 主文档为准，再反向同步 HTML 和专题文档</td></tr>
+        <tr><td><b>看似对但没验证</b></td><td>先补测试、截图、接口验证或真实链路验证</td></tr>
+        <tr><td><b>同一问题连改两次还错</b></td><td>停下，收敛问题和范围后再继续</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="foot">
+    LearnBuddy 协作机制页 · 用于清晰查看文档治理、DoD 和更新流程 · 原文以 `04-进度管理.md` 为准
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+/* LearnBuddy 公共样式（V0.28 · 产品体验打磨）
+   - toast 容器：右下角飘入，3.2s 自动消失
+   - spinner：CSS 动画 1s 旋转
+   - button.loading：禁用 + 半透明 + 显示 spinner
+   - @media (max-width: 720px)：移动端布局
+   - :focus-visible 键盘可达性
+*/
+
+/* ==================== Toast ==================== */
+#toastBox {
+  position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+  max-width: calc(100vw - 40px);
+}
+.toast {
+  pointer-events: auto;
+  background: rgba(40, 36, 32, 0.96); color: #fff;
+  padding: 12px 18px; border-radius: 10px;
+  font-size: 13.5px; line-height: 1.5;
+  box-shadow: 0 6px 24px rgba(0,0,0,.18);
+  display: flex; align-items: center; gap: 10px;
+  animation: toastIn .26s ease-out;
+  max-width: 360px; word-break: break-all;
+}
+.toast.err { background: rgba(186, 50, 50, 0.95); }
+.toast.warn { background: rgba(204, 130, 30, 0.95); }
+.toast.ok { background: rgba(44, 110, 106, 0.95); }
+.toast .t-icon { font-size: 16px; flex-shrink: 0; }
+.toast.out { animation: toastOut .22s ease-in forwards; }
+@keyframes toastIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(20px); opacity: 0; } }
+
+/* ==================== Spinner ==================== */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
+  border-radius: 50%; animation: spin .8s linear infinite;
+  vertical-align: -2px;
+}
+.spinner.dark { border-color: rgba(0,0,0,.15); border-top-color: var(--teal, #2c6e6a); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==================== Button loading ==================== */
+button.loading, .btn.loading, [type="submit"].loading {
+  pointer-events: none; opacity: .65; cursor: wait !important; position: relative;
+}
+button.loading > .btn-text,
+.btn.loading > .btn-text { opacity: 0; }
+button.loading::after, .btn.loading::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
+button.loading.outline::after, .btn.outline.loading::after {
+  border-color: rgba(44,110,106,.25); border-top-color: var(--teal, #2c6e6a);
+}
+
+/* ==================== 移动端响应式（V0.28 补全 instance.html） ==================== */
+@media (max-width: 720px) {
+  /* 通用：左右内边距收紧 + 字号微调 */
+  .hero, .topbar, .main, .container, .content, .panel { padding-left: 14px !important; padding-right: 14px !important; }
+  body { font-size: 15px; }
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+
+  /* 堆叠 grid/flex 布局 */
+  .grid-2, .grid-3, .row-2, .row-3, [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns:repeat(2"], [style*="grid-template-columns: 320px 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="display:flex; gap"] { flex-wrap: wrap; }
+  .sidebar { display: none; }
+  .aside, .right-panel { width: 100% !important; }
+
+  /* 按钮在手机上全宽更易点 */
+  .btn, button.btn, button[type="submit"] { min-height: 40px; }
+
+  /* 雷达图自适应 */
+  .radar-card { flex-direction: column; align-items: stretch; }
+  .radar-card .r-svg { margin: 0 auto; }
+
+  /* 表格 → 卡片堆叠（如 hist 列表行） */
+  .hist .h-row { flex-wrap: wrap; }
+  .hist .h-mini { order: -1; }
+}
+
+/* ==================== 键盘可达性 ==================== */
+:focus-visible {
+  outline: 2px solid var(--teal, #2c6e6a);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* 隐藏 outline 当鼠标点击（避免 UI 噪音）*/
+:focus:not(:focus-visible) { outline: none; }
+
+/* ==================== 可视区高度（移动键盘弹出修复） ==================== */
+html, body { min-height: 100%; }
+body { min-height: 100vh; min-height: 100dvh; }

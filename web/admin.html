@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LearnBuddy · 管理后台</title>
+<style>
+  :root {
+    --teal: #2c6e6a; --teal-dark: #235955; --teal-soft: #e4efee;
+    --amber: #d98a3d; --amber-soft: #fbeedd;
+    --paper: #f7f4ee; --paper-2: #efeae0; --card: #ffffff;
+    --ink: #2b2926; --ink-soft: #6b6760; --ink-faint: #a39e94;
+    --line: #e7e1d6; --red: #c2603f; --green: #4a9d6e;
+    --radius: 14px; --shadow: 0 1px 2px rgba(43,41,38,.05), 0 10px 30px rgba(43,41,38,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--paper); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  header { background: #fffdf9; border-bottom: 1px solid var(--line); padding: 13px 22px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 10; }
+  header .logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(140deg, var(--teal), var(--teal-dark)); color: #fff; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+  header .title { font-weight: 700; font-size: 16px; } header .spacer { flex: 1; }
+  .btn { font: inherit; cursor: pointer; border: none; border-radius: 10px; font-weight: 600; padding: 8px 14px; text-decoration: none; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); font-size: 13px; }
+  .btn:hover { background: var(--paper-2); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 24px 80px; }
+  h1 { font-size: 23px; } .sub { color: var(--ink-soft); font-size: 14px; margin-top: 4px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin: 22px 0; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+  .stat .k { font-size: 12.5px; color: var(--ink-soft); } .stat .v { font-size: 24px; font-weight: 700; margin-top: 4px; letter-spacing: -.5px; }
+  .stat .v small { font-size: 13px; color: var(--ink-faint); font-weight: 600; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .panel h2 { font-size: 15px; padding: 14px 18px; border-bottom: 1px solid var(--line); background: #fffdf9; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-size: 12px; color: var(--ink-faint); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr { cursor: pointer; } tbody tr:hover { background: var(--teal-soft); }
+  tbody tr.sel { background: var(--teal-soft); }
+  .tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--amber-soft); color: var(--amber); }
+  .muted { color: var(--ink-faint); }
+  .layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
+  .detail .empty { padding: 40px 20px; text-align: center; color: var(--ink-faint); }
+  .scene-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+  .ev { font-size: 12.5px; padding: 7px 0; border-bottom: 1px dashed var(--line); display: flex; gap: 10px; }
+  .ev .act { font-weight: 700; color: var(--teal-dark); min-width: 72px; }
+  .ev .t { color: var(--ink-faint); min-width: 120px; }
+  .ev .d { color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; }
+  .sec { padding: 14px 18px; } .sec h3 { font-size: 13px; color: var(--ink-soft); margin-bottom: 8px; }
+  .loading { padding: 60px; text-align: center; color: var(--ink-faint); }
+  /* 趋势条形图 */
+  .chart { display: flex; align-items: flex-end; gap: 3px; height: 120px; padding: 8px 2px 0; }
+  .chart .bar { flex: 1; background: linear-gradient(180deg, var(--teal), var(--teal-dark)); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; transition: opacity .15s; }
+  .chart .bar:hover { opacity: .75; }
+  .chart .bar[data-z="1"] { background: var(--paper-2); }
+  .chart-x { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-faint); padding: 4px 2px 0; }
+  .limit-box { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .limit-box input { font: inherit; font-size: 13px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 9px; width: 130px; }
+  .limit-box .btn { padding: 7px 12px; background: var(--teal); color: #fff; border: none; }
+  .bar-tip { position: fixed; background: var(--ink); color: #fff; font-size: 11.5px; padding: 4px 8px; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity .1s; z-index: 50; white-space: nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="/space" title="返回学习空间">L</a>
+  <div class="title">LearnBuddy 管理后台</div>
+  <div class="spacer"></div>
+  <a class="btn" href="/space">📚 学习空间</a>
+  <button class="btn" onclick="logout()">登出</button>
+</header>
+
+<div class="wrap" id="root"><div class="loading">⏳ 加载中…</div></div>
+
+<script>
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function fmt(n){n=n||0; if(n>=1e6)return (n/1e6).toFixed(2)+'M'; if(n>=1e3)return (n/1e3).toFixed(1)+'k'; return String(n);}
+function ftime(s){ if(!s)return '—'; return s.replace('T',' ').slice(5,16); }
+function fmtLimit(l){ return (!l) ? '无限' : fmt(l)+'/月'; }
+async function logout(){ try{await fetch('/api/auth/logout',{method:'POST'});}catch(e){} location.href='/login'; }
+
+function barChart(daily){
+  daily = daily || [];
+  const max = Math.max(1, ...daily.map(d=>d.total_tokens));
+  const bars = daily.map(d=>{
+    const h = Math.round(d.total_tokens / max * 100);
+    return `<div class="bar" data-z="${d.total_tokens?0:1}" style="height:${Math.max(h,2)}%"
+      onmousemove="showTip(event,'${d.date.slice(5)}: ${d.total_tokens} tokens')" onmouseleave="hideTip()"></div>`;
+  }).join('');
+  const first = daily.length ? daily[0].date.slice(5) : '';
+  const last = daily.length ? daily[daily.length-1].date.slice(5) : '';
+  return `<div class="chart">${bars}</div><div class="chart-x"><span>${first}</span><span>${last}</span></div>`;
+}
+function showTip(ev,txt){ let t=document.getElementById('bartip'); if(!t){t=document.createElement('div');t.id='bartip';t.className='bar-tip';document.body.appendChild(t);} t.textContent=txt; t.style.left=(ev.clientX+10)+'px'; t.style.top=(ev.clientY-28)+'px'; t.style.opacity='1'; }
+function hideTip(){ const t=document.getElementById('bartip'); if(t)t.style.opacity='0'; }
+
+let selUser = null;
+
+async function init(){
+  let me;
+  try { const r = await fetch('/api/auth/me'); if(r.status===401){location.href='/login';return;} me = (await r.json()).user; }
+  catch(e){ location.href='/login'; return; }
+  if(!me || !me.is_admin){ location.href='/space'; return; }
+
+  const res = await fetch('/api/admin/overview');
+  if(!res.ok){ document.getElementById('root').innerHTML='<div class="loading">加载失败（'+res.status+'）</div>'; return; }
+  render(await res.json());
+}
+
+function render(data){
+  const t = data.totals;
+  const rows = (data.users||[]).map(u=>{
+    const over = u.limit && u.month_tokens >= u.limit;
+    return `
+    <tr data-id="${u.id}" onclick="selectUser(${u.id})">
+      <td>${esc(u.name||'—')}${u.is_admin?' <span class="tag">管理员</span>':''}<div class="muted" style="font-size:12px">${esc(u.email)}</div></td>
+      <td class="num">${fmt((u.credits&&u.credits.balance)||0)}</td>
+      <td class="num">${fmt(u.total_tokens)}</td>
+      <td class="num" ${over?'style="color:var(--red);font-weight:700"':''}>${fmt(u.month_tokens||0)}${u.limit?(' / '+fmt(u.limit)):''}</td>
+      <td class="num">¥${(u.est_cost||0).toFixed(2)}</td>
+      <td class="num">${u.events}</td>
+      <td class="muted">${ftime(u.last_active)}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('root').innerHTML = `
+    <h1>管理后台</h1>
+    <div class="sub">全部用户的 token 消耗与行为总览 · 成本为估算（可在 .env 配置单价）</div>
+    <div class="cards">
+      <div class="stat"><div class="k">用户数</div><div class="v">${t.users}</div></div>
+      <div class="stat"><div class="k">总 token</div><div class="v">${fmt(t.total_tokens)} <small>${t.total_tokens.toLocaleString()}</small></div></div>
+      <div class="stat"><div class="k">用户积分余额</div><div class="v">${fmt(t.credit_balance||0)}</div></div>
+      <div class="stat"><div class="k">输入 / 输出</div><div class="v" style="font-size:18px">${fmt(t.prompt_tokens)} <small>/ ${fmt(t.completion_tokens)}</small></div></div>
+      <div class="stat"><div class="k">LLM 调用次数</div><div class="v">${t.calls}</div></div>
+      <div class="stat"><div class="k">估算成本</div><div class="v">¥${(t.est_cost||0).toFixed(2)}</div></div>
+    </div>
+    <div class="panel" style="margin-bottom:18px">
+      <h2>近 30 天 token 消耗趋势（全局）</h2>
+      <div class="sec">${barChart(data.daily)}</div>
+    </div>
+    <div class="panel" style="margin-bottom:18px" id="qualityPanel">
+      <h2>质量与可观测 · 用户反馈 + LLM 调用追踪（Batch L · 环 B 的眼睛）</h2>
+      <div class="sec" id="qualityBody"><div class="muted">加载中…</div></div>
+    </div>
+    <div class="panel" style="margin-bottom:18px" id="analysisPanel">
+      <h2>每日分析 · 用户痛点与产品问题</h2>
+      <div class="sec" id="analysisBody"><div class="muted">加载中…</div></div>
+    </div>
+    <div class="panel" style="margin-bottom:18px">
+      <h2>积分卡管理</h2>
+      <div class="sec">
+        <div class="limit-box" style="margin-bottom:12px">
+          <input id="cardPoints" type="number" min="1" placeholder="面额积分" value="1000" />
+          <input id="cardCount" type="number" min="1" max="100" placeholder="数量" value="1" />
+          <input id="cardNote" placeholder="备注" style="width:180px" />
+          <button class="btn" onclick="createCards()">生成积分卡</button>
+        </div>
+        <div id="cardsBody"><div class="muted">加载中…</div></div>
+      </div>
+    </div>
+    <div class="layout">
+      <div class="panel">
+        <h2>用户消耗排行</h2>
+        <table>
+          <thead><tr><th>用户</th><th class="num">积分余额</th><th class="num">总 token</th><th class="num">本月 / 额度</th><th class="num">估算￥</th><th class="num">行为数</th><th>最近活跃</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="7" class="muted" style="text-align:center;padding:30px">暂无数据</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="panel detail" id="detail"><div class="empty">← 点击左侧某个用户，查看其消耗明细与行为轨迹</div></div>
+    </div>`;
+  renderQuality();
+  renderAnalysis();
+  loadCards();
+}
+
+async function renderQuality(){
+  let q;
+  try { const r = await fetch('/api/admin/quality'); if(!r.ok) return; q = await r.json(); }
+  catch(e){ return; }
+  const body = document.getElementById('qualityBody');
+  if(!body) return;
+  const fb = q.feedback.totals, tr = q.traces.totals;
+  const upRate = fb.total ? Math.round(fb.up / fb.total * 100) : 0;
+  const fbRate = Math.round((tr.fallback_rate || 0) * 100);
+  const cards = `<div class="cards" style="margin:0 0 18px">
+    <div class="stat"><div class="k">用户反馈数</div><div class="v">${fb.total} <small>好评 ${fb.up} · 负向 ${fb.neg}</small></div></div>
+    <div class="stat"><div class="k">好评率</div><div class="v" ${fb.total&&upRate<50?'style="color:var(--red)"':''}>${upRate}%</div></div>
+    <div class="stat"><div class="k">LLM 调用数</div><div class="v">${tr.calls}</div></div>
+    <div class="stat"><div class="k">兜底(fallback)率</div><div class="v" ${fbRate>5?'style="color:var(--red)"':''}>${fbRate}%</div></div>
+    <div class="stat"><div class="k">平均延迟</div><div class="v">${tr.avg_ms||0} <small>ms</small></div></div>
+  </div>`;
+  const trScenes = (q.traces.by_scene||[]).map(s=>{
+    const fr = s.calls ? Math.round(s.fallbacks/s.calls*100) : 0;
+    return `<div class="scene-row"><span>${esc(s.scene||'其他')} <span class="muted">· ${s.calls} 次 · 兜底 ${fr}%</span></span><b>${Math.round(s.avg_ms||0)} ms</b></div>`;
+  }).join('') || '<div class="muted" style="padding:6px 0">暂无 LLM 调用</div>';
+  const negs = (q.feedback.recent_negative||[]).map(f=>
+    `<div class="ev"><span class="act" style="color:var(--red)">${esc(f.rating)}</span><span class="t">${esc(f.scene||'')}</span><span class="d"><b>${esc(f.topic||'')}</b> ${esc(f.reason||'')}</span></div>`
+  ).join('') || '<div class="muted" style="padding:6px 0">暂无负向反馈（带文字说明）</div>';
+  body.innerHTML = cards + `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" class="qcols">
+      <div><h3 style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">各 scene 调用 · 兜底率 · 延迟</h3>${trScenes}</div>
+      <div><h3 style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">最近负向反馈（用户纠错 → 改 prompt 的输入）</h3>${negs}</div>
+    </div>`;
+}
+
+async function renderAnalysis(){
+  const body = document.getElementById('analysisBody'); if(!body) return;
+  let d;
+  try { const r = await fetch('/api/admin/analysis'); if(!r.ok) throw new Error(r.status); d = await r.json(); }
+  catch(e){ body.innerHTML = '<div class="muted">每日分析加载失败</div>'; return; }
+  const report = (d.reports||[])[0];
+  if(!report){ body.innerHTML = '<div class="muted">暂无分析报告</div>'; return; }
+  const m = report.metrics || {};
+  const issues = (report.issues||[]).map(i => {
+    const ev = (i.evidence||[]).map(x=>`<div class="ev"><span class="t">${ftime(x.created_at)}</span><span class="d">${esc(x.content||'')}</span></div>`).join('');
+    return `<div class="scene-row" style="display:block">
+      <div style="display:flex;justify-content:space-between;gap:10px"><span><b>${esc(i.title)}</b> <span class="tag">${esc(i.severity)}</span></span><b>${i.count}</b></div>
+      ${ev?`<div style="margin-top:6px">${ev}</div>`:''}
+    </div>`;
+  }).join('') || '<div class="muted" style="padding:6px 0">暂无明显痛点</div>';
+  const suggestions = (report.suggestions||[]).map(s=>`<div class="scene-row"><span>${esc(s)}</span></div>`).join('');
+  body.innerHTML = `
+    <div class="cards" style="margin:0 0 18px">
+      <div class="stat"><div class="k">分析日期</div><div class="v" style="font-size:18px">${esc(report.day)}</div></div>
+      <div class="stat"><div class="k">活跃用户 / 会话</div><div class="v">${m.active_users||0} <small>/ ${m.sessions||0}</small></div></div>
+      <div class="stat"><div class="k">用户消息</div><div class="v">${m.user_messages||0}</div></div>
+      <div class="stat"><div class="k">负向反馈</div><div class="v" ${(m.feedback_negative||0)>0?'style="color:var(--red)"':''}>${m.feedback_negative||0}</div></div>
+      <div class="stat"><div class="k">生成异常/兜底</div><div class="v" ${(m.llm_errors||0)+(m.llm_fallbacks||0)>0?'style="color:var(--red)"':''}>${(m.llm_errors||0)+(m.llm_fallbacks||0)}</div></div>
+    </div>
+    <div class="limit-box" style="margin-bottom:14px">
+      <button class="btn" onclick="runAnalysis('${esc(report.day)}')">刷新这天分析</button>
+      <span class="muted" style="font-size:12px">系统每天凌晨自动生成；这里可手动重算。</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:18px" class="qcols">
+      <div><h3 style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">发现的问题</h3>${issues}</div>
+      <div><h3 style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">建议动作</h3>${suggestions}</div>
+    </div>`;
+}
+
+async function runAnalysis(day){
+  const res = await fetch('/api/admin/analysis/run', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({day})
+  });
+  if(!res.ok){ alert('分析失败'); return; }
+  renderAnalysis();
+}
+
+async function selectUser(id){
+  selUser = id;
+  document.querySelectorAll('tbody tr').forEach(tr=>tr.classList.toggle('sel', +tr.dataset.id===id));
+  const box = document.getElementById('detail');
+  box.innerHTML = '<div class="empty">加载中…</div>';
+  const res = await fetch('/api/admin/user/'+id);
+  if(!res.ok){ box.innerHTML='<div class="empty">加载失败</div>'; return; }
+  const d = await res.json();
+  const u = d.user, s = d.summary, qa = d.quota || {};
+  const scenes = (s.by_scene||[]).map(x=>`<div class="scene-row"><span>${esc(x.scene||'其他')} <span class="muted">· ${x.calls} 次</span></span><b>${fmt(x.tt)}</b></div>`).join('') || '<div class="muted" style="padding:6px 0">暂无</div>';
+  const evs = (d.recent_events||[]).map(e=>`<div class="ev"><span class="act">${esc(e.action)}</span><span class="t">${ftime(e.created_at)}</span><span class="d">${esc(e.detail||'')}</span></div>`).join('') || '<div class="muted" style="padding:6px 0">暂无行为记录</div>';
+
+  box.innerHTML = `
+    <h2>${esc(u.name||u.email)} ${u.is_admin?'<span class="tag">管理员</span>':''}</h2>
+    <div class="sec">
+      <h3>消耗汇总</h3>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:6px">
+        <div><div class="muted" style="font-size:12px">积分余额</div><b style="font-size:18px">${fmt((d.credits&&d.credits.balance)||0)}</b></div>
+        <div><div class="muted" style="font-size:12px">总 token</div><b style="font-size:18px">${fmt(s.total_tokens)}</b></div>
+        <div><div class="muted" style="font-size:12px">调用</div><b style="font-size:18px">${s.calls}</b></div>
+        <div><div class="muted" style="font-size:12px">估算成本</div><b style="font-size:18px">¥${(s.est_cost||0).toFixed(2)}</b></div>
+      </div>
+      ${scenes}
+    </div>
+    <div class="sec" style="border-top:1px solid var(--line)">
+      <h3>积分账户</h3>
+      <div style="margin-bottom:8px;font-size:13.5px">累计获得 <b>${fmt((d.credits&&d.credits.granted)||0)}</b> · 已消耗 <b>${fmt((d.credits&&d.credits.spent)||0)}</b> · 余额 <b>${fmt((d.credits&&d.credits.balance)||0)}</b></div>
+      <div class="limit-box">
+        <input id="grantPoints" type="number" min="1" placeholder="赠送积分" value="1000" />
+        <input id="grantDetail" placeholder="备注" style="width:170px" />
+        <button class="btn" onclick="grantCredits(${u.id})">赠送积分</button>
+      </div>
+    </div>
+    <div class="sec" style="border-top:1px solid var(--line)">
+      <h3>本月额度</h3>
+      <div style="margin-bottom:8px;font-size:13.5px">本月已用 <b>${fmt(qa.month_tokens||0)}</b> / 上限 <b>${fmtLimit(qa.limit)}</b> ${qa.limit_custom?'<span class="muted">(自定义)</span>':'<span class="muted">(默认)</span>'}</div>
+      <div class="limit-box">
+        <input id="limitInput" type="number" min="0" placeholder="每月上限(0=无限)" value="${qa.limit||''}" />
+        <button class="btn" onclick="saveLimit(${u.id})">保存额度</button>
+        <span class="muted" style="font-size:12px">0=无限 · 留空=用默认</span>
+      </div>
+    </div>
+    <div class="sec" style="border-top:1px solid var(--line)">
+      <h3>近 30 天趋势</h3>
+      ${barChart(d.daily)}
+    </div>
+    <div class="sec" style="border-top:1px solid var(--line)">
+      <h3>最近行为（最多 80 条）</h3>
+      ${evs}
+    </div>`;
+}
+
+async function saveLimit(id){
+  const v = document.getElementById('limitInput').value.trim();
+  const body = { limit: v === '' ? null : Number(v) };
+  const res = await fetch('/api/admin/user/'+id+'/limit', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+  });
+  if(!res.ok){ alert('保存失败'); return; }
+  await init();          // 刷新总表
+  selectUser(id);        // 重新展开该用户
+}
+
+async function grantCredits(id){
+  const points = Number(document.getElementById('grantPoints').value || 0);
+  const detail = document.getElementById('grantDetail').value || '管理员赠送积分';
+  const res = await fetch('/api/admin/user/'+id+'/credits/grant', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({points, detail})
+  });
+  if(!res.ok){ alert(await res.text() || '赠送失败'); return; }
+  await init();
+  selectUser(id);
+}
+
+async function loadCards(){
+  const box = document.getElementById('cardsBody'); if(!box) return;
+  let d;
+  try { const r = await fetch('/api/admin/credits/cards'); if(!r.ok) throw new Error(r.status); d = await r.json(); }
+  catch(e){ box.innerHTML = '<div class="muted">积分卡加载失败</div>'; return; }
+  const rows = (d.cards||[]).slice(0,30).map(c => `<tr>
+    <td><code>${esc(c.code)}</code></td>
+    <td class="num">${fmt(c.points)}</td>
+    <td>${c.status==='unused'?'未使用':'已兑换'}</td>
+    <td>${esc(c.redeemed_email||'—')}</td>
+    <td class="muted">${ftime(c.created_at)}</td>
+  </tr>`).join('');
+  box.innerHTML = `<table><thead><tr><th>卡号</th><th class="num">积分</th><th>状态</th><th>兑换用户</th><th>创建时间</th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="muted" style="text-align:center;padding:18px">暂无积分卡</td></tr>'}</tbody></table>`;
+}
+
+async function createCards(){
+  const points = Number(document.getElementById('cardPoints').value || 0);
+  const count = Number(document.getElementById('cardCount').value || 1);
+  const note = document.getElementById('cardNote').value || '';
+  const res = await fetch('/api/admin/credits/cards', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({points, count, note})
+  });
+  if(!res.ok){ alert(await res.text() || '生成失败'); return; }
+  const d = await res.json();
+  alert('已生成：\n' + (d.cards||[]).map(c=>c.code).join('\n'));
+  loadCards();
+  init();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "id": "learnbuddy",
+  "name": "LearnBuddy",
+  "description": "Binds each trusted Feishu sender to one LearnBuddy account and resolves a requester-scoped MCP connection.",
+  "version": "0.1.0",
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": [
+      "learnbuddy_bind"
+    ]
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
