@@ -124,11 +124,11 @@
 
 ## 📌 当前会话快查（每次接手先看这里）
 
-- **当前版本**：线上 V0.52 已部署；本地 V0.53 + 首个开源候选版 `v0.53.0-rc.1` 已完成工程回归（454 tests + 18 条真实 DeepSeek 开放题 + Cloud/Personal 桌面与 390px 浏览器流程），Release Loop 仍准确阻断在 36 个双人人工评分单元，待评分、生产备份、部署与线上回归。不得把 V0.53 描述为已上线，也不得把未实测的 Docker/OpenClaw/飞书链路描述为“开箱即用”。
+- **当前版本**：线上 V0.52 已部署；本地 V0.53 + 首个开源候选版 `v0.53.0-rc.1` 已完成工程回归（454 tests + 18 条真实 DeepSeek 开放题 + Cloud/Personal 桌面与 390px 浏览器流程），源码已公开到 [`wanghui2323/learnbuddy`](https://github.com/wanghui2323/learnbuddy)。Release Loop 仍准确阻断在 36 个双人人工评分单元，待评分、生产备份、部署与线上回归。不得把 V0.53 描述为已上线，也不得把未实测的 Docker/OpenClaw/飞书链路描述为“开箱即用”。
 - **对外品牌**：备案网站名称 = `LearnBuddy 学习伙伴`；首页产品名 = `LearnBuddy`。用户可见层用"学习伙伴 / 学习路径 / 学习空间"，内部 `itutor` / `/instance` / `data/instances` 命名暂不迁移（见 `SPEC.md` ADR-013）。
 - **🔑 真相源（新会话务必先读，胜过本文件细节）**：① `SPEC.md` ADR-055（V0.53 需求合同）+ ADR-051～054（已上线事实）；② `docs/LearnBuddy项目工作台.html` 的 V0.53 任务树；③ ADR-050 与 V0.52 验收证据；④ `docs/架构总览.html`。
 - **⚠️ 运行目录**：始终在当前 Git 仓库根目录运行（默认端口 8000）。维护者 iCloud 中搬家前的旧副本已停用，不得作为代码或版本真相源。
-- **下一里程碑**：公开 `wanghui2323/learnbuddy` 的 RC 源码与文章交付；随后完成干净机 Docker、真实 OpenClaw/飞书往返，以及 V0.53 开放题双人人工复核、生产备份、部署和线上回归。之后才启动 V0.54 深度教学，不得把 V0.50.1–V0.53 已完成任务重新开发。
+- **下一里程碑**：完成干净机 Docker、真实 OpenClaw/飞书往返，以及 V0.53 开放题双人人工复核、生产备份、部署和线上回归。之后才启动 V0.54 深度教学，不得把 V0.50.1–V0.53 已完成任务重新开发。
 - **🔧 内容生成开关（env）**：`ITUTOR_LESSON_PIPELINE`（默认开）/ `ITUTOR_LESSON_REASONER`（默认开）/ `ITUTOR_LESSON_REVIEW`（锐度评审）/ `ITUTOR_LESSON_QUALITY_LOOP`（默认开）/ `ITUTOR_LESSON_MAX_REVISIONS`（默认 3，最高 5）/ `ITUTOR_LESSON_TIMEOUT`（首请求默认 45s 转后台）/ `ITUTOR_LESSON_HARD_TIMEOUT`（默认 300s）/ `ITUTOR_SOURCE_MIN_AUTHORITY`（默认 0.75）。
 
 ---
