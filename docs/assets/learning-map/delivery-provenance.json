@@ -2,7 +2,7 @@
   "date": "2026-09-06",
   "diagrams": {
     "mode": "HTML/CSS direct Chromium render",
-    "source": "docs/学习地图.html",
+    "source": "docs/学习地图.html; reader role / AI Design loading / Agent inputs revision",
     "deviceScaleFactor": 2,
     "width": 2124,
     "raster_upscaling": false,
@@ -47,8 +47,9 @@
     "raster_upscaling": false,
     "prompts": "aigc-prompts.json",
     "semantic_fixes": [
-      "Removed Cloud-Personal bidirectional arrow to prevent data-sync implication",
-      "Removed model API connection to reminder scheduler; Core remains responsible"
+      "Explicit LearnBuddy / OpenClaw / Feishu IM responsibilities",
+      "Removed outer return connector bypassing OpenClaw; keep main chain tool results",
+      "Separate deterministic reminder scheduler from conversational agent"
     ],
     "review": "Chinese labels and responsibility flow visually checked; not a live runtime trace"
   }

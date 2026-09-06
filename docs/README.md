@@ -16,7 +16,7 @@
 
 图示可编辑内容源为学习地图 HTML；重建脚本是 scripts/capture_learning_map.mjs。文章展示用 [AIGC 产品架构图](./assets/learning-map/product-architecture-aigc.png) 与 [AIGC 系统总图](./assets/learning-map/system-architecture-aigc.png) 另存，[生图与单点修正 Prompt](./assets/learning-map/aigc-prompts.json) 一起公开。真实截图与架构示例分别标明来源，不公开原始学习数据。
 
-配套导读：[100 天 AI Builder 第一周：把 LearnBuddy 的构建过程一起开源](./AIBuilder第一周.md)。
+配套导读：[用 AI 从零构建学习助手：需求、设计、开发全流程实战](./AIBuilder第一周.md)。以提醒需求贯穿 AI 辅助需求分析、设计规范加载、前后端协作、Agent 工具与测试，公众号正文显式保留完整 GitHub 地址。
 
 ## 按学习顺序打开产物
 
