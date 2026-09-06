@@ -10,7 +10,7 @@
 <header class="topbar">
   <div class="logo">L</div>
   <div class="brand">LearnBuddy 通用设计规范<small>跨版本设计准则 · Design System v1 · Visual Asset System v1</small></div>
-  <nav class="nav"><a href="../LearnBuddy项目工作台.html">项目工作台</a><a href="../文档中心.html">文档中心</a></nav>
+  <nav class="nav"><a href="./LearnBuddy项目工作台.html">项目工作台</a><a href="./文档中心.html">文档中心</a><a href="./学习地图.html#design">学习地图</a></nav>
 </header>
 <main class="wrap">
   <section class="hero">
@@ -20,6 +20,10 @@
     <div class="meta"><span class="pill gold">状态：长期生效</span><span class="pill">ADR-047</span><span class="pill gray">版本开发前必看</span></div>
   </section>
 
+  <section class="section" id="implementation">
+    <h2>规范目标与当前实现 · 2026-09-06</h2>
+    <div class="callout">本页描述目标准则，不表示所有页面已完成统一。当前 <a href="../web/index.html">对话页</a>、<a href="../web/space.html">学习空间</a>等仍在各自的 :root 定义 teal / amber / paper；<a href="../web/common.css">common.css</a>负责 toast、加载和响应式等公共状态。尚无独立 web/design-tokens.css。可在<a href="./学习地图.html#design">学习地图</a>查看实际色值与页面映射。</div>
+  </section>
   <section class="grid3">
     <article class="card panel"><h2>需求背景</h2><p>内容质量已经进入受控流水线，但视觉承接仍像多轮迭代拼起来的原型。</p><ul><li>页面级内联样式多，组件语言不统一。</li><li>暖纸底、卡片、按钮、状态色缺少统一规则。</li><li>登录页、学习空间、路径页和学练页没有共同的品牌气质。</li><li>图片资产没有系统标准，容易变成随机装饰。</li></ul></article>
     <article class="card panel"><h2>用户价值</h2><p>让产品第一眼更可信，学习过程更清楚，行动入口更稳定。</p><ul><li>用户能更快判断“现在该做什么”。</li><li>深讲内容有更好的阅读层级，不退回长讲义。</li><li>状态、错误、加载和完成反馈更一致。</li><li>视觉资产帮助理解学习场景，而不是抢注意力。</li></ul></article>
