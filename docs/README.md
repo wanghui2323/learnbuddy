@@ -2,7 +2,7 @@
 
 这里不仅解释怎样启动项目，也帮助你追踪一个学习需求怎样变成页面、代码与验收。当前入口以 **[学习地图.html](./学习地图.html)** 为主；版本与任务去 **[完整开发工作台](./LearnBuddy项目工作台.html)**。
 
-## 第一周分类交付清单 · 2026-09-06
+## 第一周分类交付清单 · 2026-09-07
 
 | 类别 | 可复用产物 | 当前状态 |
 |---|---|---|
@@ -10,13 +10,15 @@
 | 需求 | [当前版本 PRD](./01-需求方案.md) | 当前合同在前、历史档案在后；含完整需求实例与验收追踪 |
 | AI Design | [执行规范与 AI 任务模板](./AI_DESIGN.md)、[视觉规范入口](./设计规范.html) | 本轮补齐；全站迁移未完成 |
 | 体验页面 | [学习空间截图](./assets/learning-map/real-learning-space.png)、[计划页截图](./assets/learning-map/real-learning-plan.png)、[对话入口截图](./assets/learning-map/real-onboarding.png) | 用户提供真实界面；不等于独立业务验收 |
-| 系统与 Agent | [系统总图](./学习地图.html#architecture)、[Agent 架构](./学习地图.html#agent)、[工具代码](../core/tools.py) | 责任与目标合同；真实飞书链路待验收 |
+| 系统与 Agent | [系统总图](./学习地图.html#architecture)、[Agent 架构](./学习地图.html#agent)、[工具代码](../core/tools.py)、[Harness 与实现映射](./05-Harness技术体系对齐.md) | 内部多角色工作流与外部助理分开；真实飞书链路待验收 |
 | 开发过程 | [完整工作台](./LearnBuddy项目工作台.html)、[全页截图](./assets/learning-map/workbench-full.png)、[任务树](./LearnBuddy项目工作台.html#iteration-v053)、[决策 ADR](../SPEC.md) | 真实静态项目页面，人工维护，非自动任务后端 |
 | 开源与验证 | [源代码](../README.md)、[测试](../tests/)、[Release Loop](../scripts/release_loop.py)、[个人部署](./PERSONAL_DEPLOYMENT.md) | 源码 RC；安装恢复、人工评分、真实渠道及新版生产仍待验收 |
 
-图示可编辑内容源为学习地图 HTML；重建脚本是 scripts/capture_learning_map.mjs。文章展示用 [AIGC 产品架构图](./assets/learning-map/product-architecture-aigc.png)、[AI Design 使用图](./assets/learning-map/ai-design-contract-aigc.png)、[系统总图](./assets/learning-map/system-architecture-aigc.png)、[Agent 开发合同图](./assets/learning-map/agent-architecture-aigc.png) 另存，[生图与单点修正 Prompt](./assets/learning-map/aigc-prompts.json) 一起公开。真实截图与架构示例分别标明来源，不公开原始学习数据。
+当前 Agent 说明采用 [三层架构图](./assets/learning-map/agent-three-layer-aigc.png)（原生 864×1821）及 [生成 Prompt](./assets/learning-map/agent-three-layer-prompt.txt)，没有将旧图放大冒充高清。内部工作流已有实现，外部 OpenClaw/飞书仍待验收。旧图片地址保留供历史引用。
 
-配套导读：[用 AI 从零构建学习助手：需求、设计、开发全流程实战](./AIBuilder第一周.md)。以提醒需求贯穿 AI 辅助需求分析、设计规范加载、前后端协作、Agent 工具与测试，公众号正文显式保留完整 GitHub 地址。
+图示可编辑内容源为学习地图 HTML；重建脚本是 scripts/capture_learning_map.mjs。文章展示用 [AIGC 产品架构图](./assets/learning-map/product-architecture-aigc.png)、[AI Design 使用图](./assets/learning-map/ai-design-contract-aigc.png)、[系统总图](./assets/learning-map/system-architecture-aigc.png)、[旧版 Agent 开发合同图（历史）](./assets/learning-map/agent-architecture-aigc.png) 另存，[生图与单点修正 Prompt](./assets/learning-map/aigc-prompts.json) 一起公开。真实截图与架构示例分别标明来源，不公开原始学习数据。
+
+配套导读：[用 AI 从零构建学习助手：需求、设计、开发全流程实战](./AIBuilder第一周.md)。已同步作者确认的最终稿：产品定位 → 完整需求 → AI Design → 系统分层 → 个人助理、多角色工作流与 Harness → 开发和验收。正文六图；公众号已使用的仓库路径保持不变。
 
 ## 按学习顺序打开产物
 
@@ -29,6 +31,20 @@
 | Agent 怎样改变同一份学习状态？ | [工具契约](../core/tools.py)、[MCP](../mcp_server.py)、[插件](../integrations/openclaw-learnbuddy/index.js) | [对话到写入](./学习地图.html#agent) |
 | 需求如何进入一轮开发？ | [ADR](../SPEC.md)、[发布门](../scripts/release_loop.py) | [开发工作台](./LearnBuddy项目工作台.html#open-learning)、[V0.53 任务树](./LearnBuddy项目工作台.html#iteration-v053) |
 | 如何复查质量与失败？ | [工程测试](../tests/)、[Eval 样本](../tests/fixtures/assessment_eval_cases.json) | [学习练习与验收边界](./学习地图.html#verify) |
+
+## Agent 章节怎样对照源码
+
+先看三层图，再逐行打开实现；角色不等于独立部署的 Agent 实例。
+
+| 职责 | 实现与提示词 | 验证入口 |
+|---|---|---|
+| 课程设计 | [design_lesson](../core/content.py)、[课设 Prompt](../core/prompts/lesson_design.md) | [课程编排测试](../tests/test_content_review.py) |
+| 写作 | [write_lesson](../core/content.py)、[写作 Prompt](../core/prompts/lesson_write.md) | 同上，检查课设输入与结构化产物 |
+| 评审与修订 | [critic / revise / quality loop](../core/content.py)、[评审 Prompt](../core/prompts/lesson_critic.md)、[修订 Prompt](../core/prompts/lesson_revise.md) | 同上，检查返工上限、退步与失败 |
+| 个人助理接入 | [工具](../core/tools.py)、[MCP](../mcp_server.py)、[插件](../integrations/openclaw-learnbuddy/index.js) | [工具测试](../tests/test_tools.py)、真实飞书仍待验收 |
+| 运行支撑 | [Harness 盘点](./05-Harness技术体系对齐.md)、[后台任务](../core/jobs.py)、[内容质量门](../core/content_quality.py) | 以各模块测试及人工发布门为准 |
+
+模拟模型测试证明编排行为，不证明真实课程质量。Web 与工具入口的运行合同尚未完全统一，不能用图示掩盖缺口。
 
 ## 如何看可视化页面
 

@@ -7,8 +7,8 @@
 </style></head><body>
 <header><b>LearnBuddy / 开源学习地图</b><nav><a href="./文档中心.html">文档中心</a><a href="./LearnBuddy项目工作台.html#open-learning">开发工作台</a><a href="https://github.com/wanghui2323/learnbuddy">GitHub</a></nav></header>
 <main>
-<div class="eyebrow">100 DAYS AI BUILDER · WEEK 01 · 2026-09-06</div>
-<h1>把一个学习需求，<br>追到页面、代码和验收。</h1>
+<div class="eyebrow">100 DAYS AI BUILDER · WEEK 01 · 2026-09-07</div>
+<h1>用 AI 构建一个产品，<br>从需求追到架构与验收。</h1>
 <p class="intro">这是 LearnBuddy 的过程型开源入口。你可以沿着同一个用户任务，理解产品判断怎样约束设计、前后端、Agent 和下一轮迭代，再打开原始产物继续研究。</p>
 <div class="notice"><b>当前边界：</b>公开源码 v0.53.0-rc.1；线上记录 V0.52。454 是最近一次开发回归的累计工程测试数，不是本周新增。干净机安装、真实飞书、开放题双人评分及新版生产部署仍待验收。本页是人工维护的导读，不是实时监控。</div>
 <nav class="links"><a href="#product">① 产品架构与 PRD</a><a href="#design">② 设计与页面</a><a href="#architecture">③ 前后端架构</a><a href="#agent">④ Agent</a><a href="#workbench">⑤ 开发工作台</a><a href="#verify">⑥ 验证与复用</a></nav>
@@ -22,14 +22,15 @@
 <div class="links"><a href="./设计规范.html#implementation">设计规范与实际落地差异</a><a href="../web/index.html">对话页 HTML 源文件</a><a href="../web/common.css">公共组件状态 CSS</a><a href="../web/assets/style.css">共享样式变量</a></div>
 <div class="grid" style="margin-top:26px"><article class="panel"><h3>完整执行规范</h3><p>页面合同、视觉层级、组件状态、长任务反馈、失败恢复与 Design QA。</p><a href="./AI_DESIGN.md">AI Design 与可复用 AI 任务模板</a></article><article class="panel"><h3>真实内部页面</h3><p><a href="../web/space.html">学习空间</a> → <a href="../web/instance.html">路径与学练</a> → <a href="../web/self-check.html">自检</a>。<a href="./AIBuilder第一周.md">配套文章</a>收录运行环境与内部页面截图；不再以登录页代替体验。</p></article></div>
 </section>
-<section id="architecture"><div class="eyebrow">从界面动作到持久化对象</div><h2>③ 前后端与助理怎样执行同一条需求</h2><p>以“每天 21 点提醒我学习”为例：网页通过 API 保存规则，飞书消息通过 OpenClaw 选择受控工具，由 LearnBuddy 校验和保存。同一后端对两个入口负责；到期后由独立调度器发送，不要求模型持续运行。不同部署之间不自动同步数据。</p>
-<div class="canvas" id="diagram-architecture"><h3>从一句话到真实执行</h3><div class="node dark"><b>飞书 · IM 收发</b><br>每天 21 点提醒我学习</div><div class="arrow">消息 ↓　↑ 根据结果回复</div><div class="node warm"><b>OpenClaw · 个人助理运行时</b><br>模型理解 + 当前规则 + 工具说明<br>→ 读规则 → 选择修改工具</div><div class="arrow">受限 MCP：可信身份 / 参数 / 归属 ↓</div><div class="node"><b>LearnBuddy · 执行与保存</b><br>set_reminder_policy → 提醒规则<br>SQLite / JSON 保存学习数据<br><span class="small">Web 页面也经 FastAPI 调用同一后端</span></div><div class="node dark"><b>定时执行 · 不必再发消息</b><br>到期规则 → LearnBuddy 调度器<br>→ 投递队列 → 飞书提醒</div><div class="footer">助理按工具结果回复，不直接改数据库。<br>OpenClaw 不再重复调度同一队列。<br>个人版接入方案；真实渠道仍待验收。</div></div>
+<section id="architecture"><div class="eyebrow">产品能力如何分配到系统</div><h2>③ 前后端：页面、接口、学习服务与数据</h2><p>完整学习旅程是目标 → 评估 → 路径 → 学练 → 记录 → 复习与调整。各模块通过接口和持久数据交接，不以单个提醒功能代替整体架构。</p>
+<div class="canvas" id="diagram-architecture"><h3>从需求到系统的落点</h3><div class="node dark">前端：对话 / 评估 / 计划 / 学练 / 学情</div><div class="arrow">API 请求与结果 ↕</div><div class="node">FastAPI：身份 / 参数 / 额度 / 状态</div><div class="arrow">调用学习能力 ↕</div><div class="node dark">学习服务：诊断 / 生成 / 教学 / 复习 / 调整</div><div class="arrow">读取与保存 ↕</div><div class="node">SQLite 与路径文件：账号 / 证据 / 路径 / 任务 / 记录</div><div class="footer">先约定输入输出和归属，再按依赖逐段实现。<br>网页完成不等于结果持久化或生产上线。</div></div>
 <div class="links"><a href="../server.py">API 与 SSE 路由</a><a href="../core/db.py">SQLite 数据模型</a><a href="../core/baseline.py">评估生命周期</a><a href="../core/assessment_scoring.py">判分与证据</a><a href="../core/generator.py">路径生成</a><a href="../core/jobs.py">后台任务恢复</a></div>
 <p class="notice"><b>动手追踪：</b>在浏览器网络面板找到 <code>/api/baseline/assessments</code>，记录 assessment_id；观察逐题保存与刷新读取的身份是否相同。已有测试可从 <a href="../tests/test_baseline.py">test_baseline.py</a> 和 <a href="../tests/test_runtime_modes.py">额度反例</a>开始读。</p>
 </section>
-<section id="agent"><div class="eyebrow">从一句话到可确认的副作用</div><h2>④ Agent 架构：上下文、工具、执行与反馈</h2><p>“暂停我的学习提醒”是一个受控写操作。对话需要识别本人、读取当前规则，再调用工具保存；成功回复应以工具结果为依据。身份来自可信渠道信息，不能由模型随意填写 user_id。</p>
-<div class="canvas" id="diagram-agent"><h3>一个 Agent，要准备哪四件事？</h3><div class="node dark"><b>① 角色提示词 · 怎么做事</b><br>个人学习助理；先读后改<br>缺信息先问，失败不说已完成</div><div class="node"><b>② 任务上下文 · 这次知道什么</b><br>本人请求 + 当前提醒规则<br>必要的计划与进度，不塞全部历史</div><div class="node"><b>③ 工具合同 · 允许做什么</b><br>get_reminder_policy：读取<br>set_reminder_policy：修改<br>用途 / 参数 / 返回结果 / 错误</div><div class="arrow">OpenClaw：理解 → 选择 → 调用 → 读结果</div><div class="node warm"><b>④ 执行反馈 · 怎么确认完成</b><br>LearnBuddy 校验并保存<br>成功：重读结果；失败：说明未完成</div><div class="footer">身份由可信渠道与代码提供，不由模型猜。<br>验收：本人成功 / 未绑定 / 参数错 / 工具失败。<br>调度器单独送提醒；真实飞书轨迹仍待验收。</div></div>
-<div class="links"><a href="../core/tools.py">工具名称、参数与实现</a><a href="../mcp_server.py">MCP 身份注入</a><a href="../core/agent_integration.py">绑定与凭据</a><a href="../integrations/openclaw-learnbuddy/index.js">OpenClaw 插件</a><a href="../core/prompts/">学习 Prompt 模板</a><a href="../core/push_scheduler.py">提醒调度</a></div>
+<section id="agent"><div class="eyebrow">个人助理、多角色工作流与运行支撑</div><h2>④ Agent：怎样构建，而不只是怎样对话</h2><p>外部助理通过工具调用学习服务；内部课设、写作、评审和修订由代码编排。它们不是自由互聊的 Agent 团队，也不需要每个角色部署一套环境。</p>
+<div id="diagram-agent"><img class="shot" style="max-width:760px;margin:auto" src="./assets/learning-map/agent-three-layer-aigc.png" alt="Agent 三层架构：外部个人助理接入待验收；内部课设、写作、评审、修订形成受控工作流；运行底座提供上下文、状态、质量和验证。"></div>
+<p class="notice">内部工作流已有实现；真实 OpenClaw/飞书仍待验收。Web 与工具入口的运行控制尚未完全统一。旧版提醒示例图保留在原地址，不能作为最新版整体架构。</p>
+<div class="links"><a href="./assets/learning-map/agent-three-layer-aigc.png">打开完整原图</a><a href="./assets/learning-map/agent-three-layer-prompt.txt">生成 Prompt</a><a href="./README.md#agent-章节怎样对照源码">角色与源码映射</a><a href="../core/content.py">课设 / 写作 / 评审 / 修订</a><a href="../core/prompts/">角色 Prompt</a><a href="../tests/test_content_review.py">工作流测试</a><a href="./05-Harness技术体系对齐.md">Harness 实现与缺口</a><a href="../core/tools.py">工具</a><a href="../integrations/openclaw-learnbuddy/index.js">OpenClaw 插件</a></div>
 </section>
 <section id="workbench"><div class="eyebrow">把迭代过程也交给读者</div><h2>⑤ 开发工作台：需求、实现与验收的连接处</h2><p>学习空间面向学习者；开发工作台面向维护者和学习项目构建的人。它用版本号连接任务、依赖、负责模块、退出门和证据。工作台是人工维护的静态 HTML，不是已经接通 GitHub 的实时任务系统。</p>
 <div class="path">反馈 / 想法 → 需求判断 → 版本范围 → 任务依赖 → 实现 → 验收 → 下一版</div>

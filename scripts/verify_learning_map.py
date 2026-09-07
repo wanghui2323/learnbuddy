@@ -4,6 +4,9 @@ from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import unquote, urlsplit
 import re
+import argparse
+import hashlib
+import json
 
 ROOT = Path(__file__).resolve().parents[1]
 class Links(HTMLParser):
@@ -19,7 +22,7 @@ class Links(HTMLParser):
             if attrs.get(key):
                 self.links.append(attrs[key])
 
-def verify():
+def verify(article_source=None):
     page = ROOT / "docs/学习地图.html"
     content = page.read_text()
     parsed = Links()
@@ -50,7 +53,18 @@ def verify():
     assert "id=\"open-learning\"" in (ROOT / "docs/LearnBuddy项目工作台.html").read_text()
     article = (ROOT / "docs/AIBuilder第一周.md").read_text()
     images = re.findall(r"!\[[^\]]*\]\(([^)]+)\)", article)
-    assert len(images) == 7
+    delivery = json.loads((ROOT / "docs/assets/learning-map/delivery-provenance.json").read_text())["current_article"]
+    assert images == delivery["images"], "article image manifest drift"
+    assert hashlib.sha256(article.encode()).hexdigest() == delivery["sha256"], "article revision manifest drift"
+    for public_path in delivery["preserved_public_paths"]:
+        target = (ROOT / unquote(public_path.split("#", 1)[0])).resolve()
+        assert target.is_relative_to(ROOT) and target.exists(), public_path
+    if article_source:
+        expected = Path(article_source).read_text().replace("(assets/", "(./assets/learning-map/")
+        assert expected.strip() == article.strip(), "repository article differs from approved source"
+    for name in ("design_lesson", "write_lesson", "critic_lesson", "revise_lesson", "_run_lesson_quality_loop"):
+        assert name in article
+        assert f"def {name}(" in (ROOT / "core/content.py").read_text(), name
     for image in images:
         assert (ROOT / "docs" / image).resolve().is_file(), image
     for removed in ("03-page-preview.png", "01-open-process-aigc.png", "06-workbench.png"):
@@ -65,6 +79,8 @@ def verify():
     assert "LB-BASE-01" in prd and "Given" in prd
     if errors:
         raise SystemExit("\n".join(errors))
-    print(f"PASS: {checked} map references; 7 article images and repository links; PRD and AI Design contracts; version boundaries")
+    print(f"PASS: {checked} map references; {len(images)} article images; {len(delivery['preserved_public_paths'])} preserved public paths; article hash and optional source; PRD/AI Design contracts")
 if __name__ == "__main__":
-    verify()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--article-source", help="Optional author-approved Markdown to compare, without local path assumptions")
+    verify(parser.parse_args().article_source)

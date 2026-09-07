@@ -11,6 +11,8 @@
 
 ## 一句话定位
 
+**公众号配套文章（2026-09-07 同步）**：[完整最终稿](./docs/AIBuilder第一周.md) · [Agent 三层图](./docs/assets/learning-map/agent-three-layer-aigc.png) · [分类资料与源码映射](./docs/README.md)。已有文章引用地址继续有效。
+
 **想学习这个项目如何构建？** 从 [开源学习地图](./docs/README.md) 开始：产品判断 → 需求与设计 → 前后端 → Agent → 开发工作台 → 验收。仓库同时保留可视化页面、真实页面截图、源码和演进依据；HTML 预览方法也在地图中。
 
 不是 Coursera（不是课程平台）。不是 Notion 模板（不是表单）。不是多邻国（不是单领域工具）。

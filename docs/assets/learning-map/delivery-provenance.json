@@ -58,5 +58,40 @@
     "review": "Four final AIGC diagrams visually inspected for Chinese labels and responsibility relationships; conceptual illustrations, not live execution traces. HTML content sources retained.",
     "final_agent_source": "exec-7eb54041-19fc-45d5-a811-04e7c5d250f9.png",
     "final_design_source": "exec-3355015e-adb7-4705-bed6-55a1c455c24a.png"
+  },
+  "current_article": {
+    "updated": "2026-09-07",
+    "source": "author-approved article, 20260907-090854 delivery",
+    "sha256": "2ad8863eb17341ba7ef056266573a5202a8936a42bab53886f4d1421d0460232",
+    "images": [
+      "./assets/learning-map/product-architecture-aigc.png",
+      "./assets/learning-map/ai-design-contract-aigc.png",
+      "./assets/learning-map/real-learning-space.png",
+      "./assets/learning-map/real-learning-plan.png",
+      "./assets/learning-map/agent-three-layer-aigc.png",
+      "./assets/learning-map/workbench-overview.png"
+    ],
+    "preserved_public_paths": [
+      "docs/01-需求方案.md",
+      "SPEC.md",
+      "docs/AI_DESIGN.md",
+      "web/assets/style.css",
+      "docs/设计规范.html",
+      "server.py",
+      "web",
+      "core/tools.py",
+      "integrations/openclaw-learnbuddy/index.js",
+      "docs/PERSONAL_DEPLOYMENT.md",
+      "AGENTS.md",
+      "docs/LearnBuddy项目工作台.html",
+      "tests/test_agent_integration.py",
+      "docs/README.md",
+      "docs/07-开源与公有云双版本架构.md",
+      "docs/05-Harness技术体系对齐.md",
+      "docs/AIBuilder第一周.md",
+      "docs/学习地图.html",
+      "docs/06-OpenClaw接入方案.md"
+    ],
+    "note": "Earlier diagram entries describe historical deliveries. New Agent image is built-in AIGC, native 864x1821, no raster upscaling; prompt: agent-three-layer-prompt.txt. No business or production revalidation."
   }
 }

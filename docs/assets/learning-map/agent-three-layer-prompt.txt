@@ -1,0 +1,21 @@
+Use case: infographic-diagram. Create a high-resolution Chinese editorial architecture diagram for a LearnBuddy AI Builder tutorial. Portrait 1024x1536 or higher same ratio. Crisp large Chinese typography, warm ivory #F7F4EE, deep teal #2C6E6A, charcoal text, restrained amber for pending status. Beautiful professional technical diagram, no decorative robots, no tiny filler text. At most the exact labels below. Three hierarchical zones with clear generous spacing, solid connections for existing workflow, dashed amber for pending external integration. Do NOT imply free autonomous agent teams.
+
+Title: "LearnBuddy 的 Agent 架构"
+Subtitle: "个人助理 × 多角色工作流 × 运行底座"
+
+Zone 1 heading "① 入口与个人助理".
+Two branches: left box "网页" solid down to "Web 接口".
+Right dashed amber group "飞书 → OpenClaw → 受限工具" with badge "接入待验收".
+Both branches lead down into central wide box "LearnBuddy 学习服务" subtitle "评估 · 路径 · 教学 · 反馈与调整".
+Do not show Web going through OpenClaw.
+
+Zone2 heading "② 受控多角色工作流" badge "内部已有实现".
+Four large nodes arranged 2x2 with explicit clockwise arrows: top left "课设" small text "目标与主线"; top right "写作" small text "讲解与练习"; bottom right "评审" small text "问题与修改意见"; bottom left "修订" small text "定向修改".
+Edges: 课设→写作→评审; 评审→修订 labelled "需修改"; 修订→评审 return curved arrow labelled "有限返工"; 评审 down to a wide bar "满足质量要求 → 保存产物" labelled "通过". Do not connect 修订 directly to 课设. Leave ample space for arrows.
+Under this zone a short clear note "代码编排角色，不是自由互聊".
+
+Zone3 heading "③ 运行底座 Harness".
+Three equal rows of paired tiles: "上下文与检索" / "学习记录与记忆"; "后台任务与缓存" / "质量门与超时"; "用量与调用记录" / "测试与人工复核".
+This is a support foundation underneath the workflow, not another task node.
+Bottom amber note exact "Web 与工具入口的运行控制尚未完全统一".
+Use exact text, no invented metrics or claims. Legibility at mobile width prioritized; no 3D perspective. No literal code file names needed.
