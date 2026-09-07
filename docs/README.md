@@ -14,7 +14,7 @@
 | 开发过程 | [完整工作台](./LearnBuddy项目工作台.html)、[全页截图](./assets/learning-map/workbench-full.png)、[任务树](./LearnBuddy项目工作台.html#iteration-v053)、[决策 ADR](../SPEC.md) | 真实静态项目页面，人工维护，非自动任务后端 |
 | 开源与验证 | [源代码](../README.md)、[测试](../tests/)、[Release Loop](../scripts/release_loop.py)、[个人部署](./PERSONAL_DEPLOYMENT.md) | 源码 RC；安装恢复、人工评分、真实渠道及新版生产仍待验收 |
 
-图示可编辑内容源为学习地图 HTML；重建脚本是 scripts/capture_learning_map.mjs。文章展示用 [AIGC 产品架构图](./assets/learning-map/product-architecture-aigc.png) 与 [AIGC 系统总图](./assets/learning-map/system-architecture-aigc.png) 另存，[生图与单点修正 Prompt](./assets/learning-map/aigc-prompts.json) 一起公开。真实截图与架构示例分别标明来源，不公开原始学习数据。
+图示可编辑内容源为学习地图 HTML；重建脚本是 scripts/capture_learning_map.mjs。文章展示用 [AIGC 产品架构图](./assets/learning-map/product-architecture-aigc.png)、[AI Design 使用图](./assets/learning-map/ai-design-contract-aigc.png)、[系统总图](./assets/learning-map/system-architecture-aigc.png)、[Agent 开发合同图](./assets/learning-map/agent-architecture-aigc.png) 另存，[生图与单点修正 Prompt](./assets/learning-map/aigc-prompts.json) 一起公开。真实截图与架构示例分别标明来源，不公开原始学习数据。
 
 配套导读：[用 AI 从零构建学习助手：需求、设计、开发全流程实战](./AIBuilder第一周.md)。以提醒需求贯穿 AI 辅助需求分析、设计规范加载、前后端协作、Agent 工具与测试，公众号正文显式保留完整 GitHub 地址。
 

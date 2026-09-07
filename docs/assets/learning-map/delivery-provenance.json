@@ -38,7 +38,9 @@
     "mode": "built-in image_gen",
     "files": [
       "product-architecture-aigc.png",
-      "system-architecture-aigc.png"
+      "system-architecture-aigc.png",
+      "ai-design-contract-aigc.png",
+      "agent-architecture-aigc.png"
     ],
     "actual_native_dimensions": [
       1024,
@@ -49,8 +51,12 @@
     "semantic_fixes": [
       "Explicit LearnBuddy / OpenClaw / Feishu IM responsibilities",
       "Removed outer return connector bypassing OpenClaw; keep main chain tool results",
-      "Separate deterministic reminder scheduler from conversational agent"
+      "Separate deterministic reminder scheduler from conversational agent",
+      "AI Design separates AI reading Markdown rules from browser loading CSS",
+      "Agent prompt, context and tools feed runtime; backend tool results support final response"
     ],
-    "review": "Chinese labels and responsibility flow visually checked; not a live runtime trace"
+    "review": "Four final AIGC diagrams visually inspected for Chinese labels and responsibility relationships; conceptual illustrations, not live execution traces. HTML content sources retained.",
+    "final_agent_source": "exec-7eb54041-19fc-45d5-a811-04e7c5d250f9.png",
+    "final_design_source": "exec-3355015e-adb7-4705-bed6-55a1c455c24a.png"
   }
 }
